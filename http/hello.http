@@ -1,13 +1,13 @@
 ### GET TEST
-GET localhost:880/iitp/data
+GET localhost:880/iitp/data?device=1
 
 ### POST TEST
 POST localhost:880/iitp/data
 Content-Type: application/json
 
 {
-  "DEVICE_NUM": null,
-  "BATT": 1,
+  "DEVICE_NUM": 1,
+  "batt": 1.1,
   "MAG_X": 2,
   "MAG_Y": 3,
   "MAG_Z": 4,

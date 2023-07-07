@@ -1,20 +1,101 @@
 const express = require("express");
 const router = express.Router();
 const connection = require('../database/mysql');
+const e = require("express");
+
+function toTimestamp(str) {
+    const date = new Date(str);
+    console.log(date);
+    return date.getTime() / 1000;
+}
 
 router.get("/data", function (req, res, next) {
-    connection.query('SELECT * from SENSOR_DATA', (error, rows, fields) => {
-        if (error) throw error;
-        res.send(rows);
-    });
+    // 시작범위, 종료범위, 기기번호
+    const device = req.query.device;
+    const start = toTimestamp(req.query.start);
+    const end = toTimestamp(req.query.end);
+
+    console.log('device: ' + device);
+    console.log('start: ' + start);
+    console.log('end: ' + end);
+
+    // start 있는 경우
+    if (typeof start != 'undefined') {
+        // start & end 있는 경우 -> 두 기간 사이 조회
+        if (typeof end != 'undefined') {
+            if (typeof device != 'undefined') {
+                connection.query('SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE DEVICE_NUM = ? AND CREATED_AT BETWEEN ? AND ?', (device, start, end), (error, result) => {
+                    if (error) {
+                        console.log(error);
+                        res.status(500).send('Internal Server Error!');
+                    }
+                    res.status(200).send(result);
+                });
+            } else {
+                connection.query('SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ?', (start, end), (error, result) => {
+                    if (error) {
+                        console.log(error);
+                        res.status(500).send('Internal Server Error!');
+                    }
+                    res.status(200).send(result);
+                });
+            }
+        }
+        // start만 있는 경우 -> start 부터 현재 시간까지 조회
+        else {
+            if (typeof device != 'undefined') {
+
+            } else {
+
+            }
+        }
+    } else {
+        // end만 있는 경우 -> 처음부터 end까지 조회
+        if (typeof end != 'undefined') {
+            if (typeof device != 'undefined') {
+
+            } else {
+
+            }
+        }
+        // 둘 다 없는 경우 -> 전체 기간 조회
+        else {
+            // 특정 device 조회
+            if (typeof device != 'undefined') {
+                connection.query('SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE DEVICE_NUM = ?', device, (error, result) => {
+                    if (error) {
+                        console.log(error);
+                        res.status(500).send('Internal Server Error!');
+                    }
+                    res.status(200).send(result);
+                });
+            }
+            // 전체조회
+            else {
+                connection.query('SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA', (error, result) => {
+                    if (error) {
+                        console.log(error);
+                        res.status(500).send('Internal Server Error!');
+                    }
+                    res.status(200).send(result);
+                });
+            }
+        }
+    }
+
 });
 
 router.post("/data", function (req, res, next) {
-    connection.query('SELECT * from SENSOR_DATA', (error, rows, fields) => {
-        if (error) throw error;
-        res.send(rows);
+    var data = {...req.body, "created_at": new Date(Date.now())};
+
+    connection.query('INSERT INTO SENSOR_DATA SET ?', data, (er) => {
+        if (er) {
+            console.log(er);
+            res.status(500).send('Internal Server Error!');
+        } else {
+            res.status(201).send();
+        }
     });
-    res.send(req.body);
 });
 
 module.exports = router;
