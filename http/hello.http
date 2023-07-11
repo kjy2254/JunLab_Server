@@ -6,7 +6,7 @@ POST localhost:880/iitp/data
 Content-Type: application/json
 
 {
-  "DEVICE_NUM": 1,
+  "ID": 1,
   "batt": 1.1,
   "MAG_X": 2,
   "MAG_Y": 3,
@@ -27,4 +27,32 @@ Content-Type: application/json
   "RED": 18,
   "ECG": 19,
   "TEMP": 20
+}
+
+### POST TEST2
+POST localhost:880/iitp/data
+Content-Type: application/json
+
+{
+"ID": 2,
+"batt": 3.7,
+"magx": 6687.0,
+"MAGy": 3047.0,
+"MAGz": 2673.0,
+"ZYROx": 4063.0,
+"ZYROy": 62864.0,
+"ZYROz": 1043.0,
+"ACCx": 65138.0,
+"ACCy": 29.0,
+"ACCz": 1874.0,
+"AQI": 1.0,
+"TVOC": 16.0,
+"EC2": 400,
+"pm1.0": 0,
+"pm2.5": 0,
+"pm10": 0,
+"IRUN": 19225.0,
+"RED": 17433.0,
+"ECG": 30241.0,
+"TEMP": 27.5
 }
