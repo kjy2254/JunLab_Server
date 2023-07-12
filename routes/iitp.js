@@ -1,65 +1,41 @@
 const express = require("express");
 const router = express.Router();
 const connection = require('../database/mysql');
+const {stringify} = require("nodemon/lib/utils");
 const data_exporter = require('json2csv').Parser;
+
+const today = new Date();
+const year = today.getFullYear();
+const month = today.getMonth() + 1;
+const month2 = (month) < 10 ? ("0" + month) : (month);
+const day = today.getDate();
 
 
 router.get("/data", (req, res, next) => {
-    // 시작범위, 종료범위, 기기번호
     const id = req.query.id;
     let start = req.query.start;
     let end = req.query.end;
 
+    let today_st = year + "/" + month2 + "/" + day;
+
+    if (typeof start == 'undefined' || typeof start == '') start = '2023/01/01';
+    if (typeof end == 'undefined' || typeof end == '') {
+        end = today_st + ' 23:59:59';
+    }
+    else{
+        end = end + ' 23:59:59';
+    }
+
     let query = '';
     let data = [];
 
-    // start만 있는 경우
-    if (typeof start != 'undefined') {
-        // start & end 있는 경우 -> 두 기간 사이 조회
-        if (typeof end != 'undefined') {
-            if (typeof id != 'undefined') {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ? AND CREATED_AT BETWEEN ? AND ?';
-                data = [id, start, end];
-            } else {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ?';
-                data = [start, end];
-            }
-        }
-        // start만 있는 경우 -> start 부터 현재 시간까지 조회
-        else {
-            if (typeof id != 'undefined') {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ? AND CREATED_AT >= ?';
-                data = [id, start];
-            } else {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT >= ?';
-                data = [start];
-            }
-        }
-    }
-    else {
-        // end만 있는 경우 -> 처음부터 end까지 조회
-        if (typeof end != 'undefined') {
-            if (typeof id != 'undefined') {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ? AND CREATED_AT <= ?';
-                data = [id, end];
-            } else {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT <= ?';
-                data = [end];
-            }
-        }
-        // 둘 다 없는 경우 -> 전체 기간 조회
-        else {
-            // 특정 id 조회
-            if (typeof id != 'undefined') {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ?';
-                data = [id];
-            }
-            // 전체조회
-            else {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA';
-                data = [];
-            }
-        }
+
+    if (typeof id == 'undefined' || id == 'all') {
+        query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC;';
+        data = [start, end];
+    } else {
+        query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ? AND CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC;';
+        data = [id, start, end];
     }
 
     connection.query(query, data, (error, result) => {
@@ -100,73 +76,45 @@ router.post("/data", (req, res, next) => {
     });
 });
 
-router.get("/table", (req, res) =>{
+router.get("/table", (req, res) => {
     const id = req.query.id;
     let start = req.query.start;
     let end = req.query.end;
 
+    let today_st = year + "/" + month2 + "/" + day;
+
+    if (typeof start == 'undefined' || typeof start == '') start = '2023/01/01';
+    if (typeof end == 'undefined' || typeof end == '') {
+        end = today_st + ' 23:59:59';
+    }
+    else{
+        end = end + ' 23:59:59';
+    }
+
     let query = '';
     let data = [];
 
-    // start만 있는 경우
-    if (typeof start != 'undefined') {
-        // start & end 있는 경우 -> 두 기간 사이 조회
-        if (typeof end != 'undefined') {
-            if (typeof id != 'undefined') {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ? AND CREATED_AT BETWEEN ? AND ?';
-                data = [id, start, end];
-            } else {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ?';
-                data = [start, end];
-            }
-        }
-        // start만 있는 경우 -> start 부터 현재 시간까지 조회
-        else {
-            if (typeof id != 'undefined') {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ? AND CREATED_AT >= ?';
-                data = [id, start];
-            } else {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT >= ?';
-                data = [start];
-            }
-        }
-    }
-    else {
-        // end만 있는 경우 -> 처음부터 end까지 조회
-        if (typeof end != 'undefined') {
-            if (typeof id != 'undefined') {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ? AND CREATED_AT <= ?';
-                data = [id, end];
-            } else {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT <= ?';
-                data = [end];
-            }
-        }
-        // 둘 다 없는 경우 -> 전체 기간 조회
-        else {
-            // 특정 id 조회
-            if (typeof id != 'undefined') {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ?';
-                data = [id];
-            }
-            // 전체조회
-            else {
-                query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA';
-                data = [];
-            }
-        }
+
+    if (typeof id == 'undefined' || id == 'all') {
+        query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC;';
+        data = [start, end];
+    } else {
+        query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ? AND CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC;';
+        data = [id, start, end];
     }
 
-    connection.query(query, data, (error, result) => {
+    connection.query("SELECT DISTINCT ID FROM SENSOR_DATA; " + query, data, (error, result) => {
         if (error) {
             console.log(error);
             res.status(500).send('Internal Server Error!');
         }
-        res.render("SensorTable", {data : result});
+        let id_list = [];
+        result[0].forEach(e => id_list.push(e.ID));
+        res.render("SensorTable", {data: result[1], id_list: id_list});
     });
 })
 
-router.get("/table/export", (req, res) =>{
+router.get("/table/export", (req, res) => {
     let query = '';
     let data = [];
 
@@ -194,8 +142,7 @@ router.get("/table/export", (req, res) =>{
                 data = [start];
             }
         }
-    }
-    else {
+    } else {
         // end만 있는 경우 -> 처음부터 end까지 조회
         if (typeof end != 'undefined') {
             if (typeof id != 'undefined') {
