@@ -1,5 +1,5 @@
 ### GET TEST
-GET localhost:880/iitp/data?device=1
+GET localhost:880/iitp/data?id=1
 
 ### POST TEST
 POST localhost:880/iitp/data

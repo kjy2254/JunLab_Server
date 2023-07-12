@@ -4,126 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sensor Data Table</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 </head>
 <body>
-<h1>Sensor Data Table</h1>
-<div class="">
-    <button id="download" class="btn"> cvs download </button>
-    <table id="sensorTable" class="table table-striped table-hover">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">BATT</th>
-            <th scope="col">MAGx</th>
-            <th scope="col">MAGy</th>
-            <th scope="col">MAGz</th>
-            <th scope="col">ZYROx</th>
-            <th scope="col">ZYROy</th>
-            <th scope="col">ZYROz</th>
-            <th scope="col">ACCx</th>
-            <th scope="col">ACCy</th>
-            <th scope="col">ACCz</th>
-            <th scope="col">AQI</th>
-            <th scope="col">TVOC</th>
-            <th scope="col">EC2</th>
-            <th scope="col">PM1.0</th>
-            <th scope="col">PM2.5</th>
-            <th scope="col">PM10</th>
-            <th scope="col">IRUN</th>
-            <th scope="col">RED</th>
-            <th scope="col">ECG</th>
-            <th scope="col">TEMP</th>
-        </tr>
-        </thead>
-        <tbody>
-        <% data.forEach((el,index) => {%>
-        <tr>
-            <th scope="row"><%= index + 1%></th>
-            <td><%= el.BATT %></td>
-            <td><%= el.MAGx %></td>
-            <td><%= el.MAGy %></td>
-            <td><%= el.MAGz %></td>
-            <td><%= el.ZYROx %></td>
-            <td><%= el.ZYROy %></td>
-            <td><%= el.ZYROz %></td>
-            <td><%= el.ACCx %></td>
-            <td><%= el.ACCy %></td>
-            <td><%= el.ACCz %></td>
-            <td><%= el.AQI %></td>
-            <td><%= el.TVOC %></td>
-            <td><%= el.EC2 %></td>
-            <td><%= el.PM10 %></td>
-            <td><%= el.PM25 %></td>
-            <td><%= el.PM100 %></td>
-            <td><%= el.IRUN %></td>
-            <td><%= el.RED %></td>
-            <td><%= el.ECG %></td>
-            <td><%= el.TEMP %></td>
-        </tr>
-        <% }) %>
-        </tbody>
-    </table>
+<button onclick="history.back()" class="btn btn-info mx-2 my-2">
+    뒤로
+</button>
+<div class="mx-5">
+    <div class="mb-5">
+        <h1 class="">Sensor Data Table</h1>
+        <a id="download" class="d-inline" href="/iitp/table/export"><u> csv download </u></a>
+    </div>
+
+    <div class="vw-75">
+        <table id="sensorTable" class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">ID</th>
+                <th scope="col">BATT</th>
+                <th scope="col">MAGx</th>
+                <th scope="col">MAGy</th>
+                <th scope="col">MAGz</th>
+                <th scope="col">ZYROx</th>
+                <th scope="col">ZYROy</th>
+                <th scope="col">ZYROz</th>
+                <th scope="col">ACCx</th>
+                <th scope="col">ACCy</th>
+                <th scope="col">ACCz</th>
+                <th scope="col">AQI</th>
+                <th scope="col">TVOC</th>
+                <th scope="col">EC2</th>
+                <th scope="col">PM1.0</th>
+                <th scope="col">PM2.5</th>
+                <th scope="col">PM10</th>
+                <th scope="col">IRUN</th>
+                <th scope="col">RED</th>
+                <th scope="col">ECG</th>
+                <th scope="col">TEMP</th>
+                <th scope="col">CREATED_AT</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% data.forEach((el, index) => { %>
+                <tr>
+                    <th scope="row"><%= index + 1 %></th>
+                    <td><%= el.ID %></td>
+                    <td><%= el.BATT %></td>
+                    <td><%= el.MAGx %></td>
+                    <td><%= el.MAGy %></td>
+                    <td><%= el.MAGz %></td>
+                    <td><%= el.ZYROx %></td>
+                    <td><%= el.ZYROy %></td>
+                    <td><%= el.ZYROz %></td>
+                    <td><%= el.ACCx %></td>
+                    <td><%= el.ACCy %></td>
+                    <td><%= el.ACCz %></td>
+                    <td><%= el.AQI %></td>
+                    <td><%= el.TVOC %></td>
+                    <td><%= el.EC2 %></td>
+                    <td><%= el.PM10 %></td>
+                    <td><%= el.PM25 %></td>
+                    <td><%= el.PM100 %></td>
+                    <td><%= el.IRUN %></td>
+                    <td><%= el.RED %></td>
+                    <td><%= el.ECG %></td>
+                    <td><%= el.TEMP %></td>
+                    <td><%= el.CREATED_AT %></td>
+                </tr>
+            <% }) %>
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>
-
-<script>
-    class ToCSV {
-        constructor() {
-            // CSV 버튼에 이벤트 등록
-            document.querySelector('#download').addEventListener('click', e => {
-                e.preventDefault()
-                this.getCSV('mycsv.csv')
-            })
-        }
-
-        downloadCSV(csv, filename) {
-            let csvFile;
-            let downloadLink;
-
-            // CSV 파일을 위한 Blob 만들기
-            csvFile = new Blob([csv], {type: "text/csv"})
-
-            // Download link를 위한 a 엘리먼스 생성
-            downloadLink = document.createElement("a")
-
-            // 다운받을 csv 파일 이름 지정하기
-            downloadLink.download = filename;
-
-            // 위에서 만든 blob과 링크를 연결
-            downloadLink.href = window.URL.createObjectURL(csvFile)
-
-            // 링크가 눈에 보일 필요는 없으니 숨겨줍시다.
-            downloadLink.style.display = "none"
-
-            // HTML 가장 아래 부분에 링크를 붙여줍시다.
-            document.body.appendChild(downloadLink)
-
-            // 클릭 이벤트를 발생시켜 실제로 브라우저가 '다운로드'하도록 만들어줍시다.
-            downloadLink.click()
-        }
-
-        getCSV(filename) {
-            // csv를 담기 위한 빈 Array를 만듭시다.
-            const csv = []
-            const rows = document.querySelectorAll("#sensorTable table tr")
-
-            for (let i = 0; i < rows.length; i++) {
-                const row = [], cols = rows[i].querySelectorAll("td, th")
-
-                for (let j = 0; j < cols.length; j++)
-                    row.push(cols[j].innerText)
-
-                csv.push(row.join(","))
-            }
-
-            // Download CSV
-            this.downloadCSV(csv.join("\n"), filename)
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', e => {
-        new ToCSV()
-    })
-</script>

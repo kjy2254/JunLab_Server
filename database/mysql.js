@@ -7,4 +7,5 @@ const connection = mysql.createConnection({
     database: 'iitp'
 });
 
+
 module.exports = connection;
