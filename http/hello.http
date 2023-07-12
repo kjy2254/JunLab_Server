@@ -1,8 +1,8 @@
 ### GET TEST
-GET localhost:880/iitp/data?id=1
+GET localhost:880/iitp/api/sensor?id=1
 
 ### POST TEST
-POST localhost:880/iitp/data
+POST localhost:880/iitp/api/sensor
 Content-Type: application/json
 
 {
@@ -20,9 +20,9 @@ Content-Type: application/json
 "AQI": 1.0,
 "TVOC": 16.0,
 "EC2": 400,
-"pm1.0": 0,
-"pm2.5": 0,
-"pm10": 0,
+"PM1.0": 0,
+"PM2.5": 0,
+"PM10": 0,
 "IRUN": 19225.0,
 "RED": 17433.0,
 "ECG": 30241.0,

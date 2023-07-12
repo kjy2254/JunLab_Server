@@ -6,6 +6,7 @@ var logger = require('morgan');
 const ejs = require("ejs");
 var indexRouter = require('./routes/index');
 var iitpRouter = require('./routes/iitp');
+const cors = require('cors');
 
 var app = express();
 
@@ -19,14 +20,22 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// cors 설정
+app.use(cors({
+    origin: '*', // 모든 출처 허용 옵션. true 를 써도 된다.
+}));
+
 app.use('/static', express.static('static'));
 app.use('/', indexRouter);
 app.use('/iitp', iitpRouter);
 
+const { swaggerUi, specs } = require("./swagger/swagger")
+app.use("/iitp/docs/api", swaggerUi.serve, swaggerUi.setup(specs))
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     // next(createError(404));
-    res.send('404 Not found');
+    res.status(404).send('404 Not found');
 });
 
 // error handler
