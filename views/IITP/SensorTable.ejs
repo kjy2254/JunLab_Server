@@ -46,6 +46,9 @@
              + '&start=' + document.getElementById('start').value.replaceAll('-', '/')
             + '&end=' + document.getElementById('end').value.replaceAll('-', '/')"> 검색
             </button>
+            <div class="mx-5">
+                <%= data.length %> 개의 검색 결과.
+            </div>
         </div>
         <button id="download" class="btn btn-sm btn-secondary"
                 onclick="location.href= '/iitp/table/export?id=' + document.getElementById('id').options[document.getElementById('id').selectedIndex].value
