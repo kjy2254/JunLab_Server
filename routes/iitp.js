@@ -10,6 +10,19 @@ const month = today.getMonth() + 1;
 const month2 = (month) < 10 ? ("0" + month) : (month);
 const day = today.getDate();
 
+function jsonKeyUpperCase(object){
+    if(Array.isArray(object)){
+        // 리스트<맵> 형식으로 넘어오는 경우 처리
+        object.forEach((item, index) =>{
+            object[index] = Object.fromEntries(Object.entries(item).map(([key, value]) => [key.toUpperCase(), value]));
+        });
+        return object;
+    }
+    else {
+        // 맵 형식으로 넘어오는 경우 처리
+        return Object.fromEntries(Object.entries(object).map(([key, value]) => [key.toUpperCase(), value]));
+    }
+}
 
 /**
  * @swagger
@@ -209,12 +222,13 @@ router.get("/api/sensor", (req, res, next) => {
 router.post("/api/sensor", (req, res, next) => {
     let data = {...req.body, "created_at": new Date(Date.now())};
 
+    data = jsonKeyUpperCase(data);
+
     console.log(data);
 
     data.PM100 = data["PM10"];
     data.PM10 = data["PM1.0"];
     data.PM25 = data["PM2.5"];
-    delete data["PM10"];
     delete data["PM1.0"];
     delete data["PM2.5"];
 
