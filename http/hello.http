@@ -2,11 +2,11 @@
 GET localhost:880/iitp/api/sensor?id=1
 
 ### POST TEST
-POST localhost:880/iitp/api/sensor
+POST junlab.postech.ac.kr:880/iitp/api/sensor
 Content-Type: application/json
 
 {
-"ID": 1,
+"ID": 3,
 "batt": 3.7,
 "magx": 6687.0,
 "MAGy": 3047.0,
@@ -22,7 +22,7 @@ Content-Type: application/json
 "EC2": 400,
 "PM1.0": 1,
 "PM2.5": 2,
-"pm10": 3,
+"PM10": 3,
 "IRUN": 19225.0,
 "RED": 17433.0,
 "ECG": 30241.0,

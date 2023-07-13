@@ -33,7 +33,7 @@ function jsonKeyUpperCase(object){
 
 /**
  * @swagger
- *  /iitp/api/sensor?id={device_id}&start={start_date}&end={end_date}:
+ * /iitp/api/sensor?id={device_id}&start={start_date}&end={end_date}:
  *   get:
  *      summary: "조건에 맞는 센서 데이터 조회"
  *      description: "요청 경로에 값을 담아 서버에 보낸다. (파라미터가 없을 경우 전체 정보를 조회한다)"
@@ -45,26 +45,27 @@ function jsonKeyUpperCase(object){
  *          description: Device ID
  *          schema:
  *            type: string
- *            default: 1
+ *            default: 2
  *        - in: query
  *          name: start
  *          required: false
  *          description: Start Date e.g.) YYYY/MM/DD
  *          schema:
  *            type: string
- *            default: 2023/07/10
+ *            default: 2023/07/13
  *        - in: query
  *          name: end
  *          required: false
  *          description: End Date e.g.) YYYY/MM/DD
  *          schema:
  *            type: string
- *            default: 2023/07/12
+ *            default: 2023/07/13
  *      responses:
  *        "200":
  *          description: Information read success
  *          content:
  *            application/json:
+ *
  *              schema:
  *                type: object
  *                properties:
