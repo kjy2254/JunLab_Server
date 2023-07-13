@@ -49,7 +49,7 @@ const day = today.getDate();
  *            default: 2023/07/12
  *      responses:
  *        "200":
- *          description: Infomation read success
+ *          description: Information read success
  *          content:
  *            application/json:
  *              schema:
@@ -200,7 +200,7 @@ router.get("/api/sensor", (req, res, next) => {
  *                          default: 37
  *      responses:
  *       201:
- *        description: Infomation create success
+ *        description: Information create success
  *       404:
  *        description: NotFound
  *       500:
