@@ -124,9 +124,11 @@
     month2 = (month) < 10 ? ("0" + month) : (month);
     day = today.getDate();
 
-    default_end = year + "-" + month2 + "-" + day;
+    default_day = year + "-" + month2 + "-" + day;
 
-    document.querySelector('#end').value = default_end;
+
+    document.querySelector('#start').value = default_day;
+    document.querySelector('#end').value = default_day;
 
     sp = new URLSearchParams(location.search);
     if (sp.get('start')) document.querySelector('#start').value = sp.get('start').replaceAll('/', '-');

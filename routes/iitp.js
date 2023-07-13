@@ -255,18 +255,23 @@ router.get("/table", (req, res) => {
 
     let today_st = year + "/" + month2 + "/" + day;
 
-    if (typeof start == 'undefined' || typeof start == '') start = '2023/01/01';
-    if (typeof end == 'undefined' || typeof end == '') {
+    if (typeof start == 'undefined' || start === '') {
+        start = today_st + ' 00:00:00';
+    }
+    if (typeof end == 'undefined' || end === '') {
         end = today_st + ' 23:59:59';
     } else {
         end = end + ' 23:59:59';
     }
 
+
+    console.log(start, end);
+
     let query = '';
     let data = [];
 
 
-    if (typeof id == 'undefined' || id == 'all') {
+    if (typeof id == 'undefined' || id === 'all') {
         query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC;';
         data = [start, end];
     } else {
