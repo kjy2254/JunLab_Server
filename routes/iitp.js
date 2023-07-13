@@ -224,8 +224,6 @@ router.post("/api/sensor", (req, res, next) => {
 
     data = jsonKeyUpperCase(data);
 
-    console.log(data);
-
     data.PM100 = data["PM10"];
     data.PM10 = data["PM1.0"];
     data.PM25 = data["PM2.5"];
