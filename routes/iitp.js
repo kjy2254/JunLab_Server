@@ -45,7 +45,7 @@ function jsonKeyUpperCase(object){
  *          description: Device ID
  *          schema:
  *            type: string
- *            default: 2
+ *            default: 1
  *        - in: query
  *          name: start
  *          required: false
