@@ -8,17 +8,23 @@ var indexRouter = require('./routes/index');
 var iitpRouter = require('./routes/iitp');
 const cors = require('cors');
 const bodyParser = require("body-parser");
-
+const fs = require('fs');
 var app = express();
 
 // view engine setup
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
-app.use(logger('dev'));
-app.use(logger(":remote-addr"), (req, res, next) =>{
+//logger
+app.use(logger({
+    format: 'dev',
+    stream: fs.createWriteStream('app.log', {'flags': 'w'})
+}));
+app.use(logger("[:remote-addr] :method :url"), (req, res, next) =>{
     next();
-})
+});
+
+
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
