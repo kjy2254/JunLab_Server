@@ -10,15 +10,14 @@ const month = today.getMonth() + 1;
 const month2 = (month) < 10 ? ("0" + month) : (month);
 const day = today.getDate();
 
-function jsonKeyUpperCase(object){
-    if(Array.isArray(object)){
+function jsonKeyUpperCase(object) {
+    if (Array.isArray(object)) {
         // 리스트<맵> 형식으로 넘어오는 경우 처리
-        object.forEach((item, index) =>{
+        object.forEach((item, index) => {
             object[index] = Object.fromEntries(Object.entries(item).map(([key, value]) => [key.toUpperCase(), value]));
         });
         return object;
-    }
-    else {
+    } else {
         // 맵 형식으로 넘어오는 경우 처리
         return Object.fromEntries(Object.entries(object).map(([key, value]) => [key.toUpperCase(), value]));
     }
@@ -98,7 +97,7 @@ function jsonKeyUpperCase(object){
  *                                "CREATED_AT": "2023/07/12 13:02:58" }]
  */
 router.get("/api/sensor", (req, res, next) => {
-    const ip = req.headers['x-forwarded-for'] ||  req.connection.remoteAddress;
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     console.log(ip);
     const id = req.query.id;
     let start = req.query.start;
@@ -135,6 +134,141 @@ router.get("/api/sensor", (req, res, next) => {
 
 });
 
+// /**
+//  * @swagger
+//  *  /iitp/api/sensor:
+//  *    post:
+//  *      tags: [Sensor]
+//  *      summary: "센서 데이터 추가"
+//  *      description: "POST 방식으로 센서 값을 등록한다."
+//  *      produces: application/json
+//  *      requestBody:
+//  *          description: "각 센서 데이터 값 입력"
+//  *          required: true
+//  *          content:
+//  *            application/json:
+//  *              schema:
+//  *                  type: object
+//  *                  properties:
+//  *                      ID:
+//  *                          type: number
+//  *                          default: 1
+//  *                      BATT:
+//  *                          type: number
+//  *                          default: 3.7
+//  *                      MAGx:
+//  *                          type: number
+//  *                          default: 6687
+//  *                      MAGy:
+//  *                          type: number
+//  *                          default: 3047
+//  *                      MAGz:
+//  *                          type: number
+//  *                          default: 2673
+//  *                      ZYROx:
+//  *                          type: number
+//  *                          default: 4063
+//  *                      ZYROy:
+//  *                          type: number
+//  *                          default: 62864
+//  *                      ZYROz:
+//  *                          type: number
+//  *                          default: 1043
+//  *                      ACCx:
+//  *                          type: number
+//  *                          default: 65138
+//  *                      ACCy:
+//  *                          type: number
+//  *                          default: 29
+//  *                      ACCz:
+//  *                          type: number
+//  *                          default: 1874
+//  *                      AQI:
+//  *                          type: number
+//  *                          default: 1
+//  *                      TVOC:
+//  *                          type: number
+//  *                          default: 16
+//  *                      EC2:
+//  *                          type: number
+//  *                          default: 400
+//  *                      PM1.0:
+//  *                          type: number
+//  *                          default: 0
+//  *                      PM2.5:
+//  *                          type: number
+//  *                          default: 0
+//  *                      PM10:
+//  *                          type: number
+//  *                          default: 0
+//  *                      IRUN:
+//  *                          type: number
+//  *                          default: 19225
+//  *                      RED:
+//  *                          type: number
+//  *                          default: 17433
+//  *                      ECG:
+//  *                          type: number
+//  *                          default: 30241
+//  *                      TEMP:
+//  *                          type: number
+//  *                          default: 37
+//  *      responses:
+//  *       201:
+//  *        description: Information create success
+//  *       404:
+//  *        description: NotFound
+//  *       500:
+//  *        description: Server Error
+//  */
+// router.post("/api/sensor", (req, res, next) => {
+//     const ip = req.headers['x-forwarded-for'] ||  req.connection.remoteAddress;
+//     console.log(ip);
+//     let data = {...req.body, "created_at": new Date(Date.now())};
+//
+//     data = jsonKeyUpperCase(data);
+//
+//     data.PM100 = data["PM10"];
+//     data.PM10 = data["PM1.0"];
+//     data.PM25 = data["PM2.5"];
+//     delete data["PM1.0"];
+//     delete data["PM2.5"];
+//
+//     connection.query("INSERT INTO SENSOR_DATA SET ?", data, (er) => {
+//         if (er) {
+//             console.log(er);
+//             res.status(500).send('Internal Server Error!');
+//         } else {
+//             res.status(201).send();
+//         }
+//     });
+// });
+
+// router.post("/api/sensor", (req, res, next) => {
+//     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+//     console.log(ip);
+//
+//     let data = {...req.body, "created_at": new Date(Date.now())};
+//
+//     data = jsonKeyUpperCase(data);
+//
+//     data.PM100 = data["PM10"];
+//     data.PM10 = data["PM1.0"];
+//     data.PM25 = data["PM2.5"];
+//     delete data["PM1.0"];
+//     delete data["PM2.5"];
+//
+//     connection.query("INSERT INTO SENSOR_DATA SET ?", data, (er) => {
+//         if (er) {
+//             console.log(er);
+//             res.status(500).send('Internal Server Error!');
+//         } else {
+//             res.status(201).send();
+//         }
+//     });
+// });
+
+
 /**
  * @swagger
  *  /iitp/api/sensor:
@@ -142,78 +276,15 @@ router.get("/api/sensor", (req, res, next) => {
  *      tags: [Sensor]
  *      summary: "센서 데이터 추가"
  *      description: "POST 방식으로 센서 값을 등록한다."
- *      produces: application/json
+ *      produces: text/plain
  *      requestBody:
- *          description: "각 센서 데이터 값 입력"
+ *          description: "21개의 센서값을 순서대로 나열 (구분자: ',') <br /> [ID, BATT, MAGx, MAGy, MAGz, ZYROx, ZYROy, ZYROz, ACCx, ACCy, ACCz, AQI, TVOC, EC2, PM1.0, PM2.5, PM10, IRUN, RED, ECG, TEMP]"
  *          required: true
  *          content:
- *            application/json:
+ *            text/plain:
  *              schema:
- *                  type: object
- *                  properties:
- *                      ID:
- *                          type: number
- *                          default: 1
- *                      BATT:
- *                          type: number
- *                          default: 3.7
- *                      MAGx:
- *                          type: number
- *                          default: 6687
- *                      MAGy:
- *                          type: number
- *                          default: 3047
- *                      MAGz:
- *                          type: number
- *                          default: 2673
- *                      ZYROx:
- *                          type: number
- *                          default: 4063
- *                      ZYROy:
- *                          type: number
- *                          default: 62864
- *                      ZYROz:
- *                          type: number
- *                          default: 1043
- *                      ACCx:
- *                          type: number
- *                          default: 65138
- *                      ACCy:
- *                          type: number
- *                          default: 29
- *                      ACCz:
- *                          type: number
- *                          default: 1874
- *                      AQI:
- *                          type: number
- *                          default: 1
- *                      TVOC:
- *                          type: number
- *                          default: 16
- *                      EC2:
- *                          type: number
- *                          default: 400
- *                      PM1.0:
- *                          type: number
- *                          default: 0
- *                      PM2.5:
- *                          type: number
- *                          default: 0
- *                      PM10:
- *                          type: number
- *                          default: 0
- *                      IRUN:
- *                          type: number
- *                          default: 19225
- *                      RED:
- *                          type: number
- *                          default: 17433
- *                      ECG:
- *                          type: number
- *                          default: 30241
- *                      TEMP:
- *                          type: number
- *                          default: 37
+ *                  type: string
+ *                  example: 3, 3.7, 6687.0, 3047.0, 2673.0, 4063.0, 62864.0, 1043.0, 65138.0, 29.0, 1874.0, 1.0, 16.0, 400, 1, 2, 3, 19225.0, 17433.0, 30241.0, 27.5
  *      responses:
  *       201:
  *        description: Information create success
@@ -222,25 +293,43 @@ router.get("/api/sensor", (req, res, next) => {
  *       500:
  *        description: Server Error
  */
-router.post("/api/sensor", (req, res, next) => {
-    const ip = req.headers['x-forwarded-for'] ||  req.connection.remoteAddress;
-    console.log(ip);
-    let data = {...req.body, "created_at": new Date(Date.now())};
+router.post("/api/sensor", (req, res) => {
+    let keys = [
+        'ID',
+        'BATT',
+        'magx',
+        'MAGy',
+        'MAGz',
+        'ZYROx',
+        'ZYROy',
+        'ZYROz',
+        'ACCx',
+        'ACCy',
+        'ACCz',
+        'AQI',
+        'TVOC',
+        'EC2',
+        'PM10',
+        'PM25',
+        'PM100',
+        'IRUN',
+        'RED',
+        'ECG',
+        'TEMP'];
+    let values = req.body.replaceAll(' ', '').split(',');
 
-    data = jsonKeyUpperCase(data);
+    const dict = keys.reduce((acc, curr, idx) => {
+        return { ...acc, [curr]: values[idx] };
+    }, new Object);
 
-    data.PM100 = data["PM10"];
-    data.PM10 = data["PM1.0"];
-    data.PM25 = data["PM2.5"];
-    delete data["PM1.0"];
-    delete data["PM2.5"];
+    let data = {...dict, "created_at": new Date(Date.now())};
 
     connection.query("INSERT INTO SENSOR_DATA SET ?", data, (er) => {
         if (er) {
             console.log(er);
             res.status(500).send('Internal Server Error!');
         } else {
-            res.status(201).send();
+            res.status(201).send('Data addition successful');
         }
     });
 });
@@ -250,7 +339,7 @@ router.get("/", (req, res) => {
 })
 
 router.get("/table", (req, res) => {
-    const ip = req.headers['x-forwarded-for'] ||  req.connection.remoteAddress;
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     console.log(ip);
     const id = req.query.id;
     let start = req.query.start;

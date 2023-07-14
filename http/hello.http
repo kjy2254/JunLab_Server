@@ -28,3 +28,10 @@ Content-Type: application/json
 "ECG": 30241.0,
 "TEMP": 27.5
 }
+
+
+### POST TEST2
+POST junlab.postech.ac.kr:880/iitp/api/sensor
+Content-Type: text/plain
+
+3, 3.7, 6687.0, 3047.0, 2673.0, 4063.0, 62864.0, 1043.0, 65138.0, 29.0, 1874.0, 1.0, 16.0, 400, 1, 2, 3, 19225.0, 17433.0, 30241.0, 27.5

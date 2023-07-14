@@ -7,6 +7,7 @@ const ejs = require("ejs");
 var indexRouter = require('./routes/index');
 var iitpRouter = require('./routes/iitp');
 const cors = require('cors');
+const bodyParser = require("body-parser");
 
 var app = express();
 
@@ -19,7 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(bodyParser.text());
 // cors 설정
 app.use(cors({
     origin: '*', // 모든 출처 허용 옵션. true 를 써도 된다.
