@@ -97,8 +97,6 @@ function jsonKeyUpperCase(object) {
  *                                "CREATED_AT": "2023/07/12 13:02:58" }]
  */
 router.get("/api/sensor", (req, res, next) => {
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log(ip);
     const id = req.query.id;
     let start = req.query.start;
     let end = req.query.end;
@@ -339,8 +337,6 @@ router.get("/", (req, res) => {
 })
 
 router.get("/table", (req, res) => {
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log(ip);
     const id = req.query.id;
     let start = req.query.start;
     let end = req.query.end;
