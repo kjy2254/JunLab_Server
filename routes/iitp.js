@@ -98,6 +98,8 @@ function jsonKeyUpperCase(object){
  *                                "CREATED_AT": "2023/07/12 13:02:58" }]
  */
 router.get("/api/sensor", (req, res, next) => {
+    const ip = req.headers['x-forwarded-for'] ||  req.connection.remoteAddress;
+    console.log(ip);
     const id = req.query.id;
     let start = req.query.start;
     let end = req.query.end;
@@ -221,6 +223,8 @@ router.get("/api/sensor", (req, res, next) => {
  *        description: Server Error
  */
 router.post("/api/sensor", (req, res, next) => {
+    const ip = req.headers['x-forwarded-for'] ||  req.connection.remoteAddress;
+    console.log(ip);
     let data = {...req.body, "created_at": new Date(Date.now())};
 
     data = jsonKeyUpperCase(data);
@@ -230,8 +234,6 @@ router.post("/api/sensor", (req, res, next) => {
     data.PM25 = data["PM2.5"];
     delete data["PM1.0"];
     delete data["PM2.5"];
-
-    console.log(data);
 
     connection.query("INSERT INTO SENSOR_DATA SET ?", data, (er) => {
         if (er) {
@@ -248,6 +250,8 @@ router.get("/", (req, res) => {
 })
 
 router.get("/table", (req, res) => {
+    const ip = req.headers['x-forwarded-for'] ||  req.connection.remoteAddress;
+    console.log(ip);
     const id = req.query.id;
     let start = req.query.start;
     let end = req.query.end;
@@ -262,9 +266,6 @@ router.get("/table", (req, res) => {
     } else {
         end = end + ' 23:59:59';
     }
-
-
-    console.log(start, end);
 
     let query = '';
     let data = [];
