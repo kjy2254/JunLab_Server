@@ -15,46 +15,62 @@ commandServer.listen(4323, () => {
     console.log('Command server listening on 4323 ...');
 })
 
-socketServer.on('connection', (socket) => {
-    console.log(socket.address().address + " connected");
+commandServer.on('connection', (socket) => {
+    socket.on('data', (data) => {
+        if(data.toString().trim() === "devices"){
+            socket.write("\r\nregistered devices: " + Object.keys(sockets).toString() + "\r\n");
+        }
+        else if(data.toString().trim().includes("/")){
+            let commands = data.toString().trim().split('/');
+            console.log("ID:", commands[0]);
+            console.log("Command:", commands[1]);
 
-    // 디바이스 켜짐 체크
-    if(rawData.compare(hello)){
-        // 센서 데이터 1회 수신
-        socket.write("sensorTA,1,10000");
-        socket.write("sensorTA,0,10000");
-    }
-
-    socket.on('data', (rawData) => {
-        let sensorData = rawData.toString().split(',');
-
-        console.log(rawData.toString());
-        if (save(rawData)) {
-            socket.write("Data Save Successful" + "\r\n");
-        } else {
-            socket.write("Invalid Data testsetsetstse" + "\r\n");
+            if(Object.keys(sockets).includes(commands[0])){
+                sockets[commands[0]].write(commands[1]);
+            }
+            else{
+                socket.write("\r\n" + commands[0] + "is not registered");
+            }
+        }
+        else{
+            socket.write("\r\nType this Command: \r\n - devices: Check registered devices \r\n - ID_?/[command]: Send command to ID_?\r\n");
         }
     })
+})
 
-    if(sensorData.length == 21){
-        sockets = {...sockets, ["ID_"+sensorData[0]]:socket};
+socketServer.on('connection', (socket) => {
+    socket.on('data', (rawData) => {
+        let sensorData = rawData.toString().split(',');
+        // 디바이스 켜짐 체크
+        if(rawData.compare(hello) === 0){
+            // 센서 데이터 1회 수신
+            socket.write("sensorTA,1,1000");
+            console.log('receive one packet');
+        }
 
-    }
-
-
-    console.log(sockets);
+        if(sensorData.length === 21){
+            if(Object.keys(sockets).includes("ID_"+sensorData[0])){
+                if (save(rawData)) {
+                    socket.write("Data save success" + "\r\n");
+                } else {
+                    socket.write("Something went wrong" + "\r\n");
+                }
+            }
+            else{
+                sockets = {...sockets, ["ID_"+sensorData[0]]:socket};
+                socket.write("sensorTA,0,1000");
+                socket.write("device"+sensorData[0]+" is registered");
+            }
+            console.log(sockets);
+        }
+    })
 
     socket.on('close', () => {
         console.log('disconnected');
     })
-
-
-
-    
 })
 
 function save(rawData) {
-    console.log("received data:", rawData.toString());
     let keys = [
         'ID',
         'BATT',
@@ -91,12 +107,7 @@ function save(rawData) {
         // console.log(data);
 
         connection.query("INSERT INTO SENSOR_DATA SET ?", data, (er) => {
-            if(er){
-                return false;
-            }
-            else{
-                 return true;
-            }
+            return !(er);
         });
     }
     return true;
