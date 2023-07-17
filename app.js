@@ -28,8 +28,6 @@ logger.token('date', () =>{
 app.use(logger("[:remote-addr] :method :url :date"), (req, res, next) =>{
     next();
 });
-
-
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
