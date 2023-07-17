@@ -43,6 +43,7 @@ app.use('/', indexRouter);
 app.use('/iitp', iitpRouter);
 
 const { swaggerUi, specs } = require("./swagger/swagger")
+const socketServer = require("./socket");
 app.use("/iitp/docs/api", swaggerUi.serve, swaggerUi.setup(specs))
 
 // catch 404 and forward to error handler

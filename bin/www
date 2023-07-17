@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('oslab-server:server');
 var http = require('http');
-var net = require('net');
+
 /**
  * Get port from environment and store in Express.
  */
@@ -20,21 +20,9 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
-var socketServer = net.createServer((socket) => {
-    console.log(socket.address().address + " connected");
 
-    socket.on('data', (data) => {
-        console.log('received data: ', data.toString('utf-8'));
-    })
-    socket.on('close', () => {
-        console.log('disconnected');
-    })
 
-})
 
-socketServer.listen(881, () => {
-  console.log('Socket server listening on 881 ...');
-})
 /**
  * Listen on provided port, on all network interfaces.
  */
