@@ -29,8 +29,8 @@ commandServer.on('connection', (socket) => {
         }
         else if(data.toString().trim().includes("/")){
             let commands = data.toString().trim().split('/');
-            console.log("ID:", commands[0]);
-            console.log("Command:", commands[1]);
+            // console.log("ID:", commands[0]);
+            // console.log("Command:", commands[1]);
 
             if(Object.keys(sockets).includes(commands[0])){
                 sockets[commands[0]].write(commands[1]);
@@ -58,7 +58,7 @@ socketServer.on('connection', (socket) => {
             socket.write("sensorTA,1,1000");
         }
         if(sensorData.length === 21){
-            if(Object.keys(sockets).includes("ID_"+sensorData[0])){
+            if(Object.keys(sockets).includes("ID_"+sensorData[0])){ // 소켓이 등록되어 있는 경우
                 if (save(rawData)) {
                     socket.write("\r\nData save success" + "\r\n");
                 } else {
@@ -66,7 +66,7 @@ socketServer.on('connection', (socket) => {
                 }
             }
             else{
-                if(!isNaN(sensorData[0])){
+                if(!isNaN(sensorData[0])){ // 첫 번째 인자가 숫자일 경우
                     sockets = {...sockets, ["ID_"+sensorData[0]]:socket};
                     socket.write("sensorTA,0,1000");
                     socket.write("\r\nDevice"+sensorData[0]+" is registered\r\n");
@@ -87,6 +87,14 @@ socketServer.on('connection', (socket) => {
         }
         delete sockets[getKeyByValue(sockets, socket)];
     })
+})
+socketServer.on('close', (socket) => {
+    // console.log(getKeyByValue(sockets, socket) + " is disconnected")
+    console.log(commandSocket);
+    if(commandSocket != undefined){
+        commandSocket.write(getKeyByValue(sockets, socket) + " is disconnected");
+    }
+    delete sockets[getKeyByValue(sockets, socket)];
 })
 
 function save(rawData) {
