@@ -22,28 +22,40 @@ commandServer.listen(4323, () => {
 
 commandServer.on('connection', (socket) => {
     commandSocket = socket;
+
+    // 커맨드 서버 최초 연결시 안내 메시지
     socket.write("Welcome to Command Server\r\n" +
         "--------------------------------------------------------------------\r\n" +
         "Type this Command: \r\n " +
         "- Devices: Check registered devices \r\n " +
         "- ID_?/[command]: Send command to ID_?\r\n" +
         "--------------------------------------------------------------------\r\n");
+
+    // 데이터 입력시
     socket.on('data', (data) => {
+
+        // devices 명령어
         if (data.toString().trim().toLowerCase() === "devices") {
             socket.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
-        } else if (data.toString().trim().includes("/")) {
+        }
+        // ID/Command 명령어
+        else if (data.toString().trim().includes("/")) {
             let commands = data.toString().trim().split('/');
             // console.log("ID:", commands[0]);
             // console.log("Command:", commands[1]);
 
+            // 연결된 디바이스로의 명령일 경우
             if (Object.keys(sockets).includes(commands[0])) {
                 sockets[commands[0]].write(commands[1]);
                 last_command = {...last_command, [commands[0]]: commands[1]}
-
-            } else {
+            }
+            // 연결되지 않은 디바이스로의 명령일 경우
+            else {
                 socket.write("\r\n" + commands[0] + "is not registered\r\n");
             }
-        } else {
+        }
+        // 등록되지 않은 명령어
+        else {
             socket.write("" +
                 "--------------------------------------------------------------------\r\n" +
                 "Type this Command: \r\n " +
@@ -52,6 +64,8 @@ commandServer.on('connection', (socket) => {
                 "--------------------------------------------------------------------\r\n");
         }
     })
+
+    // 연결 해제시
     socket.on('close', () => {
         console.log('command server disconnected');
     })
@@ -60,52 +74,47 @@ commandServer.on('connection', (socket) => {
 socketServer.on('connection', (socket) => {
     socket.on('data', (rawData) => {
         console.log(rawData.toString());
+        // rawData 파싱
         let sensorData = rawData.toString().split(',');
-        // // 디바이스 켜짐 체크
-        // if(rawData.toString().trim() === "Hello server?"){
-        //     // 센서 데이터 1회 수신
-        //     socket.write("sensorTA,1,1000");
-        // }
-        //
+
+        // !!! 업데이트 전 테스트
+        if(rawData.toString().trim().toLowerCase() === "hello server?"){
+            socket.write("sensorTA,1,1000");
+        }
+
+        // 최초 연결일 경우
         if (sensorData.length > 1 && sensorData[1].toString().includes("AP")) {
+
+            // sokets에 ID 등록
             sockets = {...sockets, ["ID_" + sensorData[0]]: socket};
-            // socket.write("\r\nsensorTA,0,1000\r\n");
+
+            // 이전 커맨드기록이 있을 경우
             if (Object.keys(last_command).includes("ID_" + sensorData[0])) {
                 console.log("last command: ", last_command["ID_" + sensorData[0]]);
+
+                //해당 커맨드 실행
                 socket.write(last_command["ID_" + sensorData[0]]);
             }
+
+            // 커맨드 서버에 연결된 클라이언트가 있는 경우
             if (commandSocket != undefined) { // !! command 여러개일 경우 수정 필요
                 commandSocket.write("\r\n" + "ID_" + sensorData[0] + " is connected\r\n");
                 commandSocket.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
                 commandSocket.write("\r\n" + "run last command: " + last_command["ID_" + sensorData[0]] + "\r\n");
             }
-            // socket.write("\r\nDevice"+sensorData[0]+" is registered\r\n");
         }
+
+        // 센서 데이터일 경우
         if (sensorData.length === 21) {
             if (save(rawData)) {
                 socket.write("\r\nData save success" + "\r\n");
             } else {
                 socket.write("\r\nSomething went wrong" + "\r\n");
             }
-            // if(Object.keys(sockets).includes("ID_"+sensorData[0])){ // 소켓이 등록되어 있는 경우
-            // }
-            // else{
-            //     if(!isNaN(sensorData[0])){ // 첫 번째 인자가 숫자일 경우
-            //         // sockets = {...sockets, ["ID_"+sensorData[0]]:socket};
-            //         // socket.write("\r\nsensorTA,0,1000\r\n");
-            //         // socket.write("\r\nDevice"+sensorData[0]+" is registered\r\n");
-            //         // if(commandSocket != undefined){
-            //         //     commandSocket.write("\r\n" + "ID_"+sensorData[0] + " is connected\r\n");
-            //         //     commandSocket.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
-            //         // }
-            //     }
-            // }
         }
     })
 
     socket.on('close', () => {
-        // console.log(getKeyByValue(sockets, socket) + " is disconnected")
-        console.log(commandSocket);
         if (commandSocket != undefined) {
             commandSocket.write("\r\n" + getKeyByValue(sockets, socket) + " is disconnected\r\n");
         }
