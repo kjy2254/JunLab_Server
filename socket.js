@@ -6,6 +6,8 @@ var commandServer = net.createServer();
 
 var sockets = {};
 var commandSocket = undefined;
+var last_command = {};
+
 //hello server?
 const hello = Buffer.from([0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x3f]);
 
@@ -23,6 +25,14 @@ commandServer.listen(4323, () => {
 
 commandServer.on('connection', (socket) => {
     commandSocket = socket;
+    socket.write("Connected to Server\r\n" +
+        "--------------------------------------------------------------------\r\n" +
+        "Type this Command: \r\n " +
+        "- Devices: Check registered devices \r\n " +
+        "- ID_?/[command]: Send command to ID_?\r\n" +
+        "--------------------------------------------------------------------\r\n");
+
+
     socket.on('data', (data) => {
         if(data.toString().trim().toLowerCase() === "devices"){
             socket.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
@@ -34,13 +44,20 @@ commandServer.on('connection', (socket) => {
 
             if(Object.keys(sockets).includes(commands[0])){
                 sockets[commands[0]].write(commands[1]);
+                last_command = {...last_command, [commands[0]]:commands[1]}
+                console.log(last_command);
             }
             else{
                 socket.write("\r\n" + commands[0] + "is not registered\r\n");
             }
         }
         else{
-            socket.write("\r\nType this Command: \r\n - Devices: Check registered devices \r\n - ID_?/[command]: Send command to ID_?\r\n");
+            socket.write("" +
+                "--------------------------------------------------------------------\r\n" +
+                "Type this Command: \r\n " +
+                "- Devices: Check registered devices \r\n " +
+                "- ID_?/[command]: Send command to ID_?\r\n" +
+                "--------------------------------------------------------------------\r\n");
         }
     })
 
@@ -51,6 +68,7 @@ commandServer.on('connection', (socket) => {
 
 socketServer.on('connection', (socket) => {
     socket.on('data', (rawData) => {
+        console.log(rawData.toString());
         let sensorData = rawData.toString().split(',');
         // 디바이스 켜짐 체크
         if(rawData.toString().trim() === "Hello server?"){
@@ -68,7 +86,7 @@ socketServer.on('connection', (socket) => {
             else{
                 if(!isNaN(sensorData[0])){ // 첫 번째 인자가 숫자일 경우
                     sockets = {...sockets, ["ID_"+sensorData[0]]:socket};
-                    socket.write("sensorTA,0,1000");
+                    socket.write("\r\nsensorTA,0,1000\r\n");
                     socket.write("\r\nDevice"+sensorData[0]+" is registered\r\n");
                     if(commandSocket != undefined){
                         commandSocket.write("\r\n" + "ID_"+sensorData[0] + " is connected\r\n");
@@ -83,18 +101,15 @@ socketServer.on('connection', (socket) => {
         // console.log(getKeyByValue(sockets, socket) + " is disconnected")
         console.log(commandSocket);
         if(commandSocket != undefined){
-            commandSocket.write(getKeyByValue(sockets, socket) + " is disconnected");
+            commandSocket.write("\r\n"+getKeyByValue(sockets, socket) + " is disconnected\r\n");
         }
         delete sockets[getKeyByValue(sockets, socket)];
     })
-})
-socketServer.on('close', (socket) => {
-    // console.log(getKeyByValue(sockets, socket) + " is disconnected")
-    console.log(commandSocket);
-    if(commandSocket != undefined){
-        commandSocket.write(getKeyByValue(sockets, socket) + " is disconnected");
-    }
-    delete sockets[getKeyByValue(sockets, socket)];
+
+    socket.on('error', function (exc) {
+        console.log("Update Connection");
+        if(Object.keys(sockets).includes(last_command[0])) sockets[last_command[0]].write(last_command[1]);
+    });
 })
 
 function save(rawData) {
