@@ -5,7 +5,7 @@ var socketServer = net.createServer();
 var commandServer = net.createServer();
 
 var sockets = {};
-var commandSocket;
+var commandSocket = undefined;
 //hello server?
 const hello = Buffer.from([0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x3f]);
 
@@ -70,8 +70,10 @@ socketServer.on('connection', (socket) => {
                     sockets = {...sockets, ["ID_"+sensorData[0]]:socket};
                     socket.write("sensorTA,0,1000");
                     socket.write("\r\nDevice"+sensorData[0]+" is registered\r\n");
-                    commandSocket.write("\r\n" + "ID_"+sensorData[0] + " is connected\r\n");
-                    commandSocket.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
+                    if(commandSocket != undefined){
+                        commandSocket.write("\r\n" + "ID_"+sensorData[0] + " is connected\r\n");
+                        commandSocket.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
+                    }
                 }
             }
         }
@@ -79,7 +81,10 @@ socketServer.on('connection', (socket) => {
 
     socket.on('close', () => {
         // console.log(getKeyByValue(sockets, socket) + " is disconnected")
-        commandSocket.write(getKeyByValue(sockets, socket) + " is disconnected");
+        console.log(commandSocket);
+        if(commandSocket != undefined){
+            commandSocket.write(getKeyByValue(sockets, socket) + " is disconnected");
+        }
         delete sockets[getKeyByValue(sockets, socket)];
     })
 })
