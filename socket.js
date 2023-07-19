@@ -72,15 +72,16 @@ commandServer.on('connection', (socket) => {
 })
 
 socketServer.on('connection', (socket) => {
+    console.log(last_command);
     socket.on('data', (rawData) => {
         console.log(rawData.toString());
         // rawData 파싱
         let sensorData = rawData.toString().split(',');
 
         // !!! 업데이트 전 테스트
-        if(rawData.toString().trim().toLowerCase() === "hello server?"){
-            socket.write("sensorTA,1,1000");
-        }
+        // if(rawData.toString().trim().toLowerCase() === "hello server?"){
+        //     socket.write("sensorTA,1,1000");
+        // }
 
         // 최초 연결일 경우
         if (sensorData.length > 1 && sensorData[1].toString().includes("AP")) {
@@ -94,13 +95,16 @@ socketServer.on('connection', (socket) => {
 
                 //해당 커맨드 실행
                 socket.write(last_command["ID_" + sensorData[0]]);
+
             }
 
             // 커맨드 서버에 연결된 클라이언트가 있는 경우
             if (commandSocket != undefined) { // !! command 여러개일 경우 수정 필요
                 commandSocket.write("\r\n" + "ID_" + sensorData[0] + " is connected\r\n");
                 commandSocket.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
-                commandSocket.write("\r\n" + "run last command: " + last_command["ID_" + sensorData[0]] + "\r\n");
+                if (Object.keys(last_command).includes("ID_" + sensorData[0])) {
+                    commandSocket.write("\r\n" + "ID_" + sensorData[0] + "'s last command: " + last_command["ID_" + sensorData[0]] + "\r\n");
+                }
             }
         }
 
