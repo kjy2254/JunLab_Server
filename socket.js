@@ -95,12 +95,10 @@ socketServer.on('connection', (socket) => {
             // 이전 커맨드기록이 있을 경우
             if (Object.keys(last_command).includes("ID_" + sensorData[0])) {
                 // console.log("last command: ", last_command["ID_" + sensorData[0]]);
-
                 //해당 커맨드 실행
                 socket.write(last_command["ID_" + sensorData[0]]);
 
             }
-
             // 커맨드 서버에 연결된 클라이언트가 있는 경우
             if (commandSocket.length !== 0) { // !! command 여러개일 경우 수정 필요
                 commandSocket.forEach(e => {
@@ -112,6 +110,10 @@ socketServer.on('connection', (socket) => {
                         e.write("\r\n" + "ID_" + sensorData[0] + "'s last command: " + last_command["ID_" + sensorData[0]] + "\r\n");
                     })
                 }
+                else{
+                    commandSocket.write("\r\n" + "ID_" + sensorData[0] + " is connected\r\n");
+                }
+                commandSocket.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
             }
         }
 
