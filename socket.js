@@ -34,6 +34,8 @@ commandServer.on('connection', (socket) => {
     // 데이터 입력시
     socket.on('data', (data) => {
 
+        console.log("Command:", data.toString());
+
         // devices 명령어
         if (data.toString().trim().toLowerCase() === "devices") {
             socket.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
@@ -68,12 +70,12 @@ commandServer.on('connection', (socket) => {
     // 연결 해제시
     socket.on('close', () => {
         commandSocket = commandSocket.filter(e => e !== socket);
-        console.log('command server disconnected:', commandSocket) ;
+        // console.log('command server disconnected:', commandSocket) ;
     })
 })
 
 socketServer.on('connection', (socket) => {
-    console.log(last_command);
+    // console.log(last_command);
     socket.on('data', (rawData) => {
         console.log(rawData.toString());
         // rawData 파싱
@@ -92,7 +94,7 @@ socketServer.on('connection', (socket) => {
 
             // 이전 커맨드기록이 있을 경우
             if (Object.keys(last_command).includes("ID_" + sensorData[0])) {
-                console.log("last command: ", last_command["ID_" + sensorData[0]]);
+                // console.log("last command: ", last_command["ID_" + sensorData[0]]);
 
                 //해당 커맨드 실행
                 socket.write(last_command["ID_" + sensorData[0]]);

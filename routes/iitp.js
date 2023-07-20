@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const connection = require('../database/mysql');
-const {stringify} = require("nodemon/lib/utils");
 const data_exporter = require('json2csv').Parser;
 
 const today = new Date();
