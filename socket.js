@@ -5,7 +5,7 @@ var socketServer = net.createServer();
 var commandServer = net.createServer();
 
 var sockets = {};
-var commandSocket = undefined;
+var commandSocket = [];
 var last_command = {};
 
 function getKeyByValue(object, value) {
@@ -21,7 +21,7 @@ commandServer.listen(4323, () => {
 })
 
 commandServer.on('connection', (socket) => {
-    commandSocket = socket;
+    commandSocket.push(socket);
 
     // 커맨드 서버 최초 연결시 안내 메시지
     socket.write("Welcome to Command Server\r\n" +
@@ -33,6 +33,8 @@ commandServer.on('connection', (socket) => {
 
     // 데이터 입력시
     socket.on('data', (data) => {
+
+        console.log("Command:", data.toString());
 
         // devices 명령어
         if (data.toString().trim().toLowerCase() === "devices") {
@@ -67,12 +69,13 @@ commandServer.on('connection', (socket) => {
 
     // 연결 해제시
     socket.on('close', () => {
-        console.log('command server disconnected');
+        commandSocket = commandSocket.filter(e => e !== socket);
+        // console.log('command server disconnected:', commandSocket) ;
     })
 })
 
 socketServer.on('connection', (socket) => {
-    console.log(last_command);
+    // console.log(last_command);
     socket.on('data', (rawData) => {
         console.log(rawData.toString());
         // rawData 파싱
@@ -97,12 +100,15 @@ socketServer.on('connection', (socket) => {
 
             }
             // 커맨드 서버에 연결된 클라이언트가 있는 경우
-            if (commandSocket != undefined) { // !! command 여러개일 경우 수정 필요
-                // commandSocket.write("\r\n" + "ID_" + sensorData[0] + " is connected\r\n");
-                // commandSocket.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
+            if (commandSocket.length !== 0) { // !! command 여러개일 경우 수정 필요
+                commandSocket.forEach(e => {
+                    e.write("\r\n" + "ID_" + sensorData[0] + " is connected\r\n");
+                    e.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
+                })
                 if (Object.keys(last_command).includes("ID_" + sensorData[0])) {
-                    commandSocket.write("\r\n" + "ID_" + sensorData[0] + " is reconnected\r\n");
-                    commandSocket.write("\r\n" + "Run ID_" + sensorData[0] + "'s last command: " + last_command["ID_" + sensorData[0]] + "\r\n");
+                    commandSocket.forEach(e => {
+                        e.write("\r\n" + "ID_" + sensorData[0] + "'s last command: " + last_command["ID_" + sensorData[0]] + "\r\n");
+                    })
                 }
                 else{
                     commandSocket.write("\r\n" + "ID_" + sensorData[0] + " is connected\r\n");
@@ -122,8 +128,10 @@ socketServer.on('connection', (socket) => {
     })
 
     socket.on('close', () => {
-        if (commandSocket != undefined) {
-            commandSocket.write("\r\n" + getKeyByValue(sockets, socket) + " is disconnected\r\n");
+        if (commandSocket.length !== 0) {
+            commandSocket.forEach(e => {
+                e.write("\r\n" + getKeyByValue(sockets, socket) + " is disconnected\r\n");
+            })
         }
         delete sockets[getKeyByValue(sockets, socket)];
     })
