@@ -423,4 +423,16 @@ router.get("/table/export", (req, res) => {
     });
 })
 
+router.get('/console', (req, res) => {
+    connection.query("SELECT DISTINCT ID FROM SENSOR_DATA;", (error, result) => {
+        if (error) {
+            console.log(error);
+            res.status(500).send('Internal Server Error!');
+        }
+        let id_list = [];
+        result.forEach(e => id_list.push(e.ID));
+        res.render('IITP/console', {id_list: id_list});
+    });
+})
+
 module.exports = router;

@@ -1,8 +1,10 @@
 var net = require('net');
 const connection = require("./database/mysql");
+var ws = require('ws');
 
 var socketServer = net.createServer();
 var commandServer = net.createServer();
+const wsServer = new ws.WebSocketServer({port: 881});
 
 var sockets = {};
 var commandSocket = [];
@@ -189,5 +191,55 @@ function save(rawData) {
     return true;
 }
 
+wsServer.on('connection', (ws, req) => { // 웹소켓 연결 시
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log('새로운 클라이언트 접속', ip);
+    ws.on('message', (message) => { // 클라이언트로부터 메시지
+        console.log("message:",message.toString());
+    });
+    ws.on('error', (error) => { // 에러 시
+        console.error(error);
+    });
+    ws.on('close', () => { // 연결 종료 시
+        console.log('클라이언트 접속 해제', ip);
+        clearInterval(ws.interval);
+    });
+
+    let query = "SELECT ID," +
+        " BATT," +
+        " MAGx," +
+        " MAGy," +
+        " MAGz," +
+        " ZYROx," +
+        " ZYROy," +
+        " ZYROz," +
+        " ACCx," +
+        " ACCy," +
+        " ACCz," +
+        " AQI," +
+        " TVOC," +
+        " EC2," +
+        " PM10," +
+        " PM25," +
+        " PM100," +
+        " IRUN," +
+        " RED," +
+        " ECG," +
+        " TEMP," +
+        " DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT " +
+        "FROM (SELECT * , ROW_NUMBER() OVER (PARTITION BY ID ORDER BY CREATED_AT DESC) AS RankNo FROM SENSOR_DATA) T " +
+        "WHERE RankNo <= 1"
+
+    ws.interval = setInterval(() => { // 3초마다 클라이언트로 메시지 전송
+        if (ws.readyState === ws.OPEN) {
+            connection.query(query, (error, result) => {
+                if (error) {
+                    console.log(error);
+                }
+                result.forEach(e => ws.send(JSON.stringify(e)));
+            });
+        }
+    }, 1000);
+});
 
 module.exports = socketServer;
