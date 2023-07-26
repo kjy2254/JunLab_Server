@@ -111,9 +111,13 @@ socketServer.on('connection', (socket) => {
                     })
                 }
                 else{
-                    commandSocket.write("\r\n" + "ID_" + sensorData[0] + " is connected\r\n");
+                    commandSocket.forEach(e => {
+                        e.write("\r\n" + "ID_" + sensorData[0] + " is connected\r\n");
+                    })
                 }
-                commandSocket.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
+                commandSocket.forEach(e => {
+                    e.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
+                })
             }
         }
 
