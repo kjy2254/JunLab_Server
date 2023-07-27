@@ -21,6 +21,25 @@
         .table-hover tbody tr:hover {
             background-color: #f8f9fa;
         }
+        .blinking{
+            -webkit-animation: blink 0.3s;
+            -moz-animation: blink 0.3s;
+            animation: blink 0.3s;
+        }
+        @-webkit-keyframes blink{
+            0% {opacity: 0;}
+            100% {opacity: 1;}
+        }
+
+        @-moz-keyframes blink{
+            0% {opacity: 0;}
+            100% {opacity: 1;}
+        }
+
+        @keyframes blink{
+            0% {opacity: 0;}
+            100% {opacity: 1;}
+        }
     </style>
 </head>
 <body>
@@ -95,7 +114,7 @@
 </div>
 <script>
     const webSocket = new WebSocket("ws://junlab.postech.ac.kr:881");
-
+    const sleep = second => new Promise(resolve => setTimeout(resolve, second));
     const data_structure = [
         "ID",
         "BATT",
@@ -129,7 +148,10 @@
         let tr = document.getElementById("id_" + data.ID.toString());
         let tds = tr.getElementsByTagName("td");
 
-        console.log(data);
+        if(tds[21].innerText !== data[data_structure[21]]){
+            tr.className = "blinking";
+            sleep(400).then(() => tr.className = "");
+        }
 
         for (let i = 1; i < tds.length; i++) {
             tds[i].innerHTML = data[data_structure[i]];
