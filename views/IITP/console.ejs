@@ -94,7 +94,7 @@
     </table>
 </div>
 <script>
-    const webSocket = new WebSocket("ws://localhost:881");
+    const webSocket = new WebSocket("ws://junlab.postech.ac.kr:881");
 
     const data_structure = [
         "ID",
@@ -128,6 +128,8 @@
         let data = JSON.parse(event.data);
         let tr = document.getElementById("id_" + data.ID.toString());
         let tds = tr.getElementsByTagName("td");
+
+        console.log(data);
 
         for (let i = 1; i < tds.length; i++) {
             tds[i].innerHTML = data[data_structure[i]];

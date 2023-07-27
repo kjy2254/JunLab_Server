@@ -19,7 +19,8 @@
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
     "node-table-to-csv": "^0.1.0",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "ws": "^8.13.0"
   },
   "main": "app.js",
   "keywords": [],
