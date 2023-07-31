@@ -25,6 +25,7 @@ logger.token('date', () =>{
     return new Date().toLocaleString()
 })
 
+
 app.use(logger("[:remote-addr] :method :url :date"), (req, res, next) =>{
     next();
 });

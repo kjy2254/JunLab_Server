@@ -10,6 +10,9 @@ var sockets = {};
 var commandSocket = [];
 var last_command = {};
 
+
+const sleep = second => new Promise(resolve => setTimeout(resolve, second));
+
 function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
 }
@@ -98,11 +101,11 @@ socketServer.on('connection', (socket) => {
             if (Object.keys(last_command).includes("ID_" + sensorData[0])) {
                 // console.log("last command: ", last_command["ID_" + sensorData[0]]);
                 //해당 커맨드 실행
-                socket.write(last_command["ID_" + sensorData[0]]);
-
+                // socket.write(last_command["ID_" + sensorData[0]]);
+                sleep(3000).then(() => socket.write(last_command["ID_" + sensorData[0]]));
             }
             // 커맨드 서버에 연결된 클라이언트가 있는 경우
-            if (commandSocket.length !== 0) { // !! command 여러개일 경우 수정 필요
+            if (commandSocket.length !== 0) {
                 commandSocket.forEach(e => {
                     e.write("\r\n" + "ID_" + sensorData[0] + " is connected\r\n");
                     e.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
@@ -126,9 +129,9 @@ socketServer.on('connection', (socket) => {
         // 센서 데이터일 경우
         if (sensorData.length === 21) {
             if (save(rawData)) {
-                socket.write("\r\nData save success" + "\r\n");
+                // socket.write("\r\nData save success" + "\r\n");
             } else {
-                socket.write("\r\nSomething went wrong" + "\r\n");
+                // socket.write("\r\nSomething went wrong" + "\r\n");
             }
         }
     })
@@ -183,6 +186,10 @@ function save(rawData) {
         let data = {...dict, "created_at": new Date(Date.now())};
 
         // console.log(data);
+
+        if(isNaN(parseInt(data.ID))){
+            return false;
+        }
 
         connection.query("INSERT INTO SENSOR_DATA SET ?", data, (er) => {
             return !(er);

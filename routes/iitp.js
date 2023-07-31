@@ -321,6 +321,12 @@ router.post("/api/sensor", (req, res) => {
 
     let data = {...dict, "created_at": new Date(Date.now())};
 
+    if(isNaN(parseInt(data.ID))){
+        res.status(500).send('Invalid data');
+        return;
+    }
+    // console.log(isNaN(parseInt(data.ID)));
+
     connection.query("INSERT INTO SENSOR_DATA SET ?", data, (er) => {
         if (er) {
             console.log(er);
