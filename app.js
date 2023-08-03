@@ -16,19 +16,17 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 
 //logger
-app.use(logger({
-    format: 'dev',
-    stream: fs.createWriteStream('app.log', {'flags': 'w'})
-}));
-
-logger.token('date', () =>{
-    return new Date().toLocaleString()
-})
-
-
-app.use(logger("[:remote-addr] :method :url :date"), (req, res, next) =>{
+// app.use(logger({
+//     format: 'dev',
+//     // stream: fs.createWriteStream('app.log', {'flags': 'w'})
+// }));
+// logger.token('date', () =>{
+//     return new Date().toLocaleString()
+// })
+app.use(logger("[:remote-addr] :method :url"), (req, res, next) =>{
     next();
 });
+
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
