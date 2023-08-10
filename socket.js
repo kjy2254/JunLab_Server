@@ -4,12 +4,14 @@ var ws = require('ws');
 
 var socketServer = net.createServer();
 var commandServer = net.createServer();
+
+// let dgram = require('dgram');
+// let udpServer = dgram.createSocket('udp4');
 const wsServer = new ws.WebSocketServer({port: 881});
 
 var sockets = {};
 var commandSocket = [];
 var last_command = {};
-
 
 const sleep = second => new Promise(resolve => setTimeout(resolve, second));
 
@@ -24,6 +26,22 @@ socketServer.listen(4322, () => {
 commandServer.listen(4323, () => {
     console.log('Command server listening on 4323 ...');
 })
+
+// udpServer.on('listening', () => {
+//     const address = udpServer.address();
+//     console.log(`server listening ${address.address}:${address.port}`);
+// });
+//
+// udpServer.on('error', (err) => {
+//     console.log(`server error:\n${err.stack}`);
+//     udpServer.close();
+// });
+//
+// udpServer.on('message', (msg, rinfo) => {
+//     console.log(`server got: ${msg} from ${rinfo.address}:${rinfo.port}`);
+// });
+//
+// udpServer.bind(4325);
 
 commandServer.on('connection', (socket) => {
     commandSocket.push(socket);
@@ -54,7 +72,7 @@ commandServer.on('connection', (socket) => {
             // 연결된 디바이스로의 명령일 경우
             if (Object.keys(sockets).includes(commands[0])) {
                 sockets[commands[0]].write(commands[1] + "\r\n");
-                last_command = {...last_command, [commands[0]]: commands[1]}
+                last_command = {...last_command, [commands[0]]: commands[1] + "\r\n"}
             }
             // 연결되지 않은 디바이스로의 명령일 경우
             else {
@@ -81,6 +99,8 @@ commandServer.on('connection', (socket) => {
 
 socketServer.on('connection', (socket) => {
     // console.log(last_command);
+    socket.setKeepAlive(true,100);
+
     socket.on('data', (rawData) => {
         console.log(rawData.toString());
         // rawData 파싱
@@ -92,14 +112,14 @@ socketServer.on('connection', (socket) => {
         // }
 
         // 최초 연결일 경우
-        if (sensorData.length > 1 && sensorData[1].toString().includes("AP")) {
+        if (sensorData.length > 1 && sensorData[1].toString().includes("Connected AP")) {
 
             // sokets에 ID 등록
             sockets = {...sockets, ["ID_" + sensorData[0]]: socket};
 
             // 이전 커맨드기록이 있을 경우
             if (Object.keys(last_command).includes("ID_" + sensorData[0])) {
-                // console.log("last command: ", last_command["ID_" + sensorData[0]]);
+                console.log("last command: ", last_command["ID_" + sensorData[0]]);
                 //해당 커맨드 실행
                 // socket.write(last_command["ID_" + sensorData[0]]);
                 sleep(3000).then(() => socket.write(last_command["ID_" + sensorData[0]]));
