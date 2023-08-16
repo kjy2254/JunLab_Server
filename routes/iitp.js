@@ -8,6 +8,7 @@ const year = today.getFullYear();
 const month = today.getMonth() + 1;
 const month2 = (month) < 10 ? ("0" + month) : (month);
 const day = today.getDate();
+let today_st = year + "/" + month2 + "/" + day;
 
 function jsonKeyUpperCase(object) {
     if (Array.isArray(object)) {
@@ -341,44 +342,63 @@ router.get("/", (req, res) => {
     res.render("IITP/IITP")
 })
 
+const itemsPerPage = 10; // 페이지당 아이템 수
+
 router.get("/table", (req, res) => {
     const id = req.query.id;
-    let start = req.query.start;
-    let end = req.query.end;
-
-    let today_st = year + "/" + month2 + "/" + day;
-
-    if (typeof start == 'undefined' || start === '') {
-        start = today_st + ' 00:00:00';
-    }
-    if (typeof end == 'undefined' || end === '') {
-        end = today_st + ' 23:59:59';
-    } else {
-        end = end + ' 23:59:59';
-    }
+    const start = req.query.start;
+    const end = req.query.end;
+    let page = parseInt(req.query.page) || 1; // 현재 페이지, 기본값은 1
 
     let query = '';
     let data = [];
 
-
-    if (typeof id == 'undefined' || id === 'all') {
-        query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC;';
-        data = [start, end];
-    } else {
-        query = 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ? AND CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC;';
-        data = [id, start, end];
-    }
-
-    connection.query("SELECT DISTINCT ID FROM SENSOR_DATA; " + query, data, (error, result) => {
-        if (error) {
-            console.log(error);
+    // 쿼리문 수정: 모든 ID 중복 없이 가져오기
+    const idQuery = 'SELECT DISTINCT ID FROM SENSOR_DATA;';
+    connection.query(idQuery, (idError, idResult) => {
+        if (idError) {
+            console.log(idError);
             res.status(500).send('Internal Server Error!');
+            return;
         }
-        let id_list = [];
-        result[0].forEach(e => id_list.push(e.ID));
-        res.render("IITP/SensorTable", {data: result[1], id_list: id_list});
+
+        let id_list = idResult.map(item => item.ID);
+
+        if (typeof id == 'undefined' || id === 'all') {
+            query = 'SELECT COUNT(*) as total_items FROM SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ?; ';
+            query += 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC LIMIT ? OFFSET ?;';
+            data = [start || today_st + ' 00:00:00', end || today_st + ' 23:59:59', start || today_st + ' 00:00:00', end || today_st + ' 23:59:59', itemsPerPage, (page - 1) * itemsPerPage];
+        } else {
+            query = 'SELECT COUNT(*) as total_items FROM SENSOR_DATA WHERE ID = ? AND CREATED_AT BETWEEN ? AND ?; ';
+            query += 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ? AND CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC LIMIT ? OFFSET ?;';
+            data = [id, start || today_st + ' 00:00:00', end || today_st + ' 23:59:59', id, start || today_st + ' 00:00:00', end || today_st + ' 23:59:59', itemsPerPage, (page - 1) * itemsPerPage];
+        }
+
+        connection.query(query, data, (error, results) => {
+            if (error) {
+                console.log(error);
+                res.status(500).send('Internal Server Error!');
+                return;
+            }
+
+            const totalItems = results[0][0].total_items || 0;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            res.render("IITP/SensorTable", {
+                data: results[1] || [],
+                id_list: id_list,
+                currentPage: page,
+                totalPages: totalPages,
+                totalItems: totalItems, // 추가
+                id: id, // id 추가
+                start: start, // start 추가
+                end: end // end 추가
+            });
+        });
     });
-})
+});
+
+
 
 router.get("/table/export", (req, res) => {
     const id = req.query.id;

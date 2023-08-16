@@ -6,7 +6,40 @@
     <title>Sensor Data Table</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 </head>
-<body>
+<script>
+    function initializePage() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth() + 1;
+        const month2 = (month < 10 ? "0" + month : month);
+        const day = today.getDate();
+
+        const defaultDay = `${year}-${month2}-${day}`;
+
+        document.querySelector('#start').value = defaultDay;
+        document.querySelector('#end').value = defaultDay;
+
+        const sp = new URLSearchParams(location.search);
+        if (sp.get('start')) document.querySelector('#start').value = sp.get('start').replaceAll('/', '-');
+        if (sp.get('end')) document.querySelector('#end').value = sp.get('end').replaceAll('/', '-');
+        if (sp.get('id')) document.querySelector('#id').value = sp.get('id');
+
+        if (!document.getElementById('results')) {
+            document.getElementById('download').disabled = true;
+        }
+    }
+
+    function search() {
+        const idValue = document.getElementById('id').value;
+        const startValue = document.getElementById('start').value.replaceAll('-', '/');
+        const endValue = document.getElementById('end').value.replaceAll('-', '/');
+        const page = 1; // 검색할 때는 첫 페이지로 이동
+
+        const queryString = `?id=${idValue}&start=${startValue}&end=${endValue}&page=${page}`;
+        location.href = `/iitp/table${queryString}`;
+    }
+</script>
+<body onload="initializePage();">
 <button onclick="location.href = '/iitp'" class="btn btn-info mx-2 my-2">
     뒤로
 </button>
@@ -17,14 +50,16 @@
     <div class="d-flex justify-content-between align-items-center p-2">
         <div class="d-flex align-items-center">
             <div class="mx-2">
-                <label for="id">ID를 선택하세요:
-                    <select id="id">
-                        <option value="all"> 전체</option>
-                        <% id_list.forEach((id) => { %>
-                            <option value= <%= id %>> <%= id %> </option>
-                        <% }) %>
-                    </select>
-                </label>
+                <div class="mx-2">
+                    <label for="id">ID를 선택하세요:
+                        <select id="id">
+                            <option value="all"> 전체</option>
+                            <% id_list.forEach((id) => { %>
+                                <option value= <%= id %>> <%= id %> </option>
+                            <% }) %>
+                        </select>
+                    </label>
+                </div>
             </div>
             <div class="mx-2 text-align-center">
                 <label for="start">검색 범위를 선택하세요:
@@ -42,12 +77,12 @@
                 </label>
             </div>
             <button id="search" class="btn btn-sm btn-primary"
-                    onclick="location.href= '/iitp/table?id=' + document.getElementById('id').options[document.getElementById('id').selectedIndex].value
-             + '&start=' + document.getElementById('start').value.replaceAll('-', '/')
-            + '&end=' + document.getElementById('end').value.replaceAll('-', '/')"> 검색
+                    onclick="search()"> 검색
             </button>
-            <div class="mx-5">
-                <%= data.length %> 개의 검색 결과.
+            <div class="mx-5" id="searchResults">
+                <% if (totalItems > 0) { %>
+                    검색결과: <%= totalItems %>개
+                <% } %>
             </div>
         </div>
         <button id="download" class="btn btn-sm btn-secondary"
@@ -115,29 +150,25 @@
             <% }) %>
             </tbody>
         </table>
+        <nav>
+            <ul class="pagination justify-content-center">
+                <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                    <a class="page-link" href="/iitp/table?id=<%= id %>&start=<%= start %>&end=<%= end %>&page=1" tabindex="-1" aria-disabled="true"><<</a>
+                </li>
+                <% const visiblePages = 10; %>
+                <% let startPage = Math.max(currentPage - Math.floor(visiblePages / 2), 1); %>
+                <% let endPage = Math.min(startPage + visiblePages - 1, totalPages); %>
+                <% for (let i = startPage; i <= endPage; i++) { %>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                        <a class="page-link" href="/iitp/table?id=<%= id %>&start=<%= start %>&end=<%= end %>&page=<%= i %>"><%= i %></a>
+                    </li>
+                <% } %>
+                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                    <a class="page-link" href="/iitp/table?id=<%= id %>&start=<%= start %>&end=<%= end %>&page=<%= totalPages %>">>></a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
-<script>
-    today = new Date();
-    year = today.getFullYear();
-    month = today.getMonth() + 1;
-    month2 = (month) < 10 ? ("0" + month) : (month);
-    day = today.getDate();
-
-    default_day = year + "-" + month2 + "-" + day;
-
-
-    document.querySelector('#start').value = default_day;
-    document.querySelector('#end').value = default_day;
-
-    sp = new URLSearchParams(location.search);
-    if (sp.get('start')) document.querySelector('#start').value = sp.get('start').replaceAll('/', '-');
-    if (sp.get('end')) document.querySelector('#end').value = sp.get('end').replaceAll('/', '-');
-    if (sp.get('id')) document.querySelector('#id').value = sp.get('id');
-
-    if (!document.getElementById('results')) {
-        document.getElementById('download').disabled = true;
-    }
-</script>
 </body>
 </html>

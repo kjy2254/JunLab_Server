@@ -270,5 +270,3 @@ wsServer.on('connection', (ws, req) => { // 웹소켓 연결 시
         }
     }, 1000);
 });
-
-// module.exports = socketServer;
