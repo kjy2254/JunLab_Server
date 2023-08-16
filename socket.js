@@ -10,12 +10,23 @@ var sockets = {};
 var commandSocket = [];
 var last_command = {};
 
+var sensorTime = '7000';
 
 const sleep = second => new Promise(resolve => setTimeout(resolve, second));
 
 function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
 }
+
+setInterval(() => {
+    if(sockets != {}){
+        Object.keys(sockets).forEach((key) => {
+            if(new Date() - sockets[key].last_time > parseInt(sensorTime)*2){
+                sockets[key].write("sensorTA,1," + sensorTime + "\r\n");
+            }
+        });
+    }
+}, parseInt(sensorTime)*2);
 
 socketServer.listen(4322, () => {
     console.log('Socket server listening on 4322 ...');
@@ -31,9 +42,10 @@ commandServer.on('connection', (socket) => {
     // 커맨드 서버 최초 연결시 안내 메시지
     socket.write("Welcome to Command Server\r\n" +
         "--------------------------------------------------------------------\r\n" +
-        "Type this Command: \r\n " +
-        "- Devices: Check registered devices \r\n " +
+        "Type this Command: \r\n" +
+        "- Devices: Check registered devices \r\n" +
         "- ID_?/[command]: Send command to ID_?\r\n" +
+        "- SensorTime/[time]: Set Default SensorTime to [time]\r\n" +
         "--------------------------------------------------------------------\r\n");
 
     // 데이터 입력시
@@ -46,7 +58,7 @@ commandServer.on('connection', (socket) => {
             socket.write("\r\nRegistered devices: [" + Object.keys(sockets).toString() + "]\r\n");
         }
         // ID/Command 명령어
-        else if (data.toString().trim().includes("/")) {
+        else if (data.toString().trim().includes("ID")) {
             let commands = data.toString().trim().split('/');
             // console.log("ID:", commands[0]);
             // console.log("Command:", commands[1]);
@@ -54,20 +66,35 @@ commandServer.on('connection', (socket) => {
             // 연결된 디바이스로의 명령일 경우
             if (Object.keys(sockets).includes(commands[0])) {
                 sockets[commands[0]].write(commands[1] + "\r\n");
-                last_command = {...last_command, [commands[0]]: commands[1]}
+                // sockets[commands[0]].write(commands[1]);
+                last_command = {...last_command, [commands[0]]: commands[1] + "\r\n"}
+                console.log(last_command);
             }
             // 연결되지 않은 디바이스로의 명령일 경우
             else {
                 socket.write("\r\n" + commands[0] + "is not registered\r\n");
             }
         }
+        else if(data.toString().trim().toLowerCase().includes("time")){
+            sensorTime = data.toString().trim().split('/')[1].replace('[', '').replace(']', '');
+            socket.write("default sensorTime changed:" + sensorTime);
+            if(sockets != {}){
+                Object.keys(sockets).forEach((key) => {
+                    if(new Date() - sockets[key].last_time > parseInt(sensorTime)*2){
+                        sockets[key].write("sensorTA,1," + sensorTime + "\r\n");
+                    }
+                });
+            }
+            console.log("default sensorTime changed:", sensorTime);
+        }
         // 등록되지 않은 명령어
         else {
             socket.write("" +
                 "--------------------------------------------------------------------\r\n" +
-                "Type this Command: \r\n " +
-                "- Devices: Check registered devices \r\n " +
+                "Type this Command: \r\n" +
+                "- Devices: Check registered devices \r\n" +
                 "- ID_?/[command]: Send command to ID_?\r\n" +
+                "- SensorTime/[time]: Set Default SensorTime to [time]\r\n" +
                 "--------------------------------------------------------------------\r\n");
         }
     })
@@ -80,30 +107,28 @@ commandServer.on('connection', (socket) => {
 })
 
 socketServer.on('connection', (socket) => {
-    // console.log(last_command);
+    let count = 0;
+    socket.last_time = new Date();
+
+    console.log("new connection:", socket.last_time);
+
     socket.on('data', (rawData) => {
-        console.log(rawData.toString());
+        socket.last_time = new Date();
+
+        console.log("["+String(count).padStart(4, " ")+"]", rawData.toString());
         // rawData 파싱
         let sensorData = rawData.toString().split(',');
 
-        // !!! 업데이트 전 테스트
-        // if(rawData.toString().trim().toLowerCase() === "hello server?"){
-        //     socket.write("sensorTA,1,1000");
-        // }
-
         // 최초 연결일 경우
-        if (sensorData.length > 1 && sensorData[1].toString().includes("AP")) {
+        if (sensorData.length > 1 && sensorData[1].toString().includes("Connected AP")) {
+            if(Object.keys(sockets).includes("ID_" + sensorData[0]) && sockets["ID_" + sensorData[0]] !== socket){
+                console.log("execute destroy");
+                sockets["ID_" + sensorData[0]].destroy();
+            }
 
             // sokets에 ID 등록
             sockets = {...sockets, ["ID_" + sensorData[0]]: socket};
 
-            // 이전 커맨드기록이 있을 경우
-            if (Object.keys(last_command).includes("ID_" + sensorData[0])) {
-                // console.log("last command: ", last_command["ID_" + sensorData[0]]);
-                //해당 커맨드 실행
-                // socket.write(last_command["ID_" + sensorData[0]]);
-                sleep(3000).then(() => socket.write(last_command["ID_" + sensorData[0]]));
-            }
             // 커맨드 서버에 연결된 클라이언트가 있는 경우
             if (commandSocket.length !== 0) {
                 commandSocket.forEach(e => {
@@ -128,11 +153,8 @@ socketServer.on('connection', (socket) => {
 
         // 센서 데이터일 경우
         if (sensorData.length === 21) {
-            if (save(rawData)) {
-                // socket.write("\r\nData save success" + "\r\n");
-            } else {
-                // socket.write("\r\nSomething went wrong" + "\r\n");
-            }
+            save(rawData);
+            count++;
         }
     })
 
@@ -145,7 +167,7 @@ socketServer.on('connection', (socket) => {
         delete sockets[getKeyByValue(sockets, socket)];
     })
 
-    socket.on('error', function (exc) {
+    socket.on('error', (e) => {
         console.log("Update Connection");
         if (Object.keys(sockets).includes(last_command[0])) sockets[last_command[0]].write(last_command[1]);
     });
@@ -248,5 +270,3 @@ wsServer.on('connection', (ws, req) => { // 웹소켓 연결 시
         }
     }, 1000);
 });
-
-module.exports = socketServer;
