@@ -211,9 +211,9 @@ router.get("/", (req, res) => {
     res.render("IITP/IITP")
 })
 
-const itemsPerPage = 10; // 페이지당 아이템 수
+const itemsPerPage = 30; // 페이지당 아이템 수
 
-router.get("/table", (req, res) => {
+router.get("/table2", (req, res) => {
     let id = req.query.id || 'all'; // 기본값은 'all'
     let start = req.query.start || today_st; // 기본값은 오늘 날짜 00:00:00
     let end = req.query.end || today_st; // 기본값은 오늘 날짜 23:59:59
@@ -267,6 +267,86 @@ router.get("/table", (req, res) => {
     });
 });
 
+router.get("/table", (req, res) => {
+    const id = req.query.id || 'all';
+    const start = req.query.start || today_st;
+    const end = req.query.end || today_st;
+    const itemsPerPage = req.query.itemsPerPage || 30; // 기본값은 30
+
+    const idQuery = 'SELECT DISTINCT ID FROM SENSOR_DATA;';
+    connection.query(idQuery, (idError, idResult) => {
+        if (idError) {
+            console.log(idError);
+            res.status(500).send('Internal Server Error!');
+            return;
+        }
+
+        let id_list = idResult.map(item => item.ID);
+
+        let query = '';
+        let data = [];
+
+        if (typeof id == 'undefined' || id === 'all') {
+            query = 'SELECT COUNT(*) as total_items FROM SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ?; ';
+            query += 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC LIMIT ?;';
+            data = [start, end + ' 23:59:59', start, end + ' 23:59:59', itemsPerPage];
+        } else {
+            query = 'SELECT COUNT(*) as total_items FROM SENSOR_DATA WHERE ID = ? AND CREATED_AT BETWEEN ? AND ?; ';
+            query += 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ? AND CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC LIMIT ?;';
+            data = [id, start, end + ' 23:59:59', id, start, end + ' 23:59:59', itemsPerPage];
+        }
+
+        connection.query(query, data, (error, results) => {
+            if (error) {
+                console.log(error);
+                res.status(500).send('Internal Server Error!');
+                return;
+            }
+
+            const totalItems = results[0][0].total_items || 0;
+
+            res.render("IITP/SensorTablescroll", {
+                id_list: id_list,
+                totalItems: totalItems,
+                id: id,
+                start: start,
+                end: end,
+                itemsPerPage: itemsPerPage // 추가
+            });
+        });
+    });
+});
+
+
+
+router.get('/load-more', (req, res) => {
+    let id = req.query.id || 'all';
+    let start = req.query.start || today_st;
+    let end = req.query.end || today_st;
+    let page = parseInt(req.query.page) || 1;
+
+    let query = '';
+    let data = [];
+
+    if (typeof id == 'undefined' || id === 'all') {
+        query = 'SELECT COUNT(*) as total_items FROM SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ?; ';
+        query += 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC LIMIT ? OFFSET ?;';
+        data = [start, end + ' 23:59:59', start, end + ' 23:59:59', itemsPerPage, (page - 1) * itemsPerPage];
+    } else {
+        query = 'SELECT COUNT(*) as total_items FROM SENSOR_DATA WHERE ID = ? AND CREATED_AT BETWEEN ? AND ?; ';
+        query += 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ? AND CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC LIMIT ? OFFSET ?;';
+        data = [id, start, end + ' 23:59:59', id, start, end + ' 23:59:59', itemsPerPage, (page - 1) * itemsPerPage];
+    }
+
+    connection.query(query, data, (error, results) => {
+        if (error) {
+            console.log(error);
+            res.status(500).send('Internal Server Error!');
+            return;
+        }
+        res.json(results[1] || []);
+    });
+});
 
 router.get("/table/export", (req, res) => {
     const id = req.query.id;
