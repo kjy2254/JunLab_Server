@@ -19,14 +19,15 @@ function getKeyByValue(object, value) {
 }
 
 setInterval(() => {
-    if(sockets != {}){
+    if (sockets != {}) {
         Object.keys(sockets).forEach((key) => {
-            if(new Date() - sockets[key].last_time > parseInt(sensorTime)*2){
+            if (new Date() - sockets[key].last_time > parseInt(sensorTime) * 2) {
                 sockets[key].write("sensorTA,1," + sensorTime + "\r\n");
+                console.log("server send sensorTA,1," + sensorTime + "\r\n");
             }
         });
     }
-}, parseInt(sensorTime)*2);
+}, parseInt(sensorTime) * 2);
 
 socketServer.listen(4322, () => {
     console.log('Socket server listening on 4322 ...');
@@ -74,18 +75,15 @@ commandServer.on('connection', (socket) => {
             else {
                 socket.write("\r\n" + commands[0] + "is not registered\r\n");
             }
-        }
-        else if(data.toString().trim().toLowerCase().includes("time")){
+        } else if (data.toString().trim().toLowerCase().includes("time")) {
             sensorTime = data.toString().trim().split('/')[1].replace('[', '').replace(']', '');
             socket.write("default sensorTime changed:" + sensorTime);
-            if(sockets != {}){
+            if (sockets != {}) {
                 Object.keys(sockets).forEach((key) => {
-                    if(new Date() - sockets[key].last_time > parseInt(sensorTime)*2){
-                        sockets[key].write("sensorTA,1," + sensorTime + "\r\n");
-                    }
+                    sockets[key].write("sensorTA,1," + sensorTime + "\r\n");
                 });
             }
-            console.log("default sensorTime changed:", sensorTime);
+            console.log("server send sensorTA,1," + sensorTime + "\r\n");
         }
         // 등록되지 않은 명령어
         else {
@@ -115,13 +113,13 @@ socketServer.on('connection', (socket) => {
     socket.on('data', (rawData) => {
         socket.last_time = new Date();
 
-        console.log("["+String(count).padStart(4, " ")+"]", rawData.toString());
+        console.log("[" + String(count).padStart(4, " ") + "]", rawData.toString());
         // rawData 파싱
         let sensorData = rawData.toString().split(',');
 
         // 최초 연결일 경우
         if (sensorData.length > 1 && sensorData[1].toString().includes("Connected AP")) {
-            if(Object.keys(sockets).includes("ID_" + sensorData[0]) && sockets["ID_" + sensorData[0]] !== socket){
+            if (Object.keys(sockets).includes("ID_" + sensorData[0]) && sockets["ID_" + sensorData[0]] !== socket) {
                 console.log("execute destroy");
                 sockets["ID_" + sensorData[0]].destroy();
             }
@@ -139,8 +137,7 @@ socketServer.on('connection', (socket) => {
                     commandSocket.forEach(e => {
                         e.write("\r\n" + "ID_" + sensorData[0] + "'s last command: " + last_command["ID_" + sensorData[0]] + "\r\n");
                     })
-                }
-                else{
+                } else {
                     commandSocket.forEach(e => {
                         e.write("\r\n" + "ID_" + sensorData[0] + " is connected\r\n");
                     })
@@ -209,7 +206,7 @@ function save(rawData) {
 
         // console.log(data);
 
-        if(isNaN(parseInt(data.ID))){
+        if (isNaN(parseInt(data.ID))) {
             return false;
         }
 
@@ -224,7 +221,7 @@ wsServer.on('connection', (ws, req) => { // 웹소켓 연결 시
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     console.log('새로운 클라이언트 접속', ip);
     ws.on('message', (message) => { // 클라이언트로부터 메시지
-        console.log("message:",message.toString());
+        console.log("message:", message.toString());
     });
     ws.on('error', (error) => { // 에러 시
         console.error(error);
@@ -236,15 +233,6 @@ wsServer.on('connection', (ws, req) => { // 웹소켓 연결 시
 
     let query = "SELECT ID," +
         " BATT," +
-        " MAGx," +
-        " MAGy," +
-        " MAGz," +
-        " ZYROx," +
-        " ZYROy," +
-        " ZYROz," +
-        " ACCx," +
-        " ACCy," +
-        " ACCz," +
         " AQI," +
         " TVOC," +
         " EC2," +
@@ -252,8 +240,6 @@ wsServer.on('connection', (ws, req) => { // 웹소켓 연결 시
         " PM25," +
         " PM100," +
         " IRUN," +
-        " RED," +
-        " ECG," +
         " TEMP," +
         " DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT " +
         "FROM (SELECT * , ROW_NUMBER() OVER (PARTITION BY ID ORDER BY CREATED_AT DESC) AS RankNo FROM SENSOR_DATA) T " +

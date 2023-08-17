@@ -1,25 +1,55 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Console</title>
     <style>
-        /* Custom CSS styles for the table */
-        .table-container {
-            margin-top: 20px;
-            padding-left: 20px;
-            padding-right: 20px;
+        body {
+            padding: 2rem;
         }
 
-        th {
+        .card {
+            margin-bottom: 1.5rem;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
             background-color: #007BFF;
             color: #fff;
         }
 
-        .table-hover tbody tr:hover {
+        .card-body {
             background-color: #f8f9fa;
+        }
+
+        .card-footer {
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-text strong {
+            /*width: 150px;*/
+            display: inline-block;
+        }
+
+        .card-text span {
+            display: inline-block;
+        }
+
+        @keyframes blink-effect {
+            50% {
+                opacity: 0;
+            }
         }
         .blinking{
             -webkit-animation: blink 0.5s;
@@ -42,76 +72,54 @@
         }
     </style>
 </head>
-<body>
-<div class="p-2">
-    <h1 class="">실시간 테이블</h1>
-</div>
-<!--    <div class="sidebar">-->
-<!--        <select id="id">-->
-<!--            <% id_list.forEach((id) => { %>-->
-<!--                <option value= <%= id %>> <%= id %> </option>-->
-<!--            <% }) %>-->
-<!--        </select>-->
-<!--    </div>-->
 
-<div class="table-container">
-    <table id="idTable" class="table table-striped table-hover">
-        <thead>
-        <tr>
-            <th scope="col">ID</th>
-            <th scope="col">BATT</th>
-            <th scope="col">MAGx</th>
-            <th scope="col">MAGy</th>
-            <th scope="col">MAGz</th>
-            <th scope="col">ZYROx</th>
-            <th scope="col">ZYROy</th>
-            <th scope="col">ZYROz</th>
-            <th scope="col">ACCx</th>
-            <th scope="col">ACCy</th>
-            <th scope="col">ACCz</th>
-            <th scope="col">AQI</th>
-            <th scope="col">TVOC</th>
-            <th scope="col">EC2</th>
-            <th scope="col">PM1.0</th>
-            <th scope="col">PM2.5</th>
-            <th scope="col">PM10</th>
-            <th scope="col">IRUN</th>
-            <th scope="col">RED</th>
-            <th scope="col">ECG</th>
-            <th scope="col">TEMP</th>
-            <th scope="col">LAST_UPDATE</th>
-        </tr>
-        </thead>
-        <tbody id="tbody">
-        <% id_list.forEach((el) => { %>
-        <tr id="id_<%= el %>">
-            <td> <%= el %> </td>
-            <td id="batt_<%= el %>">_</td>
-            <td id="magx_<%= el %>">_</td>
-            <td id="magy_<%= el %>">_</td>
-            <td id="magz_<%= el %>">_</td>
-            <td id="zyrox_<%= el %>">_</td>
-            <td id="zyroy_<%= el %>">_</td>
-            <td id="zyroz_<%= el %>">_</td>
-            <td id="accx_<%= el %>">_</td>
-            <td id="accy_<%= el %>">_</td>
-            <td id="accz_<%= el %>">_</td>
-            <td id="aqi_<%= el %>">_</td>
-            <td id="tvoc_<%= el %>">_</td>
-            <td id="ec2_<%= el %>">_</td>
-            <td id="pm1.0_<%= el %>">_</td>
-            <td id="pm2.5_<%= el %>">_</td>
-            <td id="pm10_<%= el %>">_</td>
-            <td id="irun_<%= el %>">_</td>
-            <td id="red_<%= el %>">_</td>
-            <td id="ecg_<%= el %>">_</td>
-            <td id="temp_<%= el %>">_</td>
-            <td id="last_update_<%= el %>">_</td>
-        </tr>
+<body>
+<div class="container">
+    <div class="py-3">
+        <h1 class="h2">실시간 데이터</h1>
+    </div>
+
+    <div class="row">
+        <% id_list.forEach((el, index) => { %>
+            <div class="col-xxl-3 col-lg-4 col-sm-12">
+                <div class="card" id="card_<%= el %>">
+                    <div class="card-header">
+                        <p class="card-title d-flex justify-content-between">
+                        <a>
+                            <strong>ID:</strong> <span id="id_<%= el %>">_</span>
+                        </a>
+                        <a>
+                            <strong>BATT:</strong> <span id="batt_<%= el %>">_</span>
+                        </a>
+                        </p>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="card-text"><strong>AQI:</strong> <span id="aqi_<%= el %>">_</span></p>
+                                <p class="card-text"><strong>PM1.0:</strong> <span id="pm1.0_<%= el %>">_</span></p>
+                                <p class="card-text"><strong>PM2.5:</strong> <span id="pm2.5_<%= el %>">_</span></p>
+                                <p class="card-text"><strong>PM10:</strong> <span id="pm10_<%= el %>">_</span></p>
+                                <p></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="card-text"><strong>TVOC:</strong> <span id="tvoc_<%= el %>">_</span></p>
+                                <p class="card-text"><strong>EC2:</strong> <span id="ec2_<%= el %>">_</span></p>
+                                <p class="card-text"><strong>IRUN:</strong> <span id="irun_<%= el %>">_</span></p>
+                                <p class="card-text"><strong>TEMP:</strong> <span id="temp_<%= el %>">_</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <p class="card-text"><strong>LAST_UPDATE:</strong> <span id="last_update_<%= el %>">_</span></p>
+                    </div>
+                </div>
+            </div>
         <% }) %>
-        </tbody>
-    </table>
+    </div>
 </div>
+
 <script src="/javascripts/realtimetable.js"></script>
 </body>
+
 </html>

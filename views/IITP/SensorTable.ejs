@@ -6,6 +6,11 @@
     <title>Sensor Data Table</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 </head>
+<style>
+    td:nth-child(1) {
+        font-weight: bold;
+    }
+</style>
 <body onload="initializePage();">
 <button onclick="location.href = '/iitp'" class="btn btn-info mx-2 my-2">뒤로</button>
 <div class="mx-5">
@@ -70,9 +75,10 @@
             </tr>
             </thead>
             <tbody>
+            <% const startIdx = (currentPage - 1) * itemsPerPage + 1; %>
             <% data.forEach((el, index) => { %>
                 <tr id="results">
-                    <th scope="row"><%= index + 1 %></th>
+                    <td><%= startIdx + index %></td>
                     <td><%= el.ID %></td>
                     <td><%= el.BATT %></td>
                     <td><%= el.MAGx %></td>
@@ -104,9 +110,8 @@
                 <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
                     <a class="page-link" href="/iitp/table?id=<%= id %>&start=<%= start %>&end=<%= end %>&page=1" tabindex="-1" aria-disabled="true"><<</a>
                 </li>
-                <% const visiblePages = 10; %>
-                <% let startPage = Math.max(currentPage - Math.floor(visiblePages / 2), 1); %>
-                <% let endPage = Math.min(startPage + visiblePages - 1, totalPages); %>
+                <% let startPage = Math.max(currentPage - Math.floor(itemsPerPage / 2), 1); %>
+                <% let endPage = Math.min(startPage + itemsPerPage - 1, totalPages); %>
                 <% for (let i = startPage; i <= endPage; i++) { %>
                     <li class="page-item <%= currentPage === i ? 'active' : '' %>">
                         <a class="page-link" href="/iitp/table?id=<%= id %>&start=<%= start %>&end=<%= end %>&page=<%= i %>"><%= i %></a>

@@ -256,6 +256,7 @@ router.get("/table", (req, res) => {
                 data: results[1] || [],
                 id_list: id_list,
                 currentPage: page,
+                itemsPerPage: itemsPerPage,
                 totalPages: totalPages,
                 totalItems: totalItems, // 추가
                 id: id, // id 추가
@@ -265,8 +266,6 @@ router.get("/table", (req, res) => {
         });
     });
 });
-
-
 
 
 router.get("/table/export", (req, res) => {
