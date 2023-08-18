@@ -1,0 +1,144 @@
+/* SensorTable.css */
+body {
+  font-family: 'Noto Sans', Arial, sans-serif;
+  background: #F2F4F8; /* 수정된 부분: 배경 색상 변경 */
+  color: #333; /* 수정된 부분: 기본 텍스트 색상 변경 */
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  padding: 20px 0;
+}
+
+form {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px auto;
+  width: 80%;
+}
+
+.input-header {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px auto;
+  width: 80%;
+}
+
+.form-left {
+  display: flex;
+  align-items: center;
+}
+
+.form-right {
+  display: flex;
+  align-items: flex-end;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+label {
+  font-weight: bold;
+  color: #555; /* 수정된 부분: 라벨 텍스트 색상 변경 */
+  margin-right: 10px;
+}
+
+select, input[type="date"], input[type="submit"] {
+  padding: 5px;
+  border: 1px solid #ccc; /* 수정된 부분: 입력 요소 테두리 색상 변경 */
+  border-radius: 5px;
+  background-color: #fff; /* 수정된 부분: 입력 요소 배경 색상 변경 */
+  color: #333; /* 수정된 부분: 입력 요소 텍스트 색상 변경 */
+}
+
+#search {
+  background-color: #1e355b;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#downloadButton {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #1e355b;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#downloadButton:hover {
+  background-color: #284b63;
+}
+
+#downloadButton[disabled] {
+  cursor: not-allowed;
+}
+
+table {
+  margin: 20px auto;
+  width: 95%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ccc; /* 수정된 부분: 테두리 색상 변경 */
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background-color: #1e355b;
+  color: #fff;
+}
+
+tr:nth-child(even) {
+  background-color: #F2F4F8;
+}
+
+tr:nth-child(odd) {
+  background-color: #E7EAF0;
+}
+
+caption {
+  text-align: right;
+}
+
+.noBorder {
+  border: none !important;
+}
+@media screen and (max-width: 1450px) {
+  /* 화면 너비가 1450 이하일 때 적용할 스타일 */
+  /* 특정 열 숨기기 */
+  .hide-on-small-screen {
+    display: none;
+  }
+}
+
+#scroll-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #90a4bb;
+  border: none;
+  border-radius: 50%; /* 원 모양을 위한 속성 */
+  width: 60px;
+  height: 60px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  display: none;
+}
+
+#scroll-to-top:hover {
+  background-color: #60839a;
+}

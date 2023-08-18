@@ -288,12 +288,10 @@ router.get("/table", (req, res) => {
 
         if (typeof id == 'undefined' || id === 'all') {
             query = 'SELECT COUNT(*) as total_items FROM SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ?; ';
-            query += 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC LIMIT ?;';
-            data = [start, end + ' 23:59:59', start, end + ' 23:59:59', itemsPerPage];
+            data = [start, end + ' 23:59:59'];
         } else {
             query = 'SELECT COUNT(*) as total_items FROM SENSOR_DATA WHERE ID = ? AND CREATED_AT BETWEEN ? AND ?; ';
-            query += 'SELECT *, DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT from SENSOR_DATA WHERE ID = ? AND CREATED_AT BETWEEN ? AND ? ORDER BY CREATED_AT DESC LIMIT ?;';
-            data = [id, start, end + ' 23:59:59', id, start, end + ' 23:59:59', itemsPerPage];
+            data = [id, start, end + ' 23:59:59'];
         }
 
         connection.query(query, data, (error, results) => {
@@ -303,7 +301,7 @@ router.get("/table", (req, res) => {
                 return;
             }
 
-            const totalItems = results[0][0].total_items || 0;
+            const totalItems = results[0].total_items || 0;
 
             res.render("IITP/SensorTablescroll", {
                 id_list: id_list,
@@ -408,5 +406,6 @@ router.get('/console', (req, res) => {
         res.render('IITP/console', {id_list: id_list});
     });
 })
+
 
 module.exports = router;

@@ -50,7 +50,7 @@ function loadMore() {
                 const noDataRow = document.createElement('tr');
                 noDataRow.innerHTML = '<td colspan="24" class="text-center">No data available</td>';
                 container.appendChild(noDataRow);
-                document.getElementById('download').disabled = true; // 데이터가 없으므로 download 버튼 비활성화
+                document.getElementById('downloadButton').disabled = true; // 데이터가 없으므로 download 버튼 비활성화
                 loading = false;
                 return;
             }
@@ -60,16 +60,16 @@ function loadMore() {
                 row.innerHTML = `
                         <td>${index + 1 + (page - 1) * itemsPerPage}</td>
                         <td>${item.ID}</td>
-                        <td>${item.BATT}</td>
-                        <td>${item.MAGx}</td>
-                        <td>${item.MAGy}</td>
-                        <td>${item.MAGz}</td>
-                        <td>${item.ZYROx}</td>
-                        <td>${item.ZYROy}</td>
-                        <td>${item.ZYROz}</td>
-                        <td>${item.ACCx}</td>
-                        <td>${item.ACCy}</td>
-                        <td>${item.ACCz}</td>
+                        <td class="hide-on-small-screen">${item.BATT}</td>
+                        <td class="hide-on-small-screen">${item.MAGx}</td>
+                        <td class="hide-on-small-screen">${item.MAGy}</td>
+                        <td class="hide-on-small-screen">${item.MAGz}</td>
+                        <td class="hide-on-small-screen">${item.ZYROx}</td>
+                        <td class="hide-on-small-screen">${item.ZYROy}</td>
+                        <td class="hide-on-small-screen">${item.ZYROz}</td>
+                        <td class="hide-on-small-screen">${item.ACCx}</td>
+                        <td class="hide-on-small-screen">${item.ACCy}</td>
+                        <td class="hide-on-small-screen">${item.ACCz}</td>
                         <td>${item.AQI}</td>
                         <td>${item.TVOC}</td>
                         <td>${item.EC2}</td>
@@ -119,12 +119,15 @@ window.addEventListener('scroll', () => {
 function search() {
     // 검색 버튼 클릭 시 페이지 초기화 및 새로운 검색 실행
     const idValue = document.getElementById('id').value;
+    console.log(idValue);
     const startValue = document.getElementById('start').value.replaceAll('-', '/');
+    console.log(startValue);
     const endValue = document.getElementById('end').value.replaceAll('-', '/');
 
     const queryString = `?id=${idValue}&start=${startValue}&end=${endValue}`;
-    location.href = `/iitp/table2${queryString}`;
-    loadMore();
+    console.log(queryString);
+    location.href = `/iitp/table${queryString}`;
+    // loadMore();
 }
 
 function downloadCSV() {
