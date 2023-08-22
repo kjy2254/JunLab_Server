@@ -1,0 +1,64 @@
+body {
+    padding: 2rem;
+    background: #F2F4F8; /* 수정된 부분: 배경 색상 변경 */
+    color: #333; /* 수정된 부분: 기본 텍스트 색상 변경 */
+}
+
+.card {
+    margin-bottom: 1.5rem;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #1e355b;
+    color: #fff;
+}
+
+.card-body {
+    background-color: #f8f9fa;
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-text strong {
+    /*width: 150px;*/
+    display: inline-block;
+}
+
+.card-text span {
+    display: inline-block;
+}
+
+@keyframes blink-effect {
+    50% {
+        opacity: 0;
+    }
+}
+.blinking{
+    -webkit-animation: blink 0.5s;
+    -moz-animation: blink 0.5s;
+    animation: blink 0.5s;
+}
+@-webkit-keyframes blink{
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+
+@-moz-keyframes blink{
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+
+@keyframes blink{
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}

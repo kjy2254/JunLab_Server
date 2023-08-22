@@ -4,12 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sensor Data Table</title>
-    <!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/SensorTable.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
 </head>
 <body onload="initializePage()">
-<button onclick="location.href = '/iitp'" class="btn btn-info mx-2 my-2">뒤로</button>
+<button id="back" onclick="location.href = '/iitp'" class="btn btn-info mx-2 my-2">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left"
+         viewBox="0 0 16 16">
+        <path fill-rule="evenodd"
+              d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+    </svg>
+</button>
 <h1>Sensor Data Table</h1>
 <div class="input-header">
     <div class="form-left">
@@ -38,9 +44,11 @@
     </div>
 </div>
 <table id="sensorTable">
-    <caption><% if (totalItems > 0) { %>
+    <caption>
+        <% if (totalItems > 0) { %>
             검색결과: <%= totalItems %>개
-        <% } %></caption>
+        <% } %>
+    </caption>
     <thead>
     <tr>
         <th>#</th>
@@ -68,6 +76,7 @@
         <th scope="col">CREATED_AT</th>
     </tr>
     </thead>
+
     <tbody id="tableBody">
 
     </tbody>
@@ -76,5 +85,5 @@
     <i class="fas fa-arrow-up fa-2x"></i>
 </button>
 </body>
-<script src="/javascripts/scroll.js"></script>
+<script src="/javascripts/SensorTablescroll.js"></script>
 </html>

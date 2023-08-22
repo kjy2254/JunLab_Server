@@ -1,5 +1,5 @@
 {
-  "name": "JunLab_Server",
+  "name": "junlab_server",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -20,7 +20,6 @@
     "mysql": "^2.18.1",
     "node-table-to-csv": "^0.1.0",
     "nodemon": "^2.0.22",
-    "pm2": "^5.3.0",
     "serve-favicon": "^2.5.0",
     "ws": "^8.13.0"
   },
@@ -28,9 +27,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
-  }
+  },
+  "description": ""
 }

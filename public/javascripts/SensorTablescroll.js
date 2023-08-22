@@ -1,12 +1,14 @@
 let page = 1;
 let loading = false;
 const itemsPerPage = 30; // 페이지 당 아이템 수
+let hasMoreData = true;
 const today = new Date();
 const year = today.getFullYear();
 const month = today.getMonth() + 1;
 const month2 = (month < 10 ? "0" + month : month);
 const day = today.getDate();
 const defaultDay = `${year}-${month2}-${day}`;
+
 
 function initializePage() {
     document.querySelector('#start').value = defaultDay;
@@ -43,6 +45,7 @@ function loadMore() {
             const container = document.getElementById('tableBody');
             if (isFirstPage) {
                 container.innerHTML = ''; // 기존 데이터 초기화
+
             }
 
             if (data.length === 0 && isFirstPage) {
@@ -51,6 +54,7 @@ function loadMore() {
                 noDataRow.innerHTML = '<td colspan="24" class="text-center">No data available</td>';
                 container.appendChild(noDataRow);
                 document.getElementById('downloadButton').disabled = true; // 데이터가 없으므로 download 버튼 비활성화
+                hasMoreData = false;
                 loading = false;
                 return;
             }
@@ -87,7 +91,8 @@ function loadMore() {
 
             if (data.length < itemsPerPage) {
                 // 데이터가 페이지당 아이템 수 미만인 경우, 모든 데이터 로드 완료됨을 나타냄
-                loading = true;
+                // loading = true;
+                hasMoreData = false;
                 document.getElementById('download').disabled = false;
             } else {
                 // 다음 페이지 데이터 로드를 위해 페이지 증가
@@ -103,8 +108,7 @@ function loadMore() {
 
 window.addEventListener('scroll', () => {
     const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
-    if (scrollTop + clientHeight >= scrollHeight - 100) {
-        loadMore();
+    if (scrollTop + clientHeight >= scrollHeight - 100 && !loading && hasMoreData) {
         initializePage();
     }
     const scrollToTopButton = document.getElementById('scroll-to-top');
