@@ -15,15 +15,13 @@ var app = express();
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
-//logger
-// app.use(logger({
-//     format: 'dev',
-//     // stream: fs.createWriteStream('app.log', {'flags': 'w'})
-// }));
-// logger.token('date', () =>{
-//     return new Date().toLocaleString()
-// })
-app.use(logger("[:remote-addr] :method :url"), (req, res, next) =>{
+// skip 함수 정의
+function skipLogging(req) {
+    // 특정 URL을 제외하고 싶은 조건을 설정
+    return req.url.includes('load-more') || req.url.includes('.js') || req.url.includes('.css') || req.url.includes('favicon');
+}
+
+app.use(logger("[:remote-addr] :method :url", { skip: skipLogging }), (req, res, next) =>{
     next();
 });
 
