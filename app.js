@@ -6,6 +6,7 @@ var logger = require('morgan');
 const ejs = require("ejs");
 var indexRouter = require('./routes/index');
 var iitpRouter = require('./routes/iitp');
+var dashboardRouter = require('./routes/dashboard');
 const cors = require('cors');
 const bodyParser = require("body-parser");
 const fs = require('fs');
@@ -38,6 +39,7 @@ app.use(cors({
 app.use('/static', express.static('static'));
 app.use('/', indexRouter);
 app.use('/iitp', iitpRouter);
+app.use('/iitp/dashboard', dashboardRouter);
 
 const { swaggerUi, specs } = require("./swagger/swagger")
 // const socketServer = require("./socket");

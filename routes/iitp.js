@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const iitp = express.Router();
 const connection = require('../database/mysql');
 const data_exporter = require('json2csv').Parser;
 
@@ -96,7 +96,7 @@ function jsonKeyUpperCase(object) {
  *                                "TEMP": 27.5,
  *                                "CREATED_AT": "2023/07/12 13:02:58" }]
  */
-router.get("/api/sensor", (req, res, next) => {
+iitp.get("/api/sensor", (req, res, next) => {
     const id = req.query.id;
     let start = req.query.start;
     let end = req.query.end;
@@ -158,7 +158,7 @@ router.get("/api/sensor", (req, res, next) => {
  *       500:
  *        description: Server Error
  */
-router.post("/api/sensor", (req, res) => {
+iitp.post("/api/sensor", (req, res) => {
     const keys = [
         'ID',
         'BATT',
@@ -207,13 +207,13 @@ router.post("/api/sensor", (req, res) => {
 });
 
 
-router.get("/", (req, res) => {
+iitp.get("/", (req, res) => {
     res.render("IITP/IITP")
 })
 
 const itemsPerPage = 30; // 페이지당 아이템 수
 
-router.get("/table2", (req, res) => {
+iitp.get("/table2", (req, res) => {
     let id = req.query.id || 'all'; // 기본값은 'all'
     let start = req.query.start || today_st; // 기본값은 오늘 날짜 00:00:00
     let end = req.query.end || today_st; // 기본값은 오늘 날짜 23:59:59
@@ -267,7 +267,7 @@ router.get("/table2", (req, res) => {
     });
 });
 
-router.get("/table", (req, res) => {
+iitp.get("/table", (req, res) => {
     const id = req.query.id || 'all';
     const start = req.query.start || today_st;
     const end = req.query.end || today_st;
@@ -317,7 +317,7 @@ router.get("/table", (req, res) => {
 
 
 
-router.get('/load-more', (req, res) => {
+iitp.get('/load-more', (req, res) => {
     let id = req.query.id || 'all';
     let start = req.query.start || today_st;
     let end = req.query.end || today_st;
@@ -346,7 +346,7 @@ router.get('/load-more', (req, res) => {
     });
 });
 
-router.get("/table/export", (req, res) => {
+iitp.get("/table/export", (req, res) => {
     const id = req.query.id;
     let start = req.query.start;
     let end = req.query.end;
@@ -395,7 +395,7 @@ router.get("/table/export", (req, res) => {
     });
 })
 
-router.get('/console', (req, res) => {
+iitp.get('/console', (req, res) => {
     connection.query("SELECT DISTINCT ID FROM SENSOR_DATA;", (error, result) => {
         if (error) {
             console.log(error);
@@ -408,4 +408,4 @@ router.get('/console', (req, res) => {
 })
 
 
-module.exports = router;
+module.exports = iitp;
