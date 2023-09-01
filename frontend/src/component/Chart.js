@@ -1,6 +1,7 @@
 import React, {Fragment} from 'react';
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import '../css/Chart.css';
 import {calculateGradientColors} from "../util";
 
 function Chart(props) {
@@ -71,7 +72,6 @@ function Chart(props) {
                         </div>
                     </div>
                 </div>
-
                 <div className="chart-value-area">
                     <div className="chart-value">
                         <div className="chart-value-num">

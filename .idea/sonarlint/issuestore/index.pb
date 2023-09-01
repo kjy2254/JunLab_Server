@@ -15,8 +15,6 @@ S
 package.json,7\0\7030d0b2f71b999ff89a343de08c414af32fc93a
 ?
 http/hello.http,f\8\f8a586f742a30962ecf7e395b876d1f5fa91fcd4
-?
-routes/index.js,3\0\30dfc417d69af8ed298ed4111dcab68f38ca7f54
 A
 database/mysql.js,4\7\47346cd32f85a13c75da76927cb82c5eb4c30c84
 F

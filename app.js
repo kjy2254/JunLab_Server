@@ -21,6 +21,9 @@ function skipLogging(req) {
     // 특정 URL을 제외하고 싶은 조건을 설정
     return req.url.includes('load-more') || req.url.includes('.js') || req.url.includes('.css') || req.url.includes('favicon');
 }
+app.use('/', indexRouter);
+
+app.use(express.static(path.join(__dirname, 'frontend/build')));
 
 app.use(logger("[:remote-addr] :method :url", { skip: skipLogging }), (req, res, next) =>{
     next();
@@ -37,7 +40,6 @@ app.use(cors({
 }));
 
 app.use('/static', express.static('static'));
-app.use('/', indexRouter);
 app.use('/iitp', iitpRouter);
 app.use('/iitp/dashboard', dashboardRouter);
 
@@ -61,5 +63,7 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+
 
 module.exports = app;

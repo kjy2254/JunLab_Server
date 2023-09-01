@@ -2,6 +2,7 @@ import Sidebar from './Sidebar';
 import '../css/Dashboard.css';
 import Chart from "./Chart";
 import React from "react";
+import WorkerSummary from "./WorkerSummary";
 
 function Dashboard() {
 
@@ -142,8 +143,20 @@ function Dashboard() {
                             chartColor="#1786C4"
                         />
                     </div>
-                    {/* 상단 20% 구역 */}
-                    {/* 나머지 내용 */}
+                    <div className="summary-header">
+                        작업자 상태 요약
+                    </div>
+                    <div className="summary-card-area">
+                        <WorkerSummary
+                            workerName={"김준영"}
+                            ID={"0001"}
+                            bpm={80}
+                            temperature={37.6}
+                            spo2={97}
+                            online={"Online"}
+                            batt={42}
+                            />
+                    </div>
                 </div>
             </div>
         </div>
