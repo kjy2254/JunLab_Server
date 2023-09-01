@@ -1,25 +1,65 @@
-import React, {Fragment} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import noData from "highcharts/modules/no-data-to-display";
 import '../css/Chart.css';
 import {calculateGradientColors} from "../util";
+import axios from "axios";
+import {Link} from "react-router-dom";
 
 function Chart(props) {
-    const { chartIcon, chartName, chartSubname,  chartUnit,  data, chartColor } = props;
+    const { chartIcon, chartName, chartSubname,  chartUnit, chartColor, factoryId, moduleId, data } = props;
 
-    const dataArray = data || [];
+    const link = chartSubname.replaceAll(' ', '');
+    const endPoint = link.toLowerCase();
+
+    const [sensorData, setSensorData] = useState({});
+
+    const fetchData = async () => {
+        try {
+            axios.get(`http://localhost:880/api/factory/${factoryId}/${endPoint}`) //today로 수정 필요
+                .then((response) => {
+                    // API 응답에서 데이터를 추출합니다.
+                    const dataResponse = response.data;
+
+                    // API 응답에서 원하는 데이터를 추출합니다. 예시에서는 1번 모듈의 데이터를 사용합니다.
+                    const dataArray = dataResponse[moduleId] && dataResponse[moduleId][data] ? dataResponse[moduleId][data] : [];
+
+                    // 데이터를 상태에 설정합니다.
+                    setSensorData(dataArray);
+                })
+                .catch((error) => {
+                    console.error('API 요청 실패:', error);
+                });
+        }
+        catch (error) {
+            console.error('API 요청 실패:', error);
+        }
+    }
+
+    useEffect(() => {
+        // API 요청을 보내고 데이터를 가져옵니다.
+        fetchData();
+        const interval = setInterval(() => {
+            fetchData();
+        }, 10000);
+        // 컴포넌트가 언마운트될 때 clearInterval을 호출하여 인터벌 정리
+        return () => {
+            clearInterval(interval);
+        };
+    }, []);
+
     let chartValue;
     let chartDiff = 0;
     noData(Highcharts);
 
-    if (dataArray.length > 0) {
-        chartValue = dataArray[dataArray.length - 1].y;
+    if (sensorData.length > 0) {
+        chartValue = sensorData[sensorData.length - 1].y;
     }
 
-    if (dataArray.length > 1) {
-        const lastValue = dataArray[dataArray.length - 1].y;
-        const prevValue = dataArray[dataArray.length - 2].y;
+    if (sensorData.length > 1) {
+        const lastValue = sensorData[sensorData.length - 1].y;
+        const prevValue = sensorData[sensorData.length - 2].y;
 
         if (prevValue !== 0) {
             chartDiff = ((lastValue - prevValue) / prevValue) * 100;
@@ -79,10 +119,10 @@ function Chart(props) {
         lang: {
           noData: "No data available"
         },
-        series: [{ name: chartSubname, data: data }]
+        series: [{ name: data, data: sensorData }]
     }
 
-    if (dataArray.length === 0) {
+    if (sensorData.length === 0) {
         options.lang.noData = "No data available"; // 데이터가 없을 때 메시지 설정
         options.noData = {
             style: {
@@ -94,7 +134,7 @@ function Chart(props) {
     }
 
     return (
-        <div className="chart-area">
+        <Link className="chart-area" to={`/iitp/factoryManagement/factory/${props.factoryId}/${link}`}>
             <div className="chart-info">
                 <div className="flex">
                     <div className="chart-icon">
@@ -128,7 +168,7 @@ function Chart(props) {
                     <HighchartsReact highcharts={Highcharts} options={options} />
                 </Fragment>
             </div>
-        </div>
+        </Link>
     );
 }
 

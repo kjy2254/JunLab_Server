@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import '../css/Sidebar.css';
-import {Link} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 
 function Sidebar(props) {
     const [detailsOpen, setDetailsOpen] = useState(false);
     const [expanded, setExpanded] = useState(false);
     const [isHovering, setIsHovering] = useState(false);
+
+    const { data } = useParams();
 
     const toggleDetails = () => {
         setDetailsOpen(!detailsOpen);
@@ -61,6 +63,7 @@ function Sidebar(props) {
             <hr className="separator" />
             <div className="head-text">{props.header}</div>
             <div className="menu">
+                <Link className="submenu-item" to={props.mode === 'admin' ? `` : `/iitp/factoryManagement/factory/${props.factoryId}`}>
                 <div className={`menu-item ${props.selected === "1" ? "selected" : ""}`}>
                     <div className="menu-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 20 20" fill="none">
@@ -70,9 +73,10 @@ function Sidebar(props) {
                         </svg>
                     </div>
                     <div className="menu-name">
-                        {props.mode === 'admin' ? 'Factories' : 'Dashboard'}
+                         {props.mode === 'admin' ? 'Factories' : 'Dashboard'}
                     </div>
                 </div>
+                </Link>
                 {props.mode !== 'admin' && (
                 <div className={`menu-item ${props.selected === "2" ? "selected" : ""}`} onClick={toggleDetails}>
                     <div className="menu-icon">
@@ -100,10 +104,10 @@ function Sidebar(props) {
                 </div> )}
                 {detailsOpen && (
                     <ul className="submenu">
-                        <li>TVOC</li>
-                        <li>CO2</li>
-                        <li>Temperature</li>
-                        <li>Fine Dust</li>
+                        <Link className={"submenu-item" + (data === "TVOC" ? "-selected" : "")} to={`/iitp/factoryManagement/factory/${props.factoryId}/TVOC`}><li> TVOC </li></Link>
+                        <Link className={"submenu-item" + (data === "CO2" ? "-selected" : "")} to={`/iitp/factoryManagement/factory/${props.factoryId}/CO2`}><li> CO2 </li></Link>
+                        <Link className={"submenu-item" + (data === "Temperature" ? "-selected" : "")} to={`/iitp/factoryManagement/factory/${props.factoryId}/Temperature`}><li> Temperature </li></Link>
+                        <Link className={"submenu-item" + (data === "FineDust" ? "-selected" : "")} to={`/iitp/factoryManagement/factory/${props.factoryId}/FineDust`}><li> Fine Dust </li></Link>
                     </ul>
                 )}
             </div>

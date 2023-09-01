@@ -29,6 +29,8 @@
     flex: 1;
     margin: 20px;
     box-shadow: 0 1px 15px rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+    color: #000A12;
 }
 
 .chart-info {

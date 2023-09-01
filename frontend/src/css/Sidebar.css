@@ -82,6 +82,17 @@
     margin-top: 0;
 }
 
+.submenu-item {
+    text-decoration: none;
+    color: white;
+}
+
+.submenu-item-selected {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
 .submenu li {
     padding: 0.5rem 0;
     cursor: pointer;
@@ -146,7 +157,7 @@
         display: none;
     }
 
-    .header {
+    .head-text {
         display: none;
     }
 
@@ -160,7 +171,7 @@
 
     .sidebar.expanded .logo span,
     .sidebar.expanded .menu-item span,
-    .sidebar.expanded .header,
+    .sidebar.expanded .head-text,
     .sidebar.expanded .menu-name,
     .sidebar.expanded .submenu li {
         display: block; /* 확장된 상태에서 요소들을 보이도록 설정 */

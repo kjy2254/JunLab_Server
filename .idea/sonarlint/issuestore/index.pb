@@ -9,20 +9,12 @@ Q
 bin/www,f\9\f9f3ad31c1666c9d010b84cbbe24e70370a40411
 S
 #public/javascripts/realtimetable.js,9\0\90370a1a87ad8b86e7486b772afc829cfa0f27d8
-=
-public/test.c,6\3\639cd0b1b3ef37b597c718a8a678211b225843fe
 <
 package.json,7\0\7030d0b2f71b999ff89a343de08c414af32fc93a
 ?
 http/hello.http,f\8\f8a586f742a30962ecf7e395b876d1f5fa91fcd4
 F
 views/IITP/console.ejs,9\4\94bb59a826534c2c7fd4b4197f4df5e916af894f
-J
-frontend/public/index.html,5\3\53b461857fde9b76a1c6e79a500050ceffbd7f33
-M
-frontend/public/manifest.json,c\d\cd34dec7520a7acb6883aced77aaaa93699c86ed
-J
-frontend/public/robots.txt,7\1\71da921be3a0f0a448954fe008e28e105a81deb2
 O
 public/javascripts/dashboard.js,3\6\36d2d674d9627f16350fbde063635ab7f6723f38
 P
@@ -59,3 +51,9 @@ E
 frontend/src/logo.svg,6\1\611470f7439a2ba36e003ec738e01fc4d55bb610
 E
 frontend/src/index.js,0\9\09a4e53ab0e5e7637fd01136f19a9bb570e1ef2d
+E
+frontend/package.json,3\7\37083060967a471c011a16651e22bdc2ade41759
+J
+frontend/public/robots.txt,7\1\71da921be3a0f0a448954fe008e28e105a81deb2
+6
+app.js,4\a\4a68969ef8e858229267b842dedf42ab5dde4d50

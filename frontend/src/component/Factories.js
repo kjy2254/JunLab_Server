@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import Sidebar from "./Sidebar";
 import '../css/Factories.css';
-import path from "../image/path.svg";
 import {Link} from "react-router-dom";
 import Header from "./Header";
 import {createFuzzyMatcher} from "../util";
@@ -58,8 +57,8 @@ function Factories() {
                     {factories.filter(v => createFuzzyMatcher(filter).test(v.factory_name.toLowerCase())).map((factory) => (
                         <Link className="factory-card" key={factory.factory_id} to={`/iitp/factoryManagement/factory/${factory.factory_id}`}>
                             <div className="factory-image">
-                                <img src={`http://localhost:880/api/image/factory_${factory.factory_id}.png`}
-                                     alt="Factory"/>
+                                <img src={`http://localhost:880/api/image/factory_${factory.factory_id}`}
+                                     alt="factory"/>
                                 <div className="factory-name">
                                     {factory.factory_name}&nbsp;
                                 </div>

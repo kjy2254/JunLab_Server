@@ -13,76 +13,43 @@ import path from "../image/path.svg"
 import Header from "./Header";
 
 function Dashboard() {
-    const [tvocData, setTvocData] = useState({});
-    const [co2Data, setCo2Data] = useState({});
-    const [temperatureData, setTemperatureData] = useState({});
-    const [pmData, setPmData] = useState({});
     const [workerData, setWorkerData] = useState([]);
     const [factoryName, setFactoryName] = useState();
+    const [filter, setFilter] = useState('');
 
     const { factoryId } = useParams();
 
-    const fetchData = async () => {
-        try {
-            // Promise.all을 사용하여 병렬로 API 요청을 보냅니다.
-            const [sensorsResponse, usersResponse, factoryResponse] = await Promise.all([
-                axios.get(`http://localhost:880/api/factory/${factoryId}/sensors`),
-                axios.get(`http://localhost:880/api/factory/${factoryId}/users`),
-                axios.get(`http://localhost:880/api/factory/${factoryId}`)
-            ]);
-
-            // API 응답에서 데이터를 추출합니다.
-            const sensorsData = sensorsResponse.data;
-            const usersData = usersResponse.data;
-            const factoryData = factoryResponse.data;
-
-            // 각 모듈의 데이터를 추출하여 객체로 관리합니다.
-            const tvocSensorData = {};
-            const co2SensorData = {};
-            const temperatureSensorData = {};
-            const pmSensorData = {};
-
-            for (const moduleId in sensorsData) {
-                if (sensorsData.hasOwnProperty(moduleId)) {
-                    const moduleData = sensorsData[moduleId];
-                    tvocSensorData[moduleId] = moduleData.tvoc;
-                    co2SensorData[moduleId] = moduleData.co2;
-                    temperatureSensorData[moduleId] = moduleData.temperature;
-                    pmSensorData[moduleId] = moduleData.pm1_0;
-                }
-            }
-            // 데이터를 상태에 설정합니다.
-            setTvocData(tvocSensorData);
-            setCo2Data(co2SensorData);
-            setTemperatureData(temperatureSensorData);
-            setPmData(pmSensorData);
-            setWorkerData(usersData);
-            setFactoryName(factoryData.factoryName);
-        } catch (error) {
-            console.error('API 요청 실패:', error);
-        }
-    };
-
     useEffect(() => {
-        fetchData();
-        const intervalId = setInterval(() => {
-            fetchData();
-        }, 10000);
-        // 컴포넌트가 언마운트될 때 clearInterval을 호출하여 인터벌 정리
-        return () => {
-            clearInterval(intervalId);
-        };
+        axios.get(`http://localhost:880/api/factory/${factoryId}`)
+            .then((response) => {
+                setFactoryName(response.data.factoryName);
+            })
+            .catch((error) => {
+                console.error('API 요청 실패:', error);
+            });
+        axios.get(`http://localhost:880/api/factory/${factoryId}/users`)
+            .then((response) => {
+                setWorkerData(response.data);
+            })
+            .catch((error) => {
+                console.error('API 요청 실패:', error);
+            });
     }, []);
 
     return (
         <div className="dashboard-container">
             <Sidebar
                 header={factoryName}
+                factoryId={factoryId}
                 selected={"1"}
             />
             <div className="dashboard-content">
                 <div className="main-section">
-                    <Header placeholder="Type any workers..."/>
+                    <Header
+                        placeholder="Type any workers..."
+                        setData={setFilter}
+                        data={filter}
+                    />
                     <div className="path-section">
                         <div className="path">
                             <img src={path}/>
@@ -109,32 +76,40 @@ function Dashboard() {
                             chartName="휘발성유기화합물"
                             chartSubname="TVOC"
                             chartUnit="ppb"
-                            data={tvocData[1]}
+                            data="tvoc"
                             chartColor="#FFC246"
+                            factoryId={factoryId}
+                            moduleId="1"
                         />
                         <Chart
                             chartIcon={co2}
                             chartName="이산화탄소"
                             chartSubname="CO2"
                             chartUnit="ppb"
-                            data={co2Data[1]}
+                            data="co2"
                             chartColor="#5470DE"
+                            factoryId={factoryId}
+                            moduleId="1"
                         />
                         <Chart
                             chartIcon={temperature}
                             chartName="온도"
                             chartSubname="Temperature"
                             chartUnit="°C"
-                            data={temperatureData[1]}
+                            data="temperature"
                             chartColor="#07BEAA"
+                            factoryId={factoryId}
+                            moduleId="1"
                         />
                         <Chart
                             chartIcon={finedust}
                             chartName="미세먼지"
                             chartSubname="Fine Dust"
                             chartUnit="㎍/㎥"
-                            data={pmData[1]}
+                            data="pm10"
                             chartColor="#1786C4"
+                            factoryId={factoryId}
+                            moduleId="1"
                         />
                     </div>
                     <div className="summary-header">
