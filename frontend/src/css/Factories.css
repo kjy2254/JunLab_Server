@@ -30,14 +30,6 @@
     justify-content: flex-start;
 }
 
-.dashboard-header {
-    background-color: #FFF;
-    color: white;
-    text-align: center;
-    min-height: 70px;
-    box-shadow: 0 1px 15px rgba(0, 0, 0, 0.1);
-}
-
 /* 스크롤바 커스텀 스타일 */
 .factory-card-area::-webkit-scrollbar {
     width: 12px; /* 스크롤바의 너비 */

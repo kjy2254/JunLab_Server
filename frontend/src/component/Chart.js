@@ -1,6 +1,7 @@
 import React, {Fragment} from 'react';
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import noData from "highcharts/modules/no-data-to-display";
 import '../css/Chart.css';
 import {calculateGradientColors} from "../util";
 
@@ -10,6 +11,7 @@ function Chart(props) {
     const dataArray = data || [];
     let chartValue;
     let chartDiff = 0;
+    noData(Highcharts);
 
     if (dataArray.length > 0) {
         chartValue = dataArray[dataArray.length - 1].y;
@@ -74,7 +76,21 @@ function Chart(props) {
                 },
             }
         },
+        lang: {
+          noData: "No data available"
+        },
         series: [{ name: chartSubname, data: data }]
+    }
+
+    if (dataArray.length === 0) {
+        options.lang.noData = "No data available"; // 데이터가 없을 때 메시지 설정
+        options.noData = {
+            style: {
+                fontWeight: '300',
+                fontSize: '15px',
+                color: '#333333'
+            }
+        };
     }
 
     return (
@@ -83,7 +99,6 @@ function Chart(props) {
                 <div className="flex">
                     <div className="chart-icon">
                         <img src={chartIcon}/>
-                        {/*{chartIcon}*/}
                     </div>
                     <div className="chart-name-area">
                         <div className="chart-name">
@@ -106,7 +121,6 @@ function Chart(props) {
                     <div className="chart-diff" style={{ color: chartDiff < 0 ? '#0653b0' : '' }}>
                         {chartDiff >= 0 ? `+${chartDiff.toFixed(2)}%` : `${chartDiff.toFixed(2)}%`}
                     </div>
-
                 </div>
             </div>
             <div className="chart">

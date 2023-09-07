@@ -10,6 +10,7 @@ import temperature from "../image/temperature.svg"
 import co2 from "../image/co2.svg"
 import tvoc from "../image/tvoc.svg"
 import path from "../image/path.svg"
+import Header from "./Header";
 
 function Dashboard() {
     const [tvocData, setTvocData] = useState({});
@@ -62,10 +63,6 @@ function Dashboard() {
         }
     };
 
-    // setInterval(() => {
-    //     fetchData();
-    // }, 10000);
-
     useEffect(() => {
         fetchData();
         const intervalId = setInterval(() => {
@@ -85,9 +82,7 @@ function Dashboard() {
             />
             <div className="dashboard-content">
                 <div className="main-section">
-                    <header className="dashboard-header">
-                        {/*<h1>대시보드</h1>*/}
-                    </header>
+                    <Header placeholder="Type any workers..."/>
                     <div className="path-section">
                         <div className="path">
                             <img src={path}/>

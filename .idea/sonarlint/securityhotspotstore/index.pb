@@ -51,8 +51,6 @@ E
 frontend/src/logo.svg,6\1\611470f7439a2ba36e003ec738e01fc4d55bb610
 J
 frontend/src/setupTests.js,7\3\73d6ccd1abf2bb05a47e15c443fb0e32314ec163
-D
-frontend/src/util.js,3\1\31e2d93c591a5bee2fb88b737a4fb43a07035bcc
 E
 frontend/src/index.js,0\9\09a4e53ab0e5e7637fd01136f19a9bb570e1ef2d
 F

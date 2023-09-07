@@ -59,7 +59,7 @@ function Sidebar(props) {
                 </span>
             </Link>
             <hr className="separator" />
-            <div className="header">{props.header}</div>
+            <div className="head-text">{props.header}</div>
             <div className="menu">
                 <div className={`menu-item ${props.selected === "1" ? "selected" : ""}`}>
                     <div className="menu-icon">

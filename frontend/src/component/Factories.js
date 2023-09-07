@@ -4,9 +4,12 @@ import Sidebar from "./Sidebar";
 import '../css/Factories.css';
 import path from "../image/path.svg";
 import {Link} from "react-router-dom";
+import Header from "./Header";
+import {createFuzzyMatcher} from "../util";
 
 function Factories() {
     const [factories, setFactories] = useState([]);
+    const [filter, setFilter] = useState('');
 
     useEffect(() => {
         // API 요청을 보내고 데이터를 가져옵니다.
@@ -30,9 +33,11 @@ function Factories() {
                 selected="1"
             />
             <div className="factory-content">
-                <header className="dashboard-header">
-                    {/*<h1>대시보드</h1>*/}
-                </header>
+                <Header
+                    placeholder="Type any factories..."
+                    setData={setFilter}
+                    data={filter}
+                />
                 <div className="path-section">
                     <div className="path-selected">
                         <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
@@ -50,7 +55,7 @@ function Factories() {
                     </div>
                 </div>
                 <div className="factory-card-area">
-                    {factories.map((factory) => (
+                    {factories.filter(v => createFuzzyMatcher(filter).test(v.factory_name.toLowerCase())).map((factory) => (
                         <Link className="factory-card" key={factory.factory_id} to={`/iitp/factoryManagement/factory/${factory.factory_id}`}>
                             <div className="factory-image">
                                 <img src={`http://localhost:880/api/image/factory_${factory.factory_id}.png`}
