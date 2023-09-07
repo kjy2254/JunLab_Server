@@ -5,9 +5,29 @@ import '../css/Chart.css';
 import {calculateGradientColors} from "../util";
 
 function Chart(props) {
-    const { chartIcon, chartName, chartSubname, chartValue, chartUnit, chartDiff, data, chartColor } = props;
+    const { chartIcon, chartName, chartSubname,  chartUnit,  data, chartColor } = props;
+
+    const dataArray = data || [];
+    let chartValue;
+    let chartDiff = 0;
+
+    if (dataArray.length > 0) {
+        chartValue = dataArray[dataArray.length - 1].y;
+    }
+
+    if (dataArray.length > 1) {
+        const lastValue = dataArray[dataArray.length - 1].y;
+        const prevValue = dataArray[dataArray.length - 2].y;
+
+        if (prevValue !== 0) {
+            chartDiff = ((lastValue - prevValue) / prevValue) * 100;
+        }
+    }
 
     const options = {
+        accessibility: {
+            enabled: false
+        },
         chart: {
             type: 'area',
             width: null,
@@ -37,6 +57,7 @@ function Chart(props) {
         plotOptions: {
             series: {
                 stacking: 'normal',
+                color: chartColor,
                 smooth: true,
                 dataLabels: {
                     enabled: false,
@@ -44,7 +65,7 @@ function Chart(props) {
                 }
             },
             area: {
-                color: {
+                fillColor: {
                     linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 }, // 위에서 아래로 그라데이션
                     stops: calculateGradientColors(chartColor)
                 },
@@ -53,7 +74,7 @@ function Chart(props) {
                 },
             }
         },
-        series: [{ name: "data", data: data }]
+        series: [{ name: chartSubname, data: data }]
     }
 
     return (
@@ -61,7 +82,8 @@ function Chart(props) {
             <div className="chart-info">
                 <div className="flex">
                     <div className="chart-icon">
-                        {chartIcon}
+                        <img src={chartIcon}/>
+                        {/*{chartIcon}*/}
                     </div>
                     <div className="chart-name-area">
                         <div className="chart-name">
@@ -81,9 +103,10 @@ function Chart(props) {
                             {chartUnit}
                         </div>
                     </div>
-                    <div className="chart-diff">
-                        {chartDiff}%
+                    <div className="chart-diff" style={{ color: chartDiff < 0 ? '#0653b0' : '' }}>
+                        {chartDiff >= 0 ? `+${chartDiff.toFixed(2)}%` : `${chartDiff.toFixed(2)}%`}
                     </div>
+
                 </div>
             </div>
             <div className="chart">

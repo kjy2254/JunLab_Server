@@ -16,6 +16,7 @@
     text-align: center;
     align-items: center;
     justify-content: center;
+    text-decoration: none;
 }
 
 .logo span {
@@ -29,7 +30,7 @@
     margin-left: 0.8rem;
 }
 
-.factory-name {
+.header {
     text-align: left;
     margin-bottom: 1.2rem;
     margin-left: 1.2rem;
@@ -97,6 +98,11 @@
     border-width: 1px;
 }
 
+.selected {
+    background-color: #303750;
+    font-weight: bold;
+}
+
 @media (max-width: 1500px) {
     .sidebar {
         width: 4rem; /* 미니멀한 너비로 변경 */
@@ -140,7 +146,7 @@
         display: none;
     }
 
-    .factory-name {
+    .header {
         display: none;
     }
 
@@ -154,7 +160,7 @@
 
     .sidebar.expanded .logo span,
     .sidebar.expanded .menu-item span,
-    .sidebar.expanded .factory-name,
+    .sidebar.expanded .header,
     .sidebar.expanded .menu-name,
     .sidebar.expanded .submenu li {
         display: block; /* 확장된 상태에서 요소들을 보이도록 설정 */

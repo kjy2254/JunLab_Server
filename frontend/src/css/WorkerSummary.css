@@ -56,7 +56,9 @@
 .bpm, .temperature, .spo2, .status-area{
     display: flex;
     align-items: center;
+    justify-content: start;
     padding: 1rem;
+    width: 100px;
 }
 
 .status-area {
