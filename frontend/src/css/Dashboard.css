@@ -1,0 +1,85 @@
+
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #F3F6FE;
+}
+
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+    width: 100%; /* 대시보드가 전체 가로를 채우도록 설정 */
+    margin-left: 0; /* 사이드바가 사라질 때 공간을 대시보드가 채우도록 */
+}
+
+.dashboard-main-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 2rem;
+}
+
+.dashboard-widget {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    text-align: center;
+    width: 200px;
+    margin: 10px;
+}
+
+.dashboard-footer {
+    background-color: #333;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+.path-section {
+    /*height: 10%;*/
+    text-align: left;
+    padding-left: 50px;
+    padding-top: 50px;
+    display: flex;
+    font-size: 15px;
+    background-color: #F3F6FE;
+}
+
+.path {
+    margin-right: 20px;
+}
+
+.path-selected {
+    font-weight: bold;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(122deg, #0043FF 0%, #8037f1 100%);
+}
+
+.main-section {
+    display: flex;
+    flex-direction: column;
+    /*height: 100vh;*/
+    /*background-color: #ffffff;*/
+}
+
+.summary-card-area {
+    margin-top: 1rem;
+    margin-left: 2.3rem;
+    margin-right: 2.3rem;
+    margin-bottom: 3rem;
+    min-height: 42rem;
+    background: white;
+    box-shadow: 0 1px 15px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+}
+

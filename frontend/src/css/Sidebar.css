@@ -1,0 +1,187 @@
+.sidebar{
+    width: 15rem;
+    background-color: #1F263E;
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.logo {
+    display: flex;
+    margin: 1rem 0;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.logo span {
+    color: #FFF;
+    font-size: 1.2rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-left: 0.8rem;
+}
+
+.head-text {
+    text-align: left;
+    margin-bottom: 1.2rem;
+    margin-left: 1.2rem;
+    font-weight: bold;
+    font-size: 1.3rem;
+    height: 2rem;
+}
+
+.menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0.9rem 1.5rem;
+    cursor: pointer;
+    transition: width 0.3s;
+}
+
+.menu-item svg {
+    margin-right: 0.5rem;
+}
+
+.menu-item span {
+    font-size: 1rem;
+    margin-left: 6rem;
+}
+
+.menu-item:hover {
+    background-color: #303750; /* 호버 시 배경 색상 변경 */
+}
+
+.menu-icon {
+    display: flex;
+    align-items: center; /* 아이콘 수직 가운데 정렬 */
+    width: 2rem;
+    height: 2rem;
+}
+
+.submenu {
+    list-style: none;
+    padding: 0.5rem;
+    margin-left: 3rem;
+    text-align: left;
+    margin-top: 0;
+}
+
+.submenu-item {
+    text-decoration: none;
+    color: white;
+}
+
+.submenu-item-selected {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+.submenu li {
+    padding: 0.5rem 0;
+    cursor: pointer;
+    border-bottom: none;
+}
+
+.submenu li:hover {
+    font-weight: bold;
+}
+
+.separator {
+    width: 80%;
+    margin-bottom: 1.8rem;
+    border-width: 1px;
+}
+
+.selected {
+    background-color: #303750;
+    font-weight: bold;
+}
+
+@media (max-width: 1500px) {
+    .sidebar {
+        width: 4rem; /* 미니멀한 너비로 변경 */
+        /* 기타 스타일 수정 */
+    }
+
+    .logo {
+        margin: 1rem 0; /* 로고의 마진을 줄임 */
+    }
+
+    .logo span {
+        display: none; /* 로고 텍스트 감춤 */
+    }
+
+    .menu-item {
+        padding: 1rem 1.2rem;
+        cursor: pointer;
+        display: flex; /* 메뉴 아이템 내부 요소를 가로 정렬 */
+        align-items: center; /* 세로 중앙 정렬 */
+    }
+
+    .menu-item span {
+        display: none; /* 메뉴 아이템 텍스트 감춤 */
+    }
+
+    .menu-item svg {
+        margin-right: 9px; /* 아이콘과 텍스트 간격을 조정 */
+    }
+
+    .submenu {
+        padding: 10px;
+        margin-left: 40px;
+        text-align: left;
+        margin-top: 0;
+    }
+
+    .submenu li {
+        padding: 10px 0;
+        cursor: pointer;
+        border-bottom: none;
+        display: none;
+    }
+
+    .head-text {
+        display: none;
+    }
+
+    .menu-name {
+        display: none;
+    }
+
+    .sidebar.expanded {
+        width: 15rem; /* 확장된 상태에서의 너비 */
+    }
+
+    .sidebar.expanded .logo span,
+    .sidebar.expanded .menu-item span,
+    .sidebar.expanded .head-text,
+    .sidebar.expanded .menu-name,
+    .sidebar.expanded .submenu li {
+        display: block; /* 확장된 상태에서 요소들을 보이도록 설정 */
+    }
+
+    .sidebar.expanded .menu-item svg {
+        margin-right: 0.5rem; /* 아이콘과 텍스트 간격을 복원 */
+    }
+
+    .sidebar.expanded .submenu {
+        margin-left: 3rem; /* 하위 메뉴의 왼쪽 여백 복원 */
+    }
+}

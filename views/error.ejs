@@ -1,0 +1,16 @@
+<!-- views/error.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error</title>
+</head>
+<body>
+<h1>Error</h1>
+<p><%= message %></p>
+<% if (error.status === 404) { %>
+    <p>Sorry, the page you requested cannot be found.</p>
+<% } else { %>
+    <p>Sorry, there was an error on the server.</p>
+<% } %>
+</body>
+</html>

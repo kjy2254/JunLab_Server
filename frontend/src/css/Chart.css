@@ -1,0 +1,80 @@
+@media (max-width: 1500px) {
+    .chart-section {
+        flex-direction: row; /* 가로 배치로 변경 */
+        flex-wrap: wrap; /* 차트 영역이 2열로 줄바꿈하도록 설정 */
+        justify-content: space-between; /* 차트 사이 간격을 조정 */
+    }
+
+    .chart-area {
+        min-width: calc(50% - 40px); /* 화면이 작아졌을 때 2열 배치를 위해 너비 조정 */
+    }
+}
+
+@media (max-width: 800px) {
+    .chart-section {
+        flex-direction: column; /* 가로 배치로 변경 */
+    }
+}
+
+.chart-section {
+    display: flex;
+    background-color: #F3F6FE;
+    padding: 1rem;
+}
+
+.chart-area {
+    min-height: 180px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    flex: 1;
+    margin: 20px;
+    box-shadow: 0 1px 15px rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+    color: #000A12;
+}
+
+.chart-info {
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem;
+}
+
+.chart-name-area {
+    margin-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.chart-name {
+    font-weight: bold;
+}
+
+.chart-subname {
+    color: gray;
+}
+
+.chart-value-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.chart-value {
+    display: flex;
+}
+
+.chart-value-num {
+    font-weight: 550;
+    margin-right: 0.3rem;
+}
+
+.chart-diff {
+    color: #EE2E6B;
+}
+
+.chart {
+    /*background-color: #61dafb;*/
+    width: 90%;
+    padding: 1rem;
+}

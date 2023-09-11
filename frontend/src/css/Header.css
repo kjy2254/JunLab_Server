@@ -1,0 +1,44 @@
+.header {
+    background-color: #FFF;
+    color: white;
+    text-align: center;
+    min-height: 70px;
+    box-shadow: 0 1px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+}
+
+.input-area {
+    display: flex;
+    /*background: #a84141;*/
+    position: relative;
+    height: 2.5rem;
+}
+
+.input-area svg {
+    position: absolute;
+    top: 50%; /* 아이콘을 수직 정렬 */
+    left: 4rem; /* 아이콘을 왼쪽에 배치 */
+    transform: translateY(-50%); /* 아이콘을 수직으로 가운데 정렬 */
+    color: #888;
+}
+
+
+input[type="text"] {
+    width: 20rem;
+    padding: 10px;
+    margin-left: 3rem;
+    border: none;
+    border-radius: 20px;
+    box-sizing: border-box;
+    background: #F8F9FB;
+    font-size: 14px;
+    color: gray;
+    text-indent: 2.5rem;
+}
+
+/* 포커스 시 스타일 */
+input[type="text"]:focus {
+    box-shadow: 0 0 5px #50B8E4;
+    outline: none;
+}

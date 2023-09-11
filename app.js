@@ -6,6 +6,8 @@ var logger = require('morgan');
 const ejs = require("ejs");
 var indexRouter = require('./routes/index');
 var iitpRouter = require('./routes/iitp');
+var apiRouter = require('./routes/api');
+var factoryManagementRouter = require('./routes/factoryManagement');
 const cors = require('cors');
 const bodyParser = require("body-parser");
 const fs = require('fs');
@@ -20,6 +22,9 @@ function skipLogging(req) {
     // 특정 URL을 제외하고 싶은 조건을 설정
     return req.url.includes('load-more') || req.url.includes('.js') || req.url.includes('.css') || req.url.includes('favicon');
 }
+app.use('/', indexRouter);
+
+app.use(express.static(path.join(__dirname, 'frontend/build')));
 
 app.use(logger("[:remote-addr] :method :url", { skip: skipLogging }), (req, res, next) =>{
     next();
@@ -36,8 +41,11 @@ app.use(cors({
 }));
 
 app.use('/static', express.static('static'));
-app.use('/', indexRouter);
 app.use('/iitp', iitpRouter);
+app.use('/api', apiRouter);
+app.use('/iitp/factoryManagement', factoryManagementRouter);
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 const { swaggerUi, specs } = require("./swagger/swagger")
 // const socketServer = require("./socket");
@@ -59,5 +67,7 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+
 
 module.exports = app;
