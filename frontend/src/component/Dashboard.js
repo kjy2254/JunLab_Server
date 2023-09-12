@@ -79,7 +79,6 @@ function Dashboard() {
                             data="tvoc"
                             chartColor="#FFC246"
                             factoryId={factoryId}
-                            moduleId="1"
                         />
                         <Chart
                             chartIcon={co2}
@@ -89,7 +88,6 @@ function Dashboard() {
                             data="co2"
                             chartColor="#5470DE"
                             factoryId={factoryId}
-                            moduleId="1"
                         />
                         <Chart
                             chartIcon={temperature}
@@ -99,7 +97,6 @@ function Dashboard() {
                             data="temperature"
                             chartColor="#07BEAA"
                             factoryId={factoryId}
-                            moduleId="1"
                         />
                         <Chart
                             chartIcon={finedust}
@@ -109,7 +106,6 @@ function Dashboard() {
                             data="pm10"
                             chartColor="#1786C4"
                             factoryId={factoryId}
-                            moduleId="1"
                         />
                     </div>
                     <div className="summary-header">

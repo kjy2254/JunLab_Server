@@ -179,10 +179,11 @@ function Details() {
                     format: "<b>{point.y}</b>",
                 }
             },
-            area: {
+            line: {
                 marker: {
-                    enabled: true // 점 비활성화
+                    enabled: false // 점 비활성화
                 },
+                smooth: true,
             },
         },
         lang: {

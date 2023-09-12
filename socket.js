@@ -1,5 +1,6 @@
 var net = require('net');
 const connection = require("./database/mysql");
+const connection2 = require('./database/apiConnection');
 var ws = require('ws');
 
 var socketServer = net.createServer();
@@ -151,6 +152,7 @@ socketServer.on('connection', (socket) => {
         // 센서 데이터일 경우
         if (sensorData.length === 21) {
             save(rawData);
+            save2(rawData);
             count++;
         }
     })
@@ -212,6 +214,49 @@ function save(rawData) {
 
         connection.query("INSERT INTO SENSOR_DATA SET ?", data, (er) => {
             return !(er);
+        });
+    }
+    return true;
+}
+
+function save2(rawData) {
+    let values = rawData.toString().replaceAll(' ', '').split(',');
+
+    if (values.length !== 21) {
+        return false;
+    } else {
+        if (isNaN(parseInt(values[0]))) {
+            return false;
+        }
+
+        connection2.query("SELECT factory_id FROM sensor_modules WHERE module_id = ?", parseInt(values[0]), (error, result) => {
+            if (error) {
+                console.log(error);
+            }
+
+            if(result.length === 0) {
+                console.log("not registered module");
+                return false;
+            }
+            console.log("factoryID:", result[0].factory_id);
+
+            const insert_query = `INSERT INTO sensor_data (factory_id,
+                                          tvoc,
+                                          co2,
+                                          temperature,
+                                          pm1_0,
+                                          pm2_5,
+                                          pm10,
+                                          timestamp,
+                                          sensor_module_id) VALUES (?,?,?,?,?,?,?,?,?)`;
+
+            const insert_value = [result[0].factory_id, values[12], values[13], values[20], values[14], values[15], values[16], new Date(Date.now()), parseInt(values[0])];
+
+            connection2.query(insert_query, insert_value, (error, result) => {
+                if (error) {
+                    console.log(error);
+                }
+            });
         });
     }
     return true;
