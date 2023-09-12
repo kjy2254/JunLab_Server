@@ -17,7 +17,7 @@ function Chart(props) {
 
     const fetchData = async () => {
         try {
-            axios.get(`http://localhost:880/api/factory/${factoryId}/${endPoint}`) //today로 수정 필요
+            axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}`) //today로 수정 필요
                 .then((response) => {
                     // API 응답에서 데이터를 추출합니다.
                     const dataResponse = response.data;

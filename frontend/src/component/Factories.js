@@ -12,7 +12,7 @@ function Factories() {
 
     useEffect(() => {
         // API 요청을 보내고 데이터를 가져옵니다.
-        axios.get('http://localhost:880/api/factories')
+        axios.get('http://junlab.postech.ac.kr:880/api/factories')
             .then((response) => {
                 // API 응답에서 데이터를 추출합니다.
                 const data = response.data;
@@ -57,7 +57,7 @@ function Factories() {
                     {factories.filter(v => createFuzzyMatcher(filter).test(v.factory_name.toLowerCase())).map((factory) => (
                         <Link className="factory-card" key={factory.factory_id} to={`/iitp/factoryManagement/factory/${factory.factory_id}`}>
                             <div className="factory-image">
-                                <img src={`http://localhost:880/api/image/factory_${factory.factory_id}`}
+                                <img src={`http://junlab.postech.ac.kr:880/api/image/factory_${factory.factory_id}`}
                                      alt="factory"/>
                                 <div className="factory-name">
                                     {factory.factory_name}&nbsp;

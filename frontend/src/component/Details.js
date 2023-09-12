@@ -60,7 +60,7 @@ function Details() {
 
     useEffect(() => {
         // API 요청을 보내고 데이터를 가져옵니다.
-        axios.get(`http://localhost:880/api/factory/${factoryId}`)
+        axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}`)
             .then((response) => {
                 setFactoryName(response.data.factoryName);
             })
@@ -70,7 +70,7 @@ function Details() {
     }, []);
 
     const fetchData = async () => {
-        axios.get(`http://localhost:880/api/factory/${factoryId}/${endPoint}?date=${date ? date : ''}`)
+        axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}?date=${date ? date : ''}`)
             .then((response) => {
                 const dataResponse = response.data;
 

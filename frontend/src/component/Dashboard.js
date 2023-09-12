@@ -20,14 +20,14 @@ function Dashboard() {
     const { factoryId } = useParams();
 
     useEffect(() => {
-        axios.get(`http://localhost:880/api/factory/${factoryId}`)
+        axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}`)
             .then((response) => {
                 setFactoryName(response.data.factoryName);
             })
             .catch((error) => {
                 console.error('API 요청 실패:', error);
             });
-        axios.get(`http://localhost:880/api/factory/${factoryId}/users`)
+        axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/users`)
             .then((response) => {
                 setWorkerData(response.data);
             })

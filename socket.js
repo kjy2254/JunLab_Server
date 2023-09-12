@@ -11,6 +11,7 @@ var commandSocket = [];
 var last_command = {};
 
 var sensorTime = '7000';
+const wsIntervalMap = new Map(); // WebSocket 인터벌 맵
 
 const sleep = second => new Promise(resolve => setTimeout(resolve, second));
 
@@ -229,23 +230,32 @@ wsServer.on('connection', (ws, req) => { // 웹소켓 연결 시
     ws.on('close', () => { // 연결 종료 시
         console.log('클라이언트 접속 해제', ip);
         clearInterval(ws.interval);
+        wsIntervalMap.delete(ws); // 맵에서 제거
     });
 
-    let query = "SELECT ID," +
-        " BATT," +
-        " AQI," +
-        " TVOC," +
-        " EC2," +
-        " PM10," +
-        " PM25," +
-        " PM100," +
-        " IRUN," +
-        " TEMP," +
-        " DATE_FORMAT(created_at, \'%Y/%m/%d %H:%i:%s\') AS CREATED_AT " +
-        "FROM (SELECT * , ROW_NUMBER() OVER (PARTITION BY ID ORDER BY CREATED_AT DESC) AS RankNo FROM SENSOR_DATA) T " +
-        "WHERE RankNo <= 1"
+    let query = `SELECT
+    sd.ID,
+        sd.BATT,
+        sd.AQI,
+        sd.TVOC,
+        sd.EC2,
+        sd.PM10,
+        sd.PM25,
+        sd.PM100,
+        sd.IRUN,
+        sd.TEMP,
+        DATE_FORMAT(sd.created_at, '%Y/%m/%d %H:%i:%s') AS CREATED_AT
+    FROM SENSOR_DATA sd
+    INNER JOIN (
+        SELECT
+    ID,
+        MAX(created_at) AS max_created_at
+    FROM SENSOR_DATA
+    GROUP BY ID
+) max_data
+    ON sd.ID = max_data.ID AND sd.created_at = max_data.max_created_at;`
 
-    ws.interval = setInterval(() => { // 3초마다 클라이언트로 메시지 전송
+    const wsInterval = setInterval(() => {
         if (ws.readyState === ws.OPEN) {
             connection.query(query, (error, result) => {
                 if (error) {
@@ -255,4 +265,6 @@ wsServer.on('connection', (ws, req) => { // 웹소켓 연결 시
             });
         }
     }, 1000);
+
+    wsIntervalMap.set(ws, wsInterval); // WebSocket과 해당 인터벌을 맵에 추가
 });
