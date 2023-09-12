@@ -23,10 +23,10 @@ function Chart(props) {
                     const dataResponse = response.data;
 
                     // API 응답에서 원하는 데이터를 추출합니다. 예시에서는 1번 모듈의 데이터를 사용합니다.
-                    const dataArray = dataResponse[moduleId] && dataResponse[moduleId][data] ? dataResponse[moduleId][data] : [];
+                    const dataArray = Object.values(dataResponse)[0] && Object.values(dataResponse)[0][data] ? Object.values(dataResponse)[0][data] : [];
 
                     // 데이터를 상태에 설정합니다.
-                    setSensorData(dataArray);
+                    setSensorData(dataArray.reverse());
                 })
                 .catch((error) => {
                     console.error('API 요청 실패:', error);
