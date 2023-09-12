@@ -60,3 +60,27 @@ input[type="date"]:focus {
     box-shadow: 0 0 5px #50B8E4;
     outline: none;
 }
+
+.none {
+    display: none;
+}
+
+.button {
+    border: none;
+    border-radius: 20px;
+    margin-right: 0.5rem;
+    padding: 0.3rem 0.7rem 0.3rem 0.7rem;
+    cursor: pointer;
+    background: rgba(187, 187, 187, 0.65);
+    color: white;
+}
+
+.button:hover {
+    background: rgba(23, 133, 194, 0.73);
+}
+
+.button-selected {
+    background: #1785c2;
+    color: white;
+
+}

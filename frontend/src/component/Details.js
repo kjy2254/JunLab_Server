@@ -27,6 +27,8 @@ function Details() {
 
     const [filter, setFilter] = useState('');
 
+    const [selected, setSelected] = useState('pm1.0');
+
     const map = {
         "TVOC": {
             "chartIcon": tvoc,
@@ -74,14 +76,46 @@ function Details() {
 
                 // API 응답에서 원하는 데이터를 추출합니다.
                 const formattedData = Object.keys(dataResponse).map(moduleId => {
-                    const moduleData = dataResponse[moduleId][endPoint].map(item => ({
-                        x: new Date(item.name),
-                        y: item.y
-                    }));
-                    return {
-                        name: `Module ${moduleId}`,
-                        data: moduleData
-                    };
+                    if (endPoint !== 'finedust') {
+                        const moduleData = dataResponse[moduleId][endPoint].map(item => ({
+                            x: new Date(item.name),
+                            y: item.y
+                        }));
+                        return {
+                            name: `Module_${moduleId} (${data})`,
+                            data: moduleData
+                        };
+                    } else {
+                        const pm1_0data = dataResponse[moduleId]['pm1_0'].map(item => ({
+                            x: new Date(item.name),
+                            y: item.y
+                        }));
+                        const pm2_5data = dataResponse[moduleId]['pm2_5'].map(item => ({
+                            x: new Date(item.name),
+                            y: item.y
+                        }));
+                        const pm10data = dataResponse[moduleId]['pm10'].map(item => ({
+                            x: new Date(item.name),
+                            y: item.y
+                        }));
+
+                        if (selected === 'pm1.0') {
+                            return {
+                                name: `Module_${moduleId} (pm1.0)`,
+                                data: pm1_0data,
+                            };
+                        } else if (selected === 'pm2.5') {
+                            return {
+                                name: `Module_${moduleId} (pm2.5)`,
+                                data: pm2_5data,
+                            };
+                        } else {
+                            return {
+                                name: `Module_${moduleId} (pm10)`,
+                                data: pm10data,
+                            };
+                        }
+                    }
                 });
                 // 데이터를 상태에 설정합니다.
                 setFormattedData(formattedData);
@@ -100,7 +134,7 @@ function Details() {
         return () => {
             clearInterval(interval);
         };
-    }, [date, data]);
+    }, [date, data, selected]);
 
 
     const options = {
@@ -233,11 +267,28 @@ function Details() {
                                 </div>
                             </div>
                         </div>
-                        <div>
+                        <div className="flex">
+                            <div className={(endPoint === "finedust" ? "" : "none")} >
+                                <button
+                                    className={"button " + (selected === 'pm1.0' ? 'button-selected' : '')}
+                                    onClick={() => setSelected('pm1.0')}
+                                >pm1.0
+                                </button>
+                                <button
+                                    className={"button " + (selected === 'pm2.5' ? 'button-selected' : '')}
+                                    onClick={() => setSelected('pm2.5')}
+                                >pm2.5
+                                </button>
+                                <button
+                                    className={"button " + (selected === 'pm10' ? 'button-selected' : '')}
+                                    onClick={() => setSelected('pm10')}
+                                >pm10
+                                </button>
+                            </div>
                             <input
                                 type="date"
                                 onChange={updateDate}
-                                value={date}
+                                value={date || ""}
                             />
                         </div>
                     </div>
