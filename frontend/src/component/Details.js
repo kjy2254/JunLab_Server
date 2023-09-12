@@ -35,24 +35,32 @@ function Details() {
             "chartName": "휘발성유기화합물",
             "chartSubname": "TVOC",
             "chartUnit": "ppb",
+            "min": 0,
+            "max": 2000
         },
         "Temperature": {
             "chartIcon": temperature,
             "chartName": "온도",
             "chartSubname": "Temperature",
             "chartUnit": "°C",
+            "min": -10,
+            "max": 70
         },
         "CO2": {
             "chartIcon": co2,
             "chartName": "이산화탄소",
             "chartSubname": "CO2",
             "chartUnit": "ppb",
+            "min": 400,
+            "max": 4000
         },
         "FineDust": {
             "chartIcon": finedust,
             "chartName": "미세먼지",
             "chartSubname": "Fine dust",
             "chartUnit": "㎍/㎥",
+            "min": 0,
+            "max": 500
         },
     };
 
@@ -162,6 +170,8 @@ function Details() {
             },
         },
         yAxis: {
+            min: map[data].min,
+            max: map[data].max,
             labels: {
                 enabled: false // y축 레이블을 비활성화합니다.
             },
