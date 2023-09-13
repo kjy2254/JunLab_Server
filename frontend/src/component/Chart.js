@@ -47,7 +47,7 @@ function Chart(props) {
         return () => {
             clearInterval(interval);
         };
-    });
+    }, []);
 
     let chartValue;
     let chartDiff = 0;
