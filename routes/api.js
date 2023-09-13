@@ -129,7 +129,9 @@ api.get('/image/:imageName', (req, res) => {
 api.get('/factory/:factoryId/tvoc', (req, res) => {
     const factoryId = parseInt(req.params.factoryId);
     const queryDate = req.query.date || getCurrentDate();
-    const count = req.query.count || 30;
+    const count = req.query.count || 'all';
+    // count가 'all'이 아닌 경우에는 최대 개수를 적용
+    const limit = count === 'all' ? '' : 'LIMIT ' + parseInt(count);
 
     // TVOC 데이터를 가져오는 쿼리를 작성합니다.
     const query = `
@@ -151,8 +153,10 @@ api.get('/factory/:factoryId/tvoc', (req, res) => {
         ) AS sd
     `;
 
+
+
     // 쿼리 실행
-    connection.query(query, [factoryId, queryDate], (error, result) => {
+    connection.query(query + limit, [factoryId, queryDate], (error, result) => {
         if (error) {
             console.log(error);
             return res.status(500).send('Internal Server Error!');
@@ -168,7 +172,7 @@ api.get('/factory/:factoryId/tvoc', (req, res) => {
                 };
             }
             // 모듈 별로 최신 데이터 30개만 선택
-            if (formattedData[moduleId].tvoc.length < count) {
+            if (formattedData[moduleId].tvoc.length < count || count === 'all') {
                 formattedData[moduleId].tvoc.push({
                     name: row.timestamp_value,
                     y: parseFloat(row.tvoc_value),  // 문자열을 숫자로 변환
@@ -184,7 +188,9 @@ api.get('/factory/:factoryId/tvoc', (req, res) => {
 api.get('/factory/:factoryId/co2', (req, res) => {
     const factoryId = parseInt(req.params.factoryId);
     const queryDate = req.query.date || getCurrentDate();
-    const count = req.query.count || 30;
+    const count = req.query.count || 'all';
+    // count가 'all'이 아닌 경우에는 최대 개수를 적용
+    const limit = count === 'all' ? '' : 'LIMIT ' + parseInt(count);
 
     // TVOC 데이터를 가져오는 쿼리를 작성합니다.
     const query = `
@@ -223,7 +229,7 @@ api.get('/factory/:factoryId/co2', (req, res) => {
                 };
             }
             // 모듈 별로 최신 데이터 30개만 선택
-            if (formattedData[moduleId].co2.length < count) {
+            if (formattedData[moduleId].co2.length < count || count === 'all') {
                 formattedData[moduleId].co2.push({
                     name: row.timestamp_value,
                     y: parseFloat(row.co2_value),  // 문자열을 숫자로 변환
@@ -239,7 +245,9 @@ api.get('/factory/:factoryId/co2', (req, res) => {
 api.get('/factory/:factoryId/temperature', (req, res) => {
     const factoryId = parseInt(req.params.factoryId);
     let queryDate = req.query.date || getCurrentDate();
-    const count = req.query.count || 30;
+    const count = req.query.count || 'all';
+    // count가 'all'이 아닌 경우에는 최대 개수를 적용
+    const limit = count === 'all' ? '' : 'LIMIT ' + parseInt(count);
 
     if (queryDate === 'undefined') {
         queryDate = getCurrentDate();
@@ -283,7 +291,7 @@ api.get('/factory/:factoryId/temperature', (req, res) => {
                 };
             }
             // 모듈 별로 최신 데이터 30개만 선택
-            if (formattedData[moduleId].temperature.length < count) {
+            if (formattedData[moduleId].temperature.length < count || count === 'all') {
                 formattedData[moduleId].temperature.push({
                     name: row.timestamp_value,
                     y: parseFloat(row.temperature_value),  // 문자열을 숫자로 변환
@@ -299,7 +307,9 @@ api.get('/factory/:factoryId/temperature', (req, res) => {
 api.get('/factory/:factoryId/finedust', (req, res) => {
     const factoryId = parseInt(req.params.factoryId);
     const queryDate = req.query.date || getCurrentDate();
-    const count = req.query.count || 30;
+    const count = req.query.count || 'all';
+    // count가 'all'이 아닌 경우에는 최대 개수를 적용
+    const limit = count === 'all' ? '' : 'LIMIT ' + parseInt(count);
 
     // TVOC 데이터를 가져오는 쿼리를 작성합니다.
     const query = `
@@ -344,21 +354,21 @@ api.get('/factory/:factoryId/finedust', (req, res) => {
                 };
             }
             // 모듈 별로 최신 데이터 30개만 선택
-            if (formattedData[moduleId].pm1_0.length < count) {
+            if (formattedData[moduleId].pm1_0.length < count || count === 'all') {
                 formattedData[moduleId].pm1_0.push({
                     name: row.timestamp_value,
                     y: parseFloat(row.pm1_0_value),  // 문자열을 숫자로 변환
                 });
             }
 
-            if (formattedData[moduleId].pm2_5.length < count) {
+            if (formattedData[moduleId].pm2_5.length < count || count === 'all') {
                 formattedData[moduleId].pm2_5.push({
                     name: row.timestamp_value,
                     y: parseFloat(row.pm2_5_value),  // 문자열을 숫자로 변환
                 });
             }
 
-            if (formattedData[moduleId].pm10.length < count) {
+            if (formattedData[moduleId].pm10.length < count || count === 'all') {
                 formattedData[moduleId].pm10.push({
                     name: row.timestamp_value,
                     y: parseFloat(row.pm10_value),  // 문자열을 숫자로 변환
