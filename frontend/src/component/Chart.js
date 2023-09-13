@@ -42,7 +42,7 @@ function Chart(props) {
         fetchData();
         const interval = setInterval(() => {
             fetchData();
-        }, 10000);
+        }, 7000);
         // 컴포넌트가 언마운트될 때 clearInterval을 호출하여 인터벌 정리
         return () => {
             clearInterval(interval);
@@ -104,7 +104,7 @@ function Chart(props) {
                 dataLabels: {
                     enabled: false,
                     format: "<b>{point.y}</b>",
-                }
+                },
             },
             area: {
                 fillColor: {

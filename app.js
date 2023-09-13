@@ -20,7 +20,7 @@ app.set('views', './views');
 // skip 함수 정의
 function skipLogging(req) {
     // 특정 URL을 제외하고 싶은 조건을 설정
-    return req.url.includes('load-more') || req.url.includes('.js') || req.url.includes('.css') || req.url.includes('favicon');
+    return req.url.includes('load-more') || req.url.includes('.js') || req.url.includes('.css') || req.url.includes('favicon') || req.url.includes('api');
 }
 app.use('/', indexRouter);
 
