@@ -34,7 +34,7 @@ function Dashboard() {
             .catch((error) => {
                 console.error('API 요청 실패:', error);
             });
-    }, []);
+    });
 
     return (
         <div className="dashboard-container">
@@ -52,7 +52,7 @@ function Dashboard() {
                     />
                     <div className="path-section">
                         <div className="path">
-                            <img src={path}/>
+                            <img src={path} alt={"path"}/>
                             &nbsp;Factory
                         </div>
                         <div className="path-selected">

@@ -75,7 +75,7 @@ function Details() {
             .catch((error) => {
                 console.error('API 요청 실패:', error);
             });
-    }, []);
+    });
 
     const fetchData = async () => {
         axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}?date=${date ? date : ''}`)
@@ -144,6 +144,26 @@ function Details() {
         };
     }, [date, data, selected]);
 
+    const sortedData = formattedData.map(series => ({
+        ...series,
+        data: series.data.sort((a, b) => a.x - b.x), // x 값을 오름차순으로 정렬
+    }));
+
+    const filteredData = sortedData.map(series => ({
+        ...series,
+        data: series.data.map(point => {
+            // 데이터 포인트의 y값이 범위 내에 있는지 확인
+            const yValue = point.y;
+            if (yValue >= 0 && yValue <= 10000) {
+                return point; // 범위 내에 있는 데이터 포인트 유지
+            } else {
+                return {
+                    ...point,
+                    y: null // 범위를 벗어나는 데이터는 null로 설정하여 숨김
+                };
+            }
+        })
+    }));
 
     const options = {
         accessibility: {
@@ -170,10 +190,11 @@ function Details() {
             },
         },
         yAxis: {
-            min: map[data].min,
-            max: map[data].max,
+            // min: map[data].min,
+            // max: map[data].max,
+            visible: true,
             labels: {
-                enabled: false // y축 레이블을 비활성화합니다.
+                enabled: true // y축 레이블을 비활성화합니다.
             },
             title: {
                 text: map[data].chartUnit
@@ -182,12 +203,12 @@ function Details() {
         },
         plotOptions: {
             series: {
-                stacking: 'overlap',
-                smooth: true,
+                smooth: false,
                 dataLabels: {
                     enabled: false,
                     format: "<b>{point.y}</b>",
-                }
+                },
+                turboThreshold: 50000,
             },
             line: {
                 marker: {
@@ -210,7 +231,7 @@ function Details() {
             }
         },
 
-        series: formattedData
+        series: filteredData
     }
 
     if (formattedData.length === 0) {
@@ -241,11 +262,11 @@ function Details() {
                 />
                 <div className="path-section">
                     <div className="path">
-                        <img src={path}/>
+                        <img src={path} alt={"path"}/>
                         &nbsp;Factory
                     </div>
                     <div className="path">
-                        <img src={path}/>
+                        <img src={path} alt={"path"}/>
                         &nbsp;{factoryName}
                     </div>
                     <div className="path-selected">
@@ -267,7 +288,7 @@ function Details() {
                     <div className="detail-info">
                         <div className="flex">
                             <div className="chart-icon">
-                                <img src={map[data].chartIcon}/>
+                                <img src={map[data].chartIcon}  alt={"icon"}/>
                             </div>
                             <div className="chart-name-area">
                                 <div className="chart-name">
