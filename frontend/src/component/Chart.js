@@ -8,7 +8,7 @@ import axios from "axios";
 import {Link} from "react-router-dom";
 
 function Chart(props) {
-    const { chartIcon, chartName, chartSubname,  chartUnit, chartColor, factoryId, moduleId, data } = props;
+    const { chartIcon, chartName, chartSubname,  chartUnit, chartColor, factoryId, data } = props;
 
     const link = chartSubname.replaceAll(' ', '');
     const endPoint = link.toLowerCase();
@@ -17,7 +17,7 @@ function Chart(props) {
 
     const fetchData = async () => {
         try {
-            axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}`) //today로 수정 필요
+            axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}?count=30`) //today로 수정 필요
                 .then((response) => {
                     // API 응답에서 데이터를 추출합니다.
                     const dataResponse = response.data;
@@ -47,7 +47,7 @@ function Chart(props) {
         return () => {
             clearInterval(interval);
         };
-    }, []);
+    });
 
     let chartValue;
     let chartDiff = 0;
@@ -138,7 +138,7 @@ function Chart(props) {
             <div className="chart-info">
                 <div className="flex">
                     <div className="chart-icon">
-                        <img src={chartIcon}/>
+                        <img src={chartIcon} alt={"icon"}/>
                     </div>
                     <div className="chart-name-area">
                         <div className="chart-name">
