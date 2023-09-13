@@ -22,8 +22,10 @@ function Details() {
     const [factoryName, setFactoryName] = useState();
 
     const [date, setDate] = useState();
+    const [count, setCount] = useState("");
 
     const updateDate = e => setDate(e.target.value);
+    const updateCount = e => setCount(e.target.value);
 
     const [filter, setFilter] = useState('');
 
@@ -78,7 +80,7 @@ function Details() {
     });
 
     const fetchData = async () => {
-        axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}?date=${date ? date : ''}`)
+        axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}?date=${date ? date : ''}&count=${count}`)
             .then((response) => {
                 const dataResponse = response.data;
 
@@ -137,12 +139,12 @@ function Details() {
         fetchData();
         const interval = setInterval(() => {
             fetchData();
-        }, 10000);
+        }, 7000);
         // 컴포넌트가 언마운트될 때 clearInterval을 호출하여 인터벌 정리
         return () => {
             clearInterval(interval);
         };
-    }, [date, data, selected]);
+    }, [date, data, selected, count]);
 
     const sortedData = formattedData.map(series => ({
         ...series,
@@ -171,6 +173,22 @@ function Details() {
         },
         chart: {
             type: 'line',
+            zoomType: 'x',
+            resetZoomButton: {
+                theme: {
+                    fill: '#F8F9FB',
+                    stroke: 'silver',
+                    r: 15,
+                    states: {
+                        hover: {
+                            fill: 'rgba(23, 133, 194, 0.73)',
+                            style: {
+                                color: 'white'
+                            }
+                        }
+                    }
+                }
+            }
         },
         title: {
             text: null // 'none' 대신에 null로 title을 비활성화합니다.
@@ -178,12 +196,20 @@ function Details() {
         credits: {
             enabled: false
         },
+        time: {
+            useUTC: false
+        },
         xAxis: {
             visible: true,
             type: 'datetime', // x축을 날짜/시간 형식으로 설정
-            // tickInterval: 1000, // 간격을 1초로 설정
             labels: {
-                enabled: false // x축 라벨 숨기기
+                formatter: function() {
+                    if (this.isFirst || this.isLast) {
+                        return Highcharts.dateFormat('%Y/%m/%d %H:%M:%S', this.value + 9 * 60 * 60 * 1000);
+                    } else {
+                        return '';
+                    }
+                }
             },
             title: {
                 text: "time"
@@ -316,6 +342,19 @@ function Details() {
                                     onClick={() => setSelected('pm10')}
                                 >pm10
                                 </button>
+                            </div>
+                            <div className="input-number">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 12 12" fill="none" onClick={() => setCount("")}>
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.29289 0.29289C0.68342 -0.09763 1.31658 -0.09763 1.70711 0.29289L6 4.58579L10.2929 0.29289C10.6834 -0.09763 11.3166 -0.09763 11.7071 0.29289C12.0976 0.68342 12.0976 1.31658 11.7071 1.70711L7.4142 6L11.7071 10.2929C12.0976 10.6834 12.0976 11.3166 11.7071 11.7071C11.3166 12.0976 10.6834 12.0976 10.2929 11.7071L6 7.4142L1.70711 11.7071C1.31658 12.0976 0.68342 12.0976 0.29289 11.7071C-0.09763 11.3166 -0.09763 10.6834 0.29289 10.2929L4.58579 6L0.29289 1.70711C-0.09763 1.31658 -0.09763 0.68342 0.29289 0.29289Z" fill="#4A5568"/>
+                                </svg>
+
+                                <input
+                                    type="number"
+                                    onChange={updateCount}
+                                    value={count || ""}
+                                    min={"1"}
+                                    placeholder={"개수"}
+                                />
                             </div>
                             <input
                                 type="date"
