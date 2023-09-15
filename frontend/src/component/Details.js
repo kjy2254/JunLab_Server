@@ -12,8 +12,9 @@ import finedust from "../image/finedust.svg"
 import temperature from "../image/temperature.svg"
 import co2 from "../image/co2.svg"
 import tvoc from "../image/tvoc.svg"
+import ForbiddenPage from "./ForbiddenPage";
 
-function Details() {
+function Details(props) {
 
     const {factoryId, data} = useParams();
     const link = data.replaceAll(' ', '');
@@ -273,105 +274,111 @@ function Details() {
         options.yAxis.visible = false;
     }
 
-    return (
-        <div className="detail-container">
-            <Sidebar
-                header={factoryName}
-                factoryId={factoryId}
-                selected="2"
-            />
-            <div className="detail-content">
-                <Header
-                    placeholder="Type any factories..."
-                    setData={setFilter}
-                    data={filter}
+    if(!props.isLogin || ((props.role !== ("Factory_" + factoryId)) && (props.role !== "Admin" ))){
+        return <ForbiddenPage isLogin={props.isLogin} role={props.role} name={props.name}/>;
+    }
+    else{
+        return (
+            <div className="detail-container">
+                <Sidebar
+                    header={factoryName}
+                    factoryId={factoryId}
+                    selected="2"
                 />
-                <div className="path-section">
-                    <div className="path">
-                        <img src={path} alt={"path"}/>
-                        &nbsp;Factory
-                    </div>
-                    <div className="path">
-                        <img src={path} alt={"path"}/>
-                        &nbsp;{factoryName}
-                    </div>
-                    <div className="path-selected">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
-                            <path fillRule="evenodd" clipRule="evenodd" d="M8 0V8H0L8 0Z"
-                                  fill="url(#paint0_linear_104_907)"/>
-                            <defs>
-                                <linearGradient id="paint0_linear_104_907" x1="13.1265" y1="6.66481" x2="3.15937"
-                                                y2="12.9836" gradientUnits="userSpaceOnUse">
-                                    <stop stopColor="#0043FF"/>
-                                    <stop offset="1" stopColor="#A370F1"/>
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                        &nbsp;{data}
-                    </div>
-                </div>
-                <div className="detail-section">
-                    <div className="detail-info">
-                        <div className="flex">
-                            <div className="chart-icon">
-                                <img src={map[data].chartIcon}  alt={"icon"}/>
-                            </div>
-                            <div className="chart-name-area">
-                                <div className="chart-name">
-                                    {map[data].chartName}
-                                </div>
-                                <div className="chart-subname">
-                                    {map[data].chartSubname}
-                                </div>
-                            </div>
+                <div className="detail-content">
+                    <Header
+                        placeholder="Type any factories..."
+                        setData={setFilter}
+                        data={filter}
+                    />
+                    <div className="path-section">
+                        <div className="path">
+                            <img src={path} alt={"path"}/>
+                            &nbsp;Factory
                         </div>
-                        <div className="flex">
-                            <div className={(endPoint === "finedust" ? "" : "none")} >
-                                <button
-                                    className={"button " + (selected === 'pm1.0' ? 'button-selected' : '')}
-                                    onClick={() => setSelected('pm1.0')}
-                                >pm1.0
-                                </button>
-                                <button
-                                    className={"button " + (selected === 'pm2.5' ? 'button-selected' : '')}
-                                    onClick={() => setSelected('pm2.5')}
-                                >pm2.5
-                                </button>
-                                <button
-                                    className={"button " + (selected === 'pm10' ? 'button-selected' : '')}
-                                    onClick={() => setSelected('pm10')}
-                                >pm10
-                                </button>
+                        <div className="path">
+                            <img src={path} alt={"path"}/>
+                            &nbsp;{factoryName}
+                        </div>
+                        <div className="path-selected">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
+                                <path fillRule="evenodd" clipRule="evenodd" d="M8 0V8H0L8 0Z"
+                                      fill="url(#paint0_linear_104_907)"/>
+                                <defs>
+                                    <linearGradient id="paint0_linear_104_907" x1="13.1265" y1="6.66481" x2="3.15937"
+                                                    y2="12.9836" gradientUnits="userSpaceOnUse">
+                                        <stop stopColor="#0043FF"/>
+                                        <stop offset="1" stopColor="#A370F1"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            &nbsp;{data}
+                        </div>
+                    </div>
+                    <div className="detail-section">
+                        <div className="detail-info">
+                            <div className="flex">
+                                <div className="chart-icon">
+                                    <img src={map[data].chartIcon}  alt={"icon"}/>
+                                </div>
+                                <div className="chart-name-area">
+                                    <div className="chart-name">
+                                        {map[data].chartName}
+                                    </div>
+                                    <div className="chart-subname">
+                                        {map[data].chartSubname}
+                                    </div>
+                                </div>
                             </div>
-                            <div className="input-number">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 12 12" fill="none" onClick={() => setCount("")}>
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.29289 0.29289C0.68342 -0.09763 1.31658 -0.09763 1.70711 0.29289L6 4.58579L10.2929 0.29289C10.6834 -0.09763 11.3166 -0.09763 11.7071 0.29289C12.0976 0.68342 12.0976 1.31658 11.7071 1.70711L7.4142 6L11.7071 10.2929C12.0976 10.6834 12.0976 11.3166 11.7071 11.7071C11.3166 12.0976 10.6834 12.0976 10.2929 11.7071L6 7.4142L1.70711 11.7071C1.31658 12.0976 0.68342 12.0976 0.29289 11.7071C-0.09763 11.3166 -0.09763 10.6834 0.29289 10.2929L4.58579 6L0.29289 1.70711C-0.09763 1.31658 -0.09763 0.68342 0.29289 0.29289Z" fill="#4A5568"/>
-                                </svg>
+                            <div className="flex">
+                                <div className={(endPoint === "finedust" ? "" : "none")} >
+                                    <button
+                                        className={"button " + (selected === 'pm1.0' ? 'button-selected' : '')}
+                                        onClick={() => setSelected('pm1.0')}
+                                    >pm1.0
+                                    </button>
+                                    <button
+                                        className={"button " + (selected === 'pm2.5' ? 'button-selected' : '')}
+                                        onClick={() => setSelected('pm2.5')}
+                                    >pm2.5
+                                    </button>
+                                    <button
+                                        className={"button " + (selected === 'pm10' ? 'button-selected' : '')}
+                                        onClick={() => setSelected('pm10')}
+                                    >pm10
+                                    </button>
+                                </div>
+                                <div className="input-number">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 12 12" fill="none" onClick={() => setCount("")}>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M0.29289 0.29289C0.68342 -0.09763 1.31658 -0.09763 1.70711 0.29289L6 4.58579L10.2929 0.29289C10.6834 -0.09763 11.3166 -0.09763 11.7071 0.29289C12.0976 0.68342 12.0976 1.31658 11.7071 1.70711L7.4142 6L11.7071 10.2929C12.0976 10.6834 12.0976 11.3166 11.7071 11.7071C11.3166 12.0976 10.6834 12.0976 10.2929 11.7071L6 7.4142L1.70711 11.7071C1.31658 12.0976 0.68342 12.0976 0.29289 11.7071C-0.09763 11.3166 -0.09763 10.6834 0.29289 10.2929L4.58579 6L0.29289 1.70711C-0.09763 1.31658 -0.09763 0.68342 0.29289 0.29289Z" fill="#4A5568"/>
+                                    </svg>
 
+                                    <input
+                                        type="number"
+                                        onChange={updateCount}
+                                        value={count || ""}
+                                        min={"1"}
+                                        placeholder={"개수"}
+                                    />
+                                </div>
                                 <input
-                                    type="number"
-                                    onChange={updateCount}
-                                    value={count || ""}
-                                    min={"1"}
-                                    placeholder={"개수"}
+                                    type="date"
+                                    onChange={updateDate}
+                                    value={date || ""}
                                 />
                             </div>
-                            <input
-                                type="date"
-                                onChange={updateDate}
-                                value={date || ""}
-                            />
                         </div>
-                    </div>
-                    <div className="detail-chart">
-                        <Fragment>
-                            <HighchartsReact highcharts={Highcharts} options={options}/>
-                        </Fragment>
+                        <div className="detail-chart">
+                            <Fragment>
+                                <HighchartsReact highcharts={Highcharts} options={options}/>
+                            </Fragment>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    );
+        );
+
+    }
 }
 
 export default Details;

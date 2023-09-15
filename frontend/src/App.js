@@ -1,25 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
-import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import {authcheck} from "./util";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Dashboard from './component/Dashboard';
 import NotFound from "./component/NotFound";
 import Factories from "./component/Factories";
 import Details from "./component/Details";
-export default App;
-
+import Login from "./component/Login";
+import Signup from "./component/Signup";
+import Home from "./component/Home";
 
 function App() {
+    const [isLogin, setIsLogin] = useState(false);
+    const [role, setRole] = useState("");
+    const [name, setName] = useState("");
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const authData = await authcheck();
+            setIsLogin(authData.isLogin);
+            setRole(authData.role);
+            setName(authData.name);
+        };
+        fetchData();
+    }, []);
+
     return (
         <div>
             <Router>
                 <Routes>
-                    <Route path="/iitp/factoryManagement/factory" element={<Factories/>}/>
-                    <Route path="/iitp/factoryManagement/factory/:factoryId" element={<Dashboard/>}/>
-                    <Route path="/iitp/factoryManagement/factory/:factoryId/:data" element={<Details/>}/>
-                    <Route element={<NotFound/>}/>
+                    <Route path="/iitp/factoryManagement" element={<Home isLogin={isLogin} role={role} name={name}/>} />
+                    <Route path="/iitp/factoryManagement/login" element={<Login isLogin={isLogin} role={role} name={name}/>} />
+                    <Route path="/iitp/factoryManagement/signup" element={<Signup isLogin={isLogin} role={role} name={name}/>} />
+                    <Route path="/iitp/factoryManagement/factory" element={<Factories isLogin={isLogin} role={role} name={name}/>} />
+                    <Route path="/iitp/factoryManagement/factory/:factoryId" element={<Dashboard isLogin={isLogin} role={role} name={name}/>} />
+                    <Route path="/iitp/factoryManagement/factory/:factoryId/:data" element={<Details isLogin={isLogin} role={role} name={name}/>} />
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </Router>
         </div>
-        // <Dashboard/>
     );
 }
+
+export default App;

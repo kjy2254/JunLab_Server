@@ -24,7 +24,7 @@
 }
 
 
-input[type="text"] {
+.search-box {
     width: 20rem;
     padding: 10px;
     margin-left: 3rem;
@@ -38,7 +38,7 @@ input[type="text"] {
 }
 
 /* 포커스 시 스타일 */
-input[type="text"]:focus {
+.search-box:focus {
     box-shadow: 0 0 5px #50B8E4;
     outline: none;
 }

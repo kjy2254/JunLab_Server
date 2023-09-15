@@ -60,3 +60,9 @@ export function hexToRgb(hex) {
 
     return { r, g, b };
 }
+
+export async function authcheck() {
+    const response = await fetch("http://junlab.postech.ac.kr:880/login/authcheck");
+    const data = await response.json();
+    return { isLogin: data.isLogin, role: data.role, name: data.name };
+}

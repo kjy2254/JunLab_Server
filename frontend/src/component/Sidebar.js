@@ -33,7 +33,7 @@ function Sidebar(props) {
         <div className={`sidebar ${expanded ? 'expanded' : ''} ${isHovering ? 'expanding' : ''}`}
              onMouseEnter={() => setIsHovering(true)}
              onMouseLeave={() => setIsHovering(false)}>
-            <Link to={`/iitp/factoryManagement/factory`} className="logo">
+            <Link to={`/iitp/factoryManagement`} className="logo">
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fillRule="evenodd" clipRule="evenodd" d="M0 24.5348C0 28.6304 3.32014 31.9505 7.41573 31.9505H32L0 1.79499V24.5348Z" fill="url(#paint0_linear_139_725)"/>
                         <g opacity="0.983161" filter="url(#filter0_b_139_725)">

@@ -7,6 +7,7 @@ const ejs = require("ejs");
 var indexRouter = require('./routes/index');
 var iitpRouter = require('./routes/iitp');
 var apiRouter = require('./routes/api');
+var longInRouter = require('./routes/login');
 var factoryManagementRouter = require('./routes/factoryManagement');
 const cors = require('cors');
 const bodyParser = require("body-parser");
@@ -43,6 +44,7 @@ app.use(cors({
 app.use('/static', express.static('static'));
 app.use('/iitp', iitpRouter);
 app.use('/api', apiRouter);
+app.use('/login', longInRouter);
 app.use('/iitp/factoryManagement', factoryManagementRouter);
 
 app.use('/images', express.static(path.join(__dirname, 'images')));

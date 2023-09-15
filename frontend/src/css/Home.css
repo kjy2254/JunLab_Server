@@ -1,0 +1,54 @@
+.home-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #F3F6FE;
+    background-image: url("../image/background.jpg");
+    background-repeat : no-repeat;
+    background-size : cover;
+
+}
+
+.home-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+    width: 100%; /* 대시보드가 전체 가로를 채우도록 설정 */
+    margin-left: 0; /* 사이드바가 사라질 때 공간을 대시보드가 채우도록 */
+}
+
+.home-main {
+    /*background: #ea9c9c;*/
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-button{
+    background: white;
+    color: #7f819b;
+    font-size: 1.5rem;
+    border-radius: 1rem;
+    padding: 1rem;
+}
+
+.milky {
+    font-family: "Arial Rounded MT Bold", "Helvetica Rounded", Arial, sans-serif;
+    text-transform: uppercase;
+    display: block;
+    font-size: 5vw;
+    color: #f1ebe5;
+    text-shadow: 0 8px 9px #80858c, 0px -2px 1px #fff;
+    font-weight: bold;
+    letter-spacing: -4px;
+    text-align: center;
+    /*background: linear-gradient(to bottom, #ece4d9 0%,#e9dfd1 100%);*/
+    position: absolute;
+    padding: 100px 200px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 20px;
+}

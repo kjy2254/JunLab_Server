@@ -1,5 +1,7 @@
+import React from "react";
+
 function NotFound() {
-    return <div>페이지를 찾을 수 없습니다.</div>;
+    return <div className="milky"> 404 Not Found </div>;
 }
 
 export default NotFound;
