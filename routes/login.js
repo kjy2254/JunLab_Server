@@ -35,6 +35,7 @@ login.get('/authcheck', (req, res) => {
 });
 
 login.get('/logout', function (req, res) {
+    console.log("logout");
     req.session.destroy(function (err) {
         res.redirect('/iitp/factoryManagement/');
     });

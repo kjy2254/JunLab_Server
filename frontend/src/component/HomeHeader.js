@@ -8,8 +8,8 @@ function HomeHeader(props) {
     console.log(props);
 
     const logout = () => {
-        axios.get(`http://localhost:880/login/logout`)
-            .then(window.location.href = `/iitp/factoryManagement/`);
+        axios.get(`http://junlab.postech.ac.kr:880/login/logout`)
+            .then(window.location.href = `/iitp/factoryManagement`);
     }
 
     return (
