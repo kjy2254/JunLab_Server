@@ -1,6 +1,7 @@
 const express = require("express");
 const api = express.Router();
 const connection = require('../database/apiConnection');
+const connection2 = require('../database/mysql');
 const path = require('path');
 const fs = require('fs');
 
@@ -12,6 +13,42 @@ function getCurrentDate() {
     return `${year}/${month}/${day}`;
 }
 
+
+api.get('/sensors', (req, res) => {
+    let query = `SELECT
+                     sd.ID,
+                     sd.BATT,
+                     sd.AQI,
+                     sd.TVOC,
+                     sd.EC2,
+                     sd.PM10,
+                     sd.PM25,
+                     sd.PM100,
+                     sd.IRUN,
+                     sd.TEMP,
+                     DATE_FORMAT(sd.created_at, '%Y/%m/%d %H:%i:%s') AS CREATED_AT
+                 FROM SENSOR_DATA sd
+                          INNER JOIN (
+                     SELECT
+                         ID,
+                         MAX(created_at) AS max_created_at
+                     FROM SENSOR_DATA
+                     GROUP BY ID
+                 ) max_data
+                                     ON sd.ID = max_data.ID AND sd.created_at = max_data.max_created_at
+                 ORDER BY sd.ID ASC;`;
+
+
+
+    connection2.query(query, (error, result) => {
+        if (error) {
+            console.log(error);
+            return res.status(500).send('Internal Server Error!');
+        }
+        // 결과를 JSON 형식으로 응답
+        return res.status(200).json(result);
+    });
+});
 
 api.get('/factory/:factoryId/users', (req, res) => {
     const factoryId = parseInt(req.params.factoryId);

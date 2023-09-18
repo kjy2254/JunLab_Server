@@ -1,6 +1,7 @@
 const express = require("express");
 const iitp = express.Router();
 const connection = require('../database/mysql');
+const path = require("path");
 const data_exporter = require('json2csv').Parser;
 
 const today = new Date();
@@ -9,6 +10,8 @@ const month = today.getMonth() + 1;
 const month2 = (month) < 10 ? ("0" + month) : (month);
 const day = today.getDate();
 let today_st = year + "/" + month2 + "/" + day;
+
+iitp.use(express.static(path.join(__dirname, '../frontend/build')));
 
 function jsonKeyUpperCase(object) {
     if (Array.isArray(object)) {
@@ -395,17 +398,21 @@ iitp.get("/table/export", (req, res) => {
     });
 })
 
+// iitp.get('/console', (req, res) => {
+//     connection.query("SELECT DISTINCT ID FROM SENSOR_DATA;", (error, result) => {
+//         if (error) {
+//             console.log(error);
+//             res.status(500).send('Internal Server Error!');
+//         }
+//         let id_list = [];
+//         result.forEach(e => id_list.push(e.ID));
+//         res.render('IITP/console', {id_list: id_list});
+//     });
+// })
+
 iitp.get('/console', (req, res) => {
-    connection.query("SELECT DISTINCT ID FROM SENSOR_DATA;", (error, result) => {
-        if (error) {
-            console.log(error);
-            res.status(500).send('Internal Server Error!');
-        }
-        let id_list = [];
-        result.forEach(e => id_list.push(e.ID));
-        res.render('IITP/console', {id_list: id_list});
-    });
-})
+    res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+});
 
 
 module.exports = iitp;

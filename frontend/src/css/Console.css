@@ -1,0 +1,86 @@
+body {
+    padding: 2rem;
+    background: #F2F4F8; /* 수정된 부분: 배경 색상 변경 */
+    color: #333; /* 수정된 부분: 기본 텍스트 색상 변경 */
+}
+
+.console-area {
+    margin-left: 2.3rem;
+    margin-right: 2.3rem;
+    margin-bottom: 3rem;
+    height: 85vh;
+    background: white;
+    box-shadow: 0 1px 15px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    overflow-y: auto;
+    display: flex;
+    padding: 2rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.title {
+    margin-top: 3rem;
+    margin-left: 3rem;
+}
+
+.console-card {
+    flex-direction: column;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 2rem;
+    max-height: 40%;
+    position: relative;
+    display: flex;
+    flex-basis: calc(25% - 4.2rem); /* 2개 카드일 때 한 카드의 너비 */
+    text-decoration: none;
+    color: #000;
+    transition: text 0.3s;
+}
+
+.console-header {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 3rem;
+    background: #1e355b;
+    color: white;
+}
+
+.console-details {
+    margin: 2rem;
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.console-footer {
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 3rem;
+    background: #1e355b;
+    color: white;
+}
+
+@media (max-width: 1800px) {
+    .console-card {
+        flex-basis: calc(33.33% - 4.2rem); /* 3개 카드일 때 한 카드의 너비 */
+    }
+}
+
+@media (max-width: 1200px) {
+    .console-card {
+        flex-basis: calc(50% - 4.2rem); /* 2개 카드일 때 한 카드의 너비 */
+    }
+}
+
+@media (max-width: 800px) {
+    .console-card {
+        flex-basis: calc(100% - 4.2rem); /* 2개 카드일 때 한 카드의 너비 */
+    }
+}

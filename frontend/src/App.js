@@ -9,6 +9,7 @@ import Details from "./component/Details";
 import Login from "./component/Login";
 import Signup from "./component/Signup";
 import Home from "./component/Home";
+import Console from "./component/Console";
 
 function App() {
     const [isLogin, setIsLogin] = useState(false);
@@ -29,6 +30,7 @@ function App() {
         <div>
             <Router>
                 <Routes>
+                    <Route path="/iitp/console" element={<Console />} />
                     <Route path="/iitp/factoryManagement" element={<Home isLogin={isLogin} role={role} name={name}/>} />
                     <Route path="/iitp/factoryManagement/login" element={<Login isLogin={isLogin} role={role} name={name}/>} />
                     <Route path="/iitp/factoryManagement/signup" element={<Signup isLogin={isLogin} role={role} name={name}/>} />
