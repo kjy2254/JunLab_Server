@@ -216,6 +216,7 @@ function save(rawData) {
         connection.query("INSERT INTO SENSOR_DATA SET ?", data, (er) => {
             return !(er);
         });
+
     }
     return true;
 }
@@ -259,6 +260,12 @@ function save2(rawData) {
                 }
             });
         });
+
+        connection2.query(`update sensor_modules set last_update = ? where module_id = ?`, [new Date(Date.now()), parseInt(values[0])], (error, result) => {
+            if (error) {
+                console.log(error);
+            }
+        })
     }
     return true;
 }

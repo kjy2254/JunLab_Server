@@ -16,25 +16,54 @@ import ForbiddenPage from "./ForbiddenPage";
 function Dashboard(props) {
     const [workerData, setWorkerData] = useState([]);
     const [factoryName, setFactoryName] = useState();
+    const [lastUpdate, setLastUpdate] = useState();
     const [filter, setFilter] = useState('');
 
     const { factoryId } = useParams();
 
+    const fetchData = async () => {
+        try {
+            axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}`)
+                .then((response) => {
+                    setFactoryName(response.data.factoryName);
+                    setLastUpdate(response.data.last_update);
+                })
+                .catch((error) => {
+                    console.error('API 요청 실패:', error);
+                });
+            axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/users`)
+                .then((response) => {
+                    setWorkerData(response.data);
+                })
+                .catch((error) => {
+                    console.error('API 요청 실패:', error);
+                });
+        }
+        catch (error) {
+            console.error('API 요청 실패:', error);
+        }
+    }
+
+    // useEffect(() => {
+    //     axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/users`)
+    //         .then((response) => {
+    //             setWorkerData(response.data);
+    //         })
+    //         .catch((error) => {
+    //             console.error('API 요청 실패:', error);
+    //         });
+    // }, []);
+
     useEffect(() => {
-        axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}`)
-            .then((response) => {
-                setFactoryName(response.data.factoryName);
-            })
-            .catch((error) => {
-                console.error('API 요청 실패:', error);
-            });
-        axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/users`)
-            .then((response) => {
-                setWorkerData(response.data);
-            })
-            .catch((error) => {
-                console.error('API 요청 실패:', error);
-            });
+        // API 요청을 보내고 데이터를 가져옵니다.
+        fetchData();
+        const interval = setInterval(() => {
+            fetchData();
+        }, 7000);
+        // 컴포넌트가 언마운트될 때 clearInterval을 호출하여 인터벌 정리
+        return () => {
+            clearInterval(interval);
+        };
     }, []);
 
     if(!props.isLogin || ((props.role !== ("Factory_" + factoryId)) && (props.role !== "Admin" ))){
@@ -55,24 +84,29 @@ function Dashboard(props) {
                             setData={setFilter}
                             data={filter}
                         />
-                        <div className="path-section">
-                            <div className="path">
-                                <img src={path} alt={"path"}/>
-                                &nbsp;Factory
+                        <div className="top-section">
+                            <div className="path-section">
+                                <div className="path">
+                                    <img src={path} alt={"path"}/>
+                                    &nbsp;Factory
+                                </div>
+                                <div className="path-selected">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
+                                        <path fillRule="evenodd" clipRule="evenodd" d="M8 0V8H0L8 0Z"
+                                              fill="url(#paint0_linear_104_907)"/>
+                                        <defs>
+                                            <linearGradient id="paint0_linear_104_907" x1="13.1265" y1="6.66481" x2="3.15937"
+                                                            y2="12.9836" gradientUnits="userSpaceOnUse">
+                                                <stop stopColor="#0043FF"/>
+                                                <stop offset="1" stopColor="#A370F1"/>
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                    &nbsp;{factoryName}
+                                </div>
                             </div>
-                            <div className="path-selected">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
-                                    <path fillRule="evenodd" clipRule="evenodd" d="M8 0V8H0L8 0Z"
-                                          fill="url(#paint0_linear_104_907)"/>
-                                    <defs>
-                                        <linearGradient id="paint0_linear_104_907" x1="13.1265" y1="6.66481" x2="3.15937"
-                                                        y2="12.9836" gradientUnits="userSpaceOnUse">
-                                            <stop stopColor="#0043FF"/>
-                                            <stop offset="1" stopColor="#A370F1"/>
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
-                                &nbsp;{factoryName}
+                            <div className="last-update">
+                                Last Update: {lastUpdate}
                             </div>
                         </div>
                         <div className="chart-section">

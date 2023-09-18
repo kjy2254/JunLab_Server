@@ -85,18 +85,50 @@ api.get('/factories', (req, res) => {
 
 api.get('/factory/:factoryId', (req, res) => {
     const factoryId = req.params.factoryId;
-    const query = 'SELECT factory_name FROM factories WHERE factory_id = ?';
 
-    connection.query(query, [factoryId], (error, result) => {
+    // 첫 번째 쿼리: 공장 이름 조회
+    const query1 = 'SELECT factory_name FROM factories WHERE factory_id = ?';
+
+    // 두 번째 쿼리: 공장에 속한 가장 최근의 센서 모듈 조회
+    const query2 = `
+        SELECT last_update
+        FROM sensor_modules
+        WHERE (factory_id, last_update) IN (
+            SELECT factory_id, MAX(last_update)
+            FROM sensor_modules
+            WHERE factory_id = ?
+            GROUP BY factory_id
+        );
+    `;
+
+    connection.query(query1, [factoryId], (error, result1) => {
         if (error) {
             console.log(error);
             return res.status(500).send('Internal Server Error!');
         }
-        if (result.length === 0) {
+        if (result1.length === 0) {
             return res.status(404).send('Factory not found');
         }
-        const factoryName = result[0].factory_name;
-        res.status(200).json({ factoryName });
+
+        // 공장 이름 결과 가져오기
+        const factoryName = result1[0].factory_name;
+
+        // 두 번째 쿼리 실행
+        connection.query(query2, [factoryId], (error, result2) => {
+            if (error) {
+                console.log(error);
+                return res.status(500).send('Internal Server Error!');
+            }
+
+            // const last_update = result2[0].last_update;
+
+            // const utcLastUpdate = result2[0].last_update;
+            const last_update = new Date(result2[0].last_update).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+
+
+            // 결과를 JSON 형태로 반환
+            res.status(200).json({ factoryName, last_update });
+        });
     });
 });
 
