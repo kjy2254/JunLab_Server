@@ -47,14 +47,10 @@ login.post("/login", (req, res) => { // 데이터 받아서 결과 전송
     const sendData = { isLogin: "", role: "", name: "" };
 
     if (username && password) {             // id와 pw가 입력되었는지 확인
-
-        console.log("Asdf1");
         connection.query('SELECT * FROM users WHERE username = ?', [username], function (error, results) {
             if (error) throw error;
             if (results.length > 0) {       // db에서의 반환값이 있다 = 일치하는 아이디가 있다.
-                console.log("Asdf2");
                 bcrypt.compare(password , results[0].password, (err, result) => {    // 입력된 비밀번호가 해시된 저장값과 같은 값인지 비교
-                    console.log("Asdf3");
                     if (result === true) {                  // 비밀번호가 일치하면
                         req.session.is_logined = true;      // 세션 정보 갱신
                         req.session.name = results[0].last_name + results[0].first_name;

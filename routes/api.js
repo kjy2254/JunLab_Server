@@ -165,6 +165,15 @@ api.get('/factory/:factoryId/tvoc', (req, res) => {
     // count가 'all'이 아닌 경우에는 최대 개수를 적용
     const limit = count === 'all' ? '' : 'LIMIT ' + parseInt(count);
 
+    const partitionName = 'p' + queryDate.replaceAll('/', '').replaceAll('-', '');
+
+    const today = new Date().toISOString().split('T')[0].replaceAll('-', '/');
+
+    if (queryDate > today) {
+        console.log('Out-of-bounds data request!');
+        return res.status(200).json({});
+    }
+
     // TVOC 데이터를 가져오는 쿼리를 작성합니다.
     const query = `
         SELECT
@@ -177,7 +186,7 @@ api.get('/factory/:factoryId/tvoc', (req, res) => {
                 tvoc,
                 timestamp
             FROM
-                sensor_data
+                sensor_data PARTITION(${partitionName})
             WHERE
                 factory_id = ? AND DATE(timestamp) = ?
             ORDER BY
@@ -223,6 +232,14 @@ api.get('/factory/:factoryId/co2', (req, res) => {
     const count = req.query.count || 'all';
     // count가 'all'이 아닌 경우에는 최대 개수를 적용
     const limit = count === 'all' ? '' : 'LIMIT ' + parseInt(count);
+    const partitionName = 'p' + queryDate.replaceAll('/', '').replaceAll('-', '');
+
+    const today = new Date().toISOString().split('T')[0].replaceAll('-', '/');
+
+    if (queryDate > today) {
+        console.log('Out-of-bounds data request!');
+        return res.status(200).json({});
+    }
 
     // TVOC 데이터를 가져오는 쿼리를 작성합니다.
     const query = `
@@ -236,7 +253,7 @@ api.get('/factory/:factoryId/co2', (req, res) => {
                 co2,
                 timestamp
             FROM
-                sensor_data
+                sensor_data PARTITION(${partitionName})
             WHERE
                 factory_id = ? AND DATE(timestamp) = ?
             ORDER BY
@@ -245,7 +262,7 @@ api.get('/factory/:factoryId/co2', (req, res) => {
     `;
 
     // 쿼리 실행
-    connection.query(query, [factoryId, queryDate], (error, result) => {
+    connection.query(query + limit, [factoryId, queryDate], (error, result) => {
         if (error) {
             console.log(error);
             return res.status(500).send('Internal Server Error!');
@@ -280,11 +297,18 @@ api.get('/factory/:factoryId/temperature', (req, res) => {
     const count = req.query.count || 'all';
     // count가 'all'이 아닌 경우에는 최대 개수를 적용
     const limit = count === 'all' ? '' : 'LIMIT ' + parseInt(count);
+    const partitionName = 'p' + queryDate.replaceAll('/', '').replaceAll('-', '');
 
     if (queryDate === 'undefined') {
         queryDate = getCurrentDate();
     }
 
+    const today = new Date().toISOString().split('T')[0].replaceAll('-', '/');
+
+    if (queryDate > today) {
+        console.log('Out-of-bounds data request!');
+        return res.status(200).json({});
+    }
 
     // TVOC 데이터를 가져오는 쿼리를 작성합니다.
     const query = `
@@ -298,7 +322,7 @@ api.get('/factory/:factoryId/temperature', (req, res) => {
                 temperature,
                 timestamp
             FROM
-                sensor_data
+                sensor_data PARTITION(${partitionName})
             WHERE
                 factory_id = ? AND DATE(timestamp) = ?
             ORDER BY
@@ -307,7 +331,7 @@ api.get('/factory/:factoryId/temperature', (req, res) => {
     `;
 
     // 쿼리 실행
-    connection.query(query, [factoryId, queryDate], (error, result) => {
+    connection.query(query + limit, [factoryId, queryDate], (error, result) => {
         if (error) {
             console.log(error);
             return res.status(500).send('Internal Server Error!');
@@ -342,6 +366,14 @@ api.get('/factory/:factoryId/finedust', (req, res) => {
     const count = req.query.count || 'all';
     // count가 'all'이 아닌 경우에는 최대 개수를 적용
     const limit = count === 'all' ? '' : 'LIMIT ' + parseInt(count);
+    const partitionName = 'p' + queryDate.replaceAll('/', '').replaceAll('-', '');
+
+    const today = new Date().toISOString().split('T')[0].replaceAll('-', '/');
+
+    if (queryDate > today) {
+        console.log('Out-of-bounds data request!');
+        return res.status(200).json({});
+    }
 
     // TVOC 데이터를 가져오는 쿼리를 작성합니다.
     const query = `
@@ -359,7 +391,7 @@ api.get('/factory/:factoryId/finedust', (req, res) => {
                 pm10,
                 timestamp
             FROM
-                sensor_data
+                sensor_data PARTITION(${partitionName})
             WHERE
                 factory_id = ? AND DATE(timestamp) = ?
             ORDER BY
@@ -368,7 +400,7 @@ api.get('/factory/:factoryId/finedust', (req, res) => {
     `;
 
     // 쿼리 실행
-    connection.query(query, [factoryId, queryDate], (error, result) => {
+    connection.query(query + limit, [factoryId, queryDate], (error, result) => {
         if (error) {
             console.log(error);
             return res.status(500).send('Internal Server Error!');

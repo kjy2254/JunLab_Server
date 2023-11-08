@@ -70,6 +70,12 @@ function Login(props) {
             });
     }
 
+    const handleOnKeyPress = e => {
+        if (e.key === 'Enter') {
+            postLogin(); // Enter 입력이 되면 클릭 이벤트 실행
+        }
+    };
+
     if (props.isLogin) {
         return <Navigate to="/iitp/factoryManagement/"/>;
     }
@@ -122,7 +128,7 @@ function Login(props) {
                     </div>
                     <div className="group">
                         <label htmlFor="pass" className="label">Password</label>
-                        <input id="pass" type="password" className="input" datatype="password" value={password} onChange={updatePassword}/>
+                        <input id="pass" type="password" className="input" datatype="password" value={password} onChange={updatePassword} onKeyDown={handleOnKeyPress}/>
                     </div>
                     <div className="group">
                         <button type="submit" className="button" onClick={postLogin}> Sign In</button>

@@ -199,6 +199,7 @@ function save(rawData) {
     let values = rawData.toString().replaceAll(' ', '').split(',');
 
     if (values.length !== 21) {
+        console.log('not sensor data');
         return false;
     } else {
         const dict = keys.reduce((acc, curr, idx) => {
