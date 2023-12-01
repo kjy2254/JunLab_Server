@@ -77,32 +77,18 @@
   /*background-color: #ffffff;*/
 }
 
-.flex {
-  display: flex;
-  align-items: center;
-}
-
-.view-section {
-  margin-top: 2rem;
+.summary-card-area {
+  margin-top: 1rem;
   margin-left: 2.3rem;
   margin-right: 2.3rem;
   margin-bottom: 3rem;
-  min-height: 50rem;
+  min-height: 42rem;
   background: white;
   box-shadow: 0 1px 15px rgba(0, 0, 0, 0.05);
   border-radius: 10px;
-  overflow-y: auto;
-  padding: 1rem;
-  display: flex;
-  flex-flow: column;
 }
 
-.summary-section {
-  /*height: 10%;*/
-  text-align: left;
-  padding-left: 50px;
-  padding-top: 50px;
+.flex {
   display: flex;
-  font-size: 15px;
-  /*background-color: #F3F6FE;*/
+  align-items: center;
 }

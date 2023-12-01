@@ -1,0 +1,21 @@
+.path-section {
+  /*height: 10%;*/
+  text-align: left;
+  padding-left: 50px;
+  padding-top: 50px;
+  display: flex;
+  font-size: 15px;
+  /*background-color: #F3F6FE;*/
+}
+
+.path {
+  margin-right: 20px;
+}
+
+.path-selected {
+  font-weight: bold;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(122deg, #0043ff 0%, #8037f1 100%);
+}

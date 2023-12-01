@@ -70,7 +70,7 @@ commandServer.on('connection', (socket) => {
             if (Object.keys(sockets).includes(commands[0])) {
                 sockets[commands[0]].write(commands[1] + "\r\n");
                 // sockets[commands[0]].write(commands[1]);
-                last_command = {...last_command, [commands[0]]: commands[1] + "\r\n"}
+                last_command = {...last_command, [commands[0]]: commands[1]}
                 console.log(last_command);
             }
             // 연결되지 않은 디바이스로의 명령일 경우

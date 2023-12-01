@@ -24,6 +24,7 @@
     "node-table-to-csv": "^0.1.0",
     "nodemon": "^2.0.22",
     "serve-favicon": "^2.5.0",
+    "uuid": "^9.0.1",
     "ws": "^8.13.0"
   },
   "main": "app.js",

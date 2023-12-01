@@ -73,7 +73,8 @@ function Chart(props) {
         chart: {
             type: 'area',
             width: null,
-            height: 90
+            height: 90,
+            animation: false
         },
         title: {
             text: null // 'none' 대신에 null로 title을 비활성화합니다.

@@ -1,44 +1,184 @@
 .header {
-    background-color: #FFF;
-    color: white;
-    text-align: center;
-    min-height: 70px;
-    box-shadow: 0 1px 15px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
+  background-color: #fff;
+  color: white;
+  text-align: center;
+  min-height: 70px;
+  box-shadow: 0 1px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .input-area {
-    display: flex;
-    /*background: #a84141;*/
-    position: relative;
-    height: 2.5rem;
+  display: flex;
+  /*background: #a84141;*/
+  position: relative;
+  height: 2.5rem;
 }
 
 .input-area svg {
-    position: absolute;
-    top: 50%; /* 아이콘을 수직 정렬 */
-    left: 4rem; /* 아이콘을 왼쪽에 배치 */
-    transform: translateY(-50%); /* 아이콘을 수직으로 가운데 정렬 */
-    color: #888;
+  position: absolute;
+  top: 50%; /* 아이콘을 수직 정렬 */
+  left: 4rem; /* 아이콘을 왼쪽에 배치 */
+  transform: translateY(-50%); /* 아이콘을 수직으로 가운데 정렬 */
+  color: #888;
 }
 
-
 .search-box {
-    width: 20rem;
-    padding: 10px;
-    margin-left: 3rem;
-    border: none;
-    border-radius: 20px;
-    box-sizing: border-box;
-    background: #F8F9FB;
-    font-size: 14px;
-    color: gray;
-    text-indent: 2.5rem;
+  width: 20rem;
+  padding: 10px;
+  margin-left: 3rem;
+  border: none;
+  border-radius: 20px;
+  box-sizing: border-box;
+  background: #f8f9fb;
+  font-size: 14px;
+  color: gray;
+  text-indent: 2.5rem;
 }
 
 /* 포커스 시 스타일 */
 .search-box:focus {
-    box-shadow: 0 0 5px #50B8E4;
-    outline: none;
+  box-shadow: 0 0 5px #50b8e4;
+  outline: none;
+}
+.home-header {
+  background-color: #fff;
+  text-align: center;
+  min-height: 70px;
+  box-shadow: 0 1px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.input-area {
+  display: flex;
+  /*background: #a84141;*/
+  position: relative;
+  height: 2.5rem;
+}
+
+.input-area svg {
+  position: absolute;
+  top: 50%; /* 아이콘을 수직 정렬 */
+  left: 4rem; /* 아이콘을 왼쪽에 배치 */
+  transform: translateY(-50%); /* 아이콘을 수직으로 가운데 정렬 */
+  color: #888;
+}
+
+.home-logo {
+  display: flex;
+  margin: 1rem 0 1rem 1rem;
+  text-align: center;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  color: gray;
+  font-size: 22px;
+  /*background: #000;*/
+  width: 7.5rem;
+}
+
+.login-area {
+  /*background: #d75e5e;*/
+  display: flex;
+  /*margin-right: 3rem;*/
+  height: 60%;
+  align-items: center;
+}
+
+.logout-area {
+  display: flex;
+  align-items: center;
+  color: #7f819b;
+}
+button {
+  color: #7f819b;
+  background: transparent;
+  text-decoration: none;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  padding: 7px 7px 7px 7px;
+  min-width: 80px;
+  cursor: pointer;
+  margin: 3px;
+}
+
+button:hover {
+  color: #7f819b;
+  /*font-weight: bold;*/
+  text-shadow: 1px 1px 1px gray;
+}
+
+.user-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.profile-button img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #ffffff;
+  min-width: 160px;
+  z-index: 1;
+  border-radius: 10px;
+  left: -100px;
+}
+
+.dropdown-content a {
+  color: gray;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  color: #7f819b;
+  /*font-weight: bold;*/
+  text-shadow: 1px 1px 1px gray;
+}
+
+.user-dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-info {
+  display: flex;
+  /*background: #000;*/
+  padding: 12px 16px;
+}
+
+.dropdown-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.profile-info {
+  display: flex;
+  flex-flow: column;
+  margin-left: 1rem;
+  align-items: flex-start;
+}
+
+.header-profile-name {
+  color: gray;
+}
+
+.header-profile-role {
+  color: gray;
 }
