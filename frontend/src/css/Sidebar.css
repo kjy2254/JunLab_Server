@@ -71,13 +71,14 @@
   display: flex;
   align-items: center; /* 아이콘 수직 가운데 정렬 */
   width: 2rem;
-  height: 2rem;
+  height: 2.2rem;
 }
 
 .submenu {
   list-style: none;
   padding: 0.5rem;
-  margin-left: 3rem;
+  padding-top: 2px;
+  margin-left: 4rem;
   text-align: left;
   margin-top: 0;
 }
@@ -115,6 +116,10 @@
   font-weight: bold;
 }
 
+.menu-name {
+  margin-left: 0.5rem;
+}
+
 @media (max-width: 1500px) {
   .sidebar {
     width: 4rem; /* 미니멀한 너비로 변경 */
@@ -130,7 +135,7 @@
   }
 
   .menu-item {
-    padding: 1rem 1.2rem;
+    padding: 1rem 1rem;
     cursor: pointer;
     display: flex; /* 메뉴 아이템 내부 요소를 가로 정렬 */
     align-items: center; /* 세로 중앙 정렬 */
@@ -141,7 +146,7 @@
   }
 
   .menu-item svg {
-    margin-right: 9px; /* 아이콘과 텍스트 간격을 조정 */
+    margin-right: 0.1rem; /* 아이콘과 텍스트 간격을 조정 */
   }
 
   .submenu {
@@ -179,7 +184,7 @@
   }
 
   .sidebar.expanded .menu-item svg {
-    margin-right: 0.5rem; /* 아이콘과 텍스트 간격을 복원 */
+    margin-right: 0.4rem; /* 아이콘과 텍스트 간격을 복원 */
   }
 
   .sidebar.expanded .submenu {

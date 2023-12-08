@@ -21,12 +21,22 @@ function App() {
   const [role, setRole] = useState("");
   const [name, setName] = useState("");
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const authData = await authcheck();
+  //     setIsLogin(authData.isLogin);
+  //     setRole(authData.role);
+  //     setName(authData.name);
+  //   };
+  //   fetchData();
+  // }, []);
+
   useEffect(() => {
     const fetchData = async () => {
-      const authData = await authcheck();
-      setIsLogin(authData.isLogin);
-      setRole(authData.role);
-      setName(authData.name);
+      //const authData = await authcheck();
+      setIsLogin(true);
+      setRole("Admin");
+      setName("JunLab");
     };
     fetchData();
   }, []);

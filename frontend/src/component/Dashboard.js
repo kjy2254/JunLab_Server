@@ -1,11 +1,15 @@
 import Sidebar from "./Sidebar";
 import "../css/Dashboard.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Header from "./Header";
 import ForbiddenPage from "./ForbiddenPage";
 import Route from "./Route";
+import Floorplan from "./Floorplan";
+import Panel from "./Panel";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
 
 function Dashboard(props) {
   const [workerData, setWorkerData] = useState([]);
@@ -51,6 +55,167 @@ function Dashboard(props) {
     };
   }, []);
 
+  const options1 = {
+    title: {
+      text: null,
+    },
+    chart: {
+      type: "pie",
+      animation: true,
+      height: 200,
+      backgroundColor: "#e6ecf0",
+      borderRadius: 25,
+      margin: 10,
+      // style: {
+      //   maxWidth: 300,
+      //   minWidth: 100,
+      // },
+    },
+    credits: {
+      enabled: false,
+    },
+    subtitle: {
+      useHTML: true,
+      text: "<span style='font-weight: bold;'>전체 작업자</span><br/>10명",
+      verticalAlign: "middle",
+      y: 15,
+      style: {
+        fontSize: "18px", // 원하는 글씨 크기로 조절
+        textAlign: "center",
+      },
+    },
+    tooltip: {
+      // valueDecimals: 1,
+      valueSuffix: " 명",
+    },
+    plotOptions: {
+      series: {
+        borderWidth: 0,
+        colorByPoint: true,
+        type: "pie",
+        size: "110%",
+        innerSize: "80%",
+        dataLabels: {
+          enabled: true,
+          crop: false,
+          distance: "-10%",
+          style: {
+            fontWeight: "bold",
+            fontSize: "16px",
+          },
+        },
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      crop: false,
+      distance: "-10%",
+      style: {
+        fontWeight: "bold",
+      },
+      connectorWidth: 0,
+    },
+    colors: ["#ce1515", "#ffd901", "#30B402"],
+    series: [
+      {
+        name: "",
+        data: [
+          {
+            name: "위험",
+            y: 2,
+          },
+          {
+            name: "경고",
+            y: 5,
+          },
+          {
+            name: "정상",
+            y: 15,
+          },
+        ],
+      },
+    ],
+  };
+
+  const options2 = {
+    title: {
+      text: null,
+    },
+    chart: {
+      type: "pie",
+      // width: 200,
+      height: 200,
+      animation: true,
+      backgroundColor: "#e6ecf0",
+      borderRadius: 25,
+      margin: 10,
+    },
+    credits: {
+      enabled: false,
+    },
+    subtitle: {
+      useHTML: true,
+      text: "<span style='font-weight: bold;'>현재 구역</span><br/>5명",
+      verticalAlign: "middle",
+      y: 15,
+      style: {
+        fontSize: "18px", // 원하는 글씨 크기로 조절
+        textAlign: "center",
+      },
+    },
+    tooltip: {
+      // valueDecimals: 1,
+      valueSuffix: " 명",
+    },
+    plotOptions: {
+      series: {
+        borderWidth: 0,
+        colorByPoint: true,
+        type: "pie",
+        size: "110%",
+        innerSize: "80%",
+        dataLabels: {
+          enabled: true,
+          crop: false,
+          distance: "-10%",
+          style: {
+            fontWeight: "bold",
+            fontSize: "16px",
+          },
+        },
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      crop: false,
+      distance: "-10%",
+      style: {
+        fontWeight: "bold",
+      },
+      connectorWidth: 0,
+    },
+    colors: ["#ce1515", "#ffd901", "#30B402"],
+    series: [
+      {
+        name: "",
+        data: [
+          {
+            name: "위험",
+            y: 2,
+          },
+          {
+            name: "경고",
+            y: 4,
+          },
+          {
+            name: "정상",
+            y: 3,
+          },
+        ],
+      },
+    ],
+  };
+
   if (
     !props.isLogin ||
     (props.role !== "Factory_" + factoryId && props.role !== "Admin")
@@ -82,10 +247,25 @@ function Dashboard(props) {
                 finalroute={"통합상황판"}
               />
             </div>
-            <div className="summary-section">
-              총 작업자수: 10 빨간색: 3 노란색: 5 초록색: 2
+            <div className="view-section">
+              <div className="view-left">
+                <select className="dropdown">
+                  <option value="1">A동</option>
+                  <option value="1">B동</option>
+                  <option value="1">C동</option>
+                </select>
+                <Floorplan />
+              </div>
+              <div className="view-right">
+                {/* <Fragment>
+                  <HighchartsReact highcharts={Highcharts} options={options1} />
+                </Fragment>
+                <Fragment>
+                  <HighchartsReact highcharts={Highcharts} options={options2} />
+                </Fragment> */}
+                <Panel />
+              </div>
             </div>
-            <div className="view-section"></div>
           </div>
         </div>
       </div>

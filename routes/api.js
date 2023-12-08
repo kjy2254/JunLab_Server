@@ -15,48 +15,31 @@ function getCurrentDate() {
 api.get("/factory/:factoryId/users", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
 
-  // 특정 공장에 속한 모든 사용자의 최근 watch data와 사용자 정보 및 watch_id 가져오기
   const query = `
-        SELECT
-            u.user_id,
-            u.name,
-            wd.heart_rate,
-            wd.body_temperature,
-            wd.oxygen_saturation,
-            wd.is_on,
-            wd.battery_level,
-            wd.timestamp,
-            wd.watch_id
-        FROM
-            users AS u
-        INNER JOIN
-            user_factory_map AS uf ON u.user_id = uf.user_id
-        LEFT JOIN (
-            SELECT
-                wd1.user_id,
-                wd1.heart_rate,
-                wd1.body_temperature,
-                wd1.oxygen_saturation,
-                wd1.is_on,
-                wd1.battery_level,
-                wd1.timestamp,
-                w1.watch_id
-            FROM
-                watch_data wd1
-            INNER JOIN (
-                SELECT
-                    user_id,
-                    MAX(timestamp) AS max_timestamp
-                FROM
-                    watch_data
-                GROUP BY
-                    user_id
-            ) wd2 ON wd1.user_id = wd2.user_id AND wd1.timestamp = wd2.max_timestamp
-            LEFT JOIN watches w1 ON wd1.user_id = w1.user_id
-        ) AS wd ON u.user_id = wd.user_id
-        WHERE
-            uf.factory_id = ?
-    `;
+    SELECT
+      w.watch_id,
+      w.last_sync,
+      CASE
+        WHEN w.last_battery_level BETWEEN 3.4 AND 4.2 THEN
+          ROUND(((w.last_battery_level - 3.4) / (4.2 - 3.4)) * 100)
+        ELSE
+          NULL
+      END AS adjusted_battery_level,
+      w.last_heart_rate,
+      w.last_body_temperature,
+      w.last_oxygen_saturation,
+      w.last_battery_level,
+      w.last_tvoc,
+      w.last_co2,
+      u.name,
+      w.last_sync
+    FROM
+      watches w
+    JOIN
+      users u ON w.user_id = u.user_id
+    WHERE
+      u.factory_id = ?;
+  `;
 
   // 쿼리 실행
   connection.query(query, [factoryId], (error, result) => {
@@ -64,8 +47,18 @@ api.get("/factory/:factoryId/users", (req, res) => {
       console.log(error);
       return res.status(500).send("Internal Server Error!");
     }
+
+    // 현재 시간
+    const currentTime = new Date();
+
+    // 30초 미만이면 online: true, 그 외에는 online: false로 설정
+    const updatedResult = result.map((user) => ({
+      ...user,
+      online: Math.abs(currentTime - new Date(user.last_sync)) < 30000,
+    }));
+
     // 결과를 JSON 형식으로 응답
-    return res.status(200).json(result);
+    return res.status(200).json(updatedResult);
   });
 });
 

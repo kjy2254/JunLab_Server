@@ -142,13 +142,13 @@ function RealtimeData(props) {
               {workerData.map((worker, index) => (
                 <WorkerSummary
                   key={index}
-                  workerName={worker.full_name}
+                  workerName={worker.name}
                   ID={worker.watch_id}
-                  bpm={worker.heart_rate}
-                  temperature={worker.body_temperature}
-                  spo2={worker.oxygen_saturation}
-                  online={worker.status === 1 ? "Online" : "Offline"}
-                  batt={worker.battery_level}
+                  bpm={worker.last_heart_rate}
+                  temperature={worker.last_body_temperature}
+                  spo2={worker.last_oxygen_saturation}
+                  online={worker.online ? "Online" : "Offline"}
+                  batt={worker.adjusted_battery_level}
                 />
               ))}
             </div>
