@@ -1,0 +1,64 @@
+.dot {
+  width: 4%;
+  max-width: 30px;
+  border-radius: 50%;
+  position: absolute;
+  aspect-ratio: 1/1;
+  font-weight: bold;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* background: #ffffff; */
+}
+
+/* .dot-text {
+  position: relative;
+  top: 1.2rem;
+  font-size: 10%;
+} */
+
+.floor-wrapper {
+  /* background: #000; */
+  /* height: 200px; */
+  display: flex;
+  height: 100%;
+  padding: 3rem;
+  justify-content: center;
+}
+
+.floor-plan {
+  margin: 1rem;
+  padding: 1rem;
+  /* background: #e49a9a; */
+  background-image: url(../image/floorplan.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  aspect-ratio: 1101 /831;
+  /* max-width: fit-content; */
+  max-height: 72vh;
+}
+
+.red {
+  background-color: red;
+}
+
+.green {
+  background-color: green;
+}
+
+.yellow {
+  background-color: rgb(255, 208, 0);
+}
+
+.dot:hover .tooltip {
+  display: block;
+  top: -30px;
+  left: 0;
+}
+
+.dot img {
+  width: 200%;
+}

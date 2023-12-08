@@ -1,90 +1,96 @@
-.worker-summary{
-    display: flex;
-    flex-flow: column;
-    flex-grow: 1;
+.worker-summary {
+  display: flex;
+  flex-flow: column;
+  flex-grow: 1;
 }
 
 .view-icon {
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
 }
 
 .summary-header {
-    padding-left: 3rem;
-    padding-right: 3rem;
-    color: #1F263E;
-    font-size: 18px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-    display: flex;
-    justify-content: space-between;
+  padding-left: 3rem;
+  padding-right: 3rem;
+  color: #1f263e;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  display: flex;
+  justify-content: space-between;
 }
 
 .summary-card {
-    width: 100%;
-    min-height: 6rem;
-    box-shadow: 0 1px 15px -4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    overflow: hidden;
+  width: 100%;
+  min-height: 6rem;
+  box-shadow: 0 1px 15px -4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
 }
 
 .profile-area {
-    display: flex;
+  display: flex;
 }
 
 .profile-name-area {
-    display: flex;
-    flex-flow: column;
-    align-items: flex-start;
-    justify-content: center;
-    text-align: left;
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
 }
 
 .profile-name {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .profile-id {
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 300;
-    line-height: normal;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
 }
 
-.bpm, .temperature, .spo2, .status-area{
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 1rem;
-    width: 100px;
+.bpm,
+.temperature,
+.spo2,
+.status-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  width: 120px;
+  /* background: #e7b8b8; */
 }
 
 .status-area {
-    display: flex;
-    flex-flow: column;
+  display: flex;
+  flex-flow: column;
 }
 
-.battery, .online {
-    display: flex;
-    align-items: center;
+.battery,
+.online {
+  display: flex;
+  align-items: center;
 }
 
 .icon {
-    margin-right: 0.8rem;
+  margin-right: 0.8rem;
 }
 
-.right, .left {
-    display: flex;
+.right,
+.left {
+  display: flex;
 }
 
 .left {
-    margin-left: 2rem;
+  margin-left: 2rem;
 }
 
 .right {
-    margin-right: 2rem;
-    flex-wrap: wrap;
-    justify-content: center;
+  margin-right: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }

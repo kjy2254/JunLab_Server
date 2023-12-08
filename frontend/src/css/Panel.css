@@ -1,0 +1,44 @@
+.panel-wrapper {
+  margin-bottom: 2rem;
+}
+
+.count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 3rem;
+  margin-top: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  /* margin-bottom: 2rem; */
+  /* background: #e3e3e3; */
+  border-radius: 10px;
+  font-size: 25px;
+  font-weight: bold;
+  background: #ffffff;
+}
+
+.text-red {
+  color: red;
+}
+
+.text-green {
+  color: green;
+}
+
+.text-yellow {
+  color: rgb(255, 208, 0);
+}
+
+.score {
+  height: 0.5rem;
+  /* width: 50%; */
+  border-radius: 10px;
+  /* background: #000; */
+  float: right;
+}
+
+.total-count {
+  color: rgb(54, 53, 53);
+}

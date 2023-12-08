@@ -86,6 +86,7 @@
   background: white;
   box-shadow: 0 1px 15px rgba(0, 0, 0, 0.05);
   border-radius: 10px;
+  overflow-y: scroll;
 }
 
 .flex {

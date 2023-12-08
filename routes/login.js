@@ -101,11 +101,13 @@ login.post("/signup", (req, res) => {
 
   const sendData = { isSuccess: "" };
 
+  console.log(username, password, password2, email);
+
   if (username && password && password2) {
     connection.query(
       "SELECT * FROM users WHERE username = ?",
       [username],
-      function (error, results, fields) {
+      (error, results) => {
         // DB에 같은 이름의 회원아이디가 있는지 확인
         if (error) throw error;
         if (results.length <= 0 && password == password2) {
@@ -114,10 +116,11 @@ login.post("/signup", (req, res) => {
           connection.query(
             "INSERT INTO users (username, password, email, role) VALUES(?,?,?,?)",
             [username, hasedPassword, email, "Default"],
-            function (error, data) {
+            (error) => {
               if (error) throw error;
               req.session.save(function () {
                 sendData.isSuccess = true;
+                console.log("저장성공");
                 res.send(sendData);
               });
             }
