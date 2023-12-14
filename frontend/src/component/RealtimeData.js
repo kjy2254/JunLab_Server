@@ -94,10 +94,17 @@ function RealtimeData(props) {
             />
             <div className="top-section">
               <Route
-                routelist={["공장", "한금 포항공장"]}
+                routelist={["공장", factoryName]}
                 finalroute={"실시간 데이터"}
               />
               <div className="last-update">Last Update: {lastUpdate}</div>
+            </div>
+            <div className="module-selector">
+              <select className="dropdown">
+                <option value="1">A동</option>
+                <option value="1">B동</option>
+                <option value="1">C동</option>
+              </select>
             </div>
             <div className="chart-section">
               <Chart

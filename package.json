@@ -20,6 +20,7 @@
     "jade": "~1.11.0",
     "json2csv": "^6.0.0-alpha.2",
     "morgan": "~1.9.1",
+    "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
     "node-table-to-csv": "^0.1.0",
     "nodemon": "^2.0.22",

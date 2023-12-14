@@ -1,11 +1,11 @@
-.dashboard-container {
+.settings-container {
   display: flex;
   height: 100vh;
   overflow: hidden;
   background-color: #f3f6fe;
 }
 
-.dashboard-content {
+.settings-content {
   display: flex;
   flex-direction: column;
   flex: 1;

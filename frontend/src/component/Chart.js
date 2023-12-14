@@ -27,7 +27,7 @@ function Chart(props) {
     try {
       axios
         .get(
-          `http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}?count=200`
+          `http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}2?count=200`
         ) //today로 수정 필요
         .then((response) => {
           // API 응답에서 데이터를 추출합니다.

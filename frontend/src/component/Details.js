@@ -84,7 +84,7 @@ function Details(props) {
   const fetchData = async () => {
     axios
       .get(
-        `http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}?date=${
+        `http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}2?date=${
           date ? date : ""
         }&count=${count}`
       )
@@ -99,7 +99,7 @@ function Details(props) {
               y: item.y,
             }));
             return {
-              name: `Module_${moduleId} (${data})`,
+              name: `${moduleId} (${data})`,
               data: moduleData,
             };
           } else {
@@ -118,17 +118,17 @@ function Details(props) {
 
             if (selected === "pm1.0") {
               return {
-                name: `Module_${moduleId} (pm1.0)`,
+                name: `${moduleId} (pm1.0)`,
                 data: pm1_0data,
               };
             } else if (selected === "pm2.5") {
               return {
-                name: `Module_${moduleId} (pm2.5)`,
+                name: `${moduleId} (pm2.5)`,
                 data: pm2_5data,
               };
             } else {
               return {
-                name: `Module_${moduleId} (pm10)`,
+                name: `${moduleId} (pm10)`,
                 data: pm10data,
               };
             }
@@ -307,7 +307,7 @@ function Details(props) {
             name={props.name}
             role={props.role}
           />
-          <Route routelist={["공장", "한금 포항공장"]} finalroute={data} />
+          <Route routelist={["공장", factoryName]} finalroute={data} />
           <div className="detail-section">
             <div className="detail-info">
               <div className="flex">

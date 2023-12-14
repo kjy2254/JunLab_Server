@@ -63,6 +63,7 @@
   padding: 1rem;
   width: 120px;
   /* background: #e7b8b8; */
+  font-weight: bolder;
 }
 
 .status-area {
@@ -74,6 +75,8 @@
 .online {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  width: 90%;
 }
 
 .icon {

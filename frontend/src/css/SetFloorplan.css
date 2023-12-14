@@ -1,0 +1,51 @@
+.set-floor-wrapper {
+  /* background: #eedbdb; */
+  width: 100%;
+  display: flex;
+  height: 100%;
+  /* padding: 1rem; */
+  /* justify-content: center; */
+  display: block;
+  position: relative;
+}
+
+.set-floor-plan {
+  margin: 1rem;
+  padding: 1rem;
+  background: #e49a9a;
+  /* background-image: url(../image/floorplan.jpg); */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  /* aspect-ratio: 1101 /831; */
+  /* max-width: fit-content; */
+  max-height: 65vh;
+}
+
+.upload {
+  font-weight: bold;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  /* position: absolute;
+  bottom: 0;
+  right: 0; */
+  color: cornflowerblue;
+  background: #0200;
+}
+
+.set-bottom {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.set-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-save {
+  background: skyblue;
+}

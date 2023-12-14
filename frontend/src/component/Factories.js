@@ -92,7 +92,7 @@ function Factories(props) {
                 >
                   <div className="factory-image">
                     <img
-                      src={`http://junlab.postech.ac.kr:880/api/image/factory_${factory.factory_id}`}
+                      src={`http://junlab.postech.ac.kr:880/api/image/factory_${factory.factory_id}.png`}
                       alt="factory"
                     />
                     <div className="factory-name">

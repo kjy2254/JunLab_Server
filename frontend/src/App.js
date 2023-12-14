@@ -14,6 +14,7 @@ import Details from "./component/Details";
 import Login from "./component/Login";
 // import Signup from "./component/Signup";
 import Home from "./component/Home";
+import Settings from "./component/Settings";
 import RealtimeData from "./component/RealtimeData";
 
 function App() {
@@ -63,14 +64,6 @@ function App() {
               )
             }
           />
-          {/* <Route
-            path="/iitp/factoryManagement/login"
-            element={<Login isLogin={isLogin} role={role} name={name} />}
-          /> */}
-          {/* <Route
-            path="/iitp/factoryManagement/signup"
-            element={<Signup isLogin={isLogin} role={role} name={name} />}
-          /> */}
           <Route
             path="/iitp/factoryManagement/factory"
             element={<Factories isLogin={isLogin} role={role} name={name} />}
@@ -86,6 +79,10 @@ function App() {
           <Route
             path="/iitp/factoryManagement/factory/:factoryId/:data"
             element={<Details isLogin={isLogin} role={role} name={name} />}
+          />
+          <Route
+            path="/iitp/factoryManagement/factory/:factoryId/settings"
+            element={<Settings isLogin={isLogin} role={role} name={name} />}
           />
           <Route path="*" element={<NotFound />} />
         </Routes>
