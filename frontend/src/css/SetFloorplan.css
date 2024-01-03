@@ -12,7 +12,7 @@
 .set-floor-plan {
   margin: 1rem;
   padding: 1rem;
-  background: #e49a9a;
+  background: #ff00003d;
   /* background-image: url(../image/floorplan.jpg); */
   background-size: contain;
   background-repeat: no-repeat;
@@ -48,4 +48,19 @@
 
 .button-save {
   background: skyblue;
+}
+
+/* 이 부분은 기존의 코드에 추가하세요 */
+.draggable-element {
+  width: 10%; /* 드래그 가능한 요소의 너비 */
+  height: 5%; /* 드래그 가능한 요소의 높이 */
+  background-color: #3498db; /* 드래그 가능한 요소의 배경 색상 */
+  position: absolute;
+  cursor: grab; /* 드래그 가능한 상태에서 마우스 커서 모양 */
+  user-select: none; /* 텍스트 선택 방지 */
+  border-radius: 5px; /* 모서리를 둥글게 만들기 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000; /* 텍스트 색상 */
 }

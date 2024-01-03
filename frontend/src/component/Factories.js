@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AdminSidebar from "./AdminSidebar";
 import "../css/Factories.css";
+import "../css/Theme.css";
 import { Link } from "react-router-dom";
 import Header from "./Header";
 import { createFuzzyMatcher } from "../util";
@@ -38,7 +39,7 @@ function Factories(props) {
     return (
       <div className="factory-container">
         <AdminSidebar header="관리자 페이지" mode="admin" selected="1" />
-        <div className="factory-content">
+        <div className="factory-content bg">
           <Header
             placeholder="Type any factories..."
             setData={setFilter}
@@ -86,7 +87,7 @@ function Factories(props) {
               )
               .map((factory) => (
                 <Link
-                  className="factory-card"
+                  className="factory-card bg2"
                   key={factory.factory_id}
                   to={`/iitp/factoryManagement/factory/${factory.factory_id}`}
                 >

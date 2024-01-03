@@ -6,6 +6,7 @@ const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const multer = require("multer");
 const util = require("util");
+const { json } = require("body-parser");
 const unlinkAsync = util.promisify(fs.unlink);
 
 function getCurrentDate() {
@@ -259,132 +260,122 @@ WHERE
 });
 
 api.get("/factory/dashboard/:factoryId", async (req, res) => {
-  const factoryId = req.params.factoryId;
-
   try {
-    // 센서 모듈 데이터 가져오기
-    const sensorModulesQuery = `
-      SELECT *, scheme_file.scheme_name
-      FROM sensor_modules
-      LEFT JOIN scheme_file ON sensor_modules.factory_id = scheme_file.factory_id AND sensor_modules.page = scheme_file.page
-      WHERE sensor_modules.factory_id = ?;
-    `;
+    const factoryId = req.params.factoryId;
+    const query1 = `SELECT name,
+                      scheme_name,
+                      page,
+                      expansion,
+                      width,
+                      height
+                    FROM scheme_file
+                    WHERE factory_id = ?
+                    ORDER BY page`;
 
-    const sensorModules = await executeQuery(sensorModulesQuery, [factoryId]);
+    const result1 = await new Promise((resolve, reject) => {
+      connection.query(query1, factoryId, (error, result) => {
+        if (error) {
+          console.error("Error executing MySQL query:", error);
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
 
-    // 사용자 데이터 가져오기
-    const usersQuery = `
-    SELECT
-      u.x AS user_x,
-      u.y AS user_y,
-      u.name AS worker_name,
-      sm.*,
-      w.last_sync,
-      w.last_heart_rate,
-      w.last_body_temperature,
-      w.last_oxygen_saturation,
-      w.last_battery_level,
-      w.last_tvoc,
-      w.last_co2,
-      w.level,
-      sf.scheme_name,
-      CONCAT(sf.name, '.', sf.expansion) AS imageName
-    FROM
-      users u
-    LEFT JOIN
-      sensor_modules sm ON u.factory_id = sm.factory_id AND u.page = sm.page
-    LEFT JOIN
-      watches w ON u.user_id = w.user_id
-    LEFT JOIN
-      scheme_file sf ON u.factory_id = sf.factory_id AND u.page = sf.page
-    WHERE
-      u.factory_id = ?;
-  `;
+    const returnData = {};
 
-    const users = await executeQuery(usersQuery, [factoryId]);
+    for (const e of result1) {
+      // console.log(e.page);
 
-    // 데이터를 그룹화하여 반환
-    const groupedResult = groupData(sensorModules, users);
+      const query2 = `SELECT u.x,
+                            u.y,
+                            w.level,
+                            u.name,
+                            w.last_heart_rate,
+                            w.last_body_temperature,
+                            w.last_oxygen_saturation
+                      FROM users u JOIN watches w ON u.watch_id = w.watch_id
+                      WHERE u.factory_id = ? AND u.page = ?`;
 
-    res.json(groupedResult);
+      const result2 = await new Promise((resolve, reject) => {
+        connection.query(query2, [factoryId, e.page], (error, result) => {
+          if (error) {
+            console.error("Error executing MySQL query:", error);
+            reject(error);
+            return;
+          }
+          resolve(result);
+        });
+      });
+
+      const workers = result2.map((w) => {
+        return {
+          x: w.x,
+          y: w.y,
+          level: w.level,
+          description: {
+            name: w.name,
+            heartrate: w.last_heart_rate,
+            temperature: w.last_body_temperature,
+            oxygen: parseInt(w.last_oxygen_saturation),
+          },
+        };
+      });
+
+      const query3 = `SELECT m.x,
+                            m.y,
+                            m.level,
+                            m.module_name,
+                            m.last_tvoc,
+                            m.last_co2,
+                            m.last_temperature,
+                            m.last_pm10
+                      FROM sensor_modules m
+                      WHERE m.factory_id = ? AND m.page = ?`;
+
+      const result3 = await new Promise((resolve, reject) => {
+        connection.query(query3, [factoryId, e.page], (error, result) => {
+          if (error) {
+            console.error("Error executing MySQL query:", error);
+            reject(error);
+            return;
+          }
+          resolve(result);
+        });
+      });
+
+      const modules = result3.map((m) => {
+        return {
+          x: m.x,
+          y: m.y,
+          level: m.level,
+          description: {
+            name: m.module_name,
+            tvoc: m.last_tvoc,
+            co2: m.last_co2,
+            temperature: m.last_temperature,
+            finedust: m.last_pm10,
+          },
+        };
+      });
+
+      returnData[e.page] = {
+        pageName: e.scheme_name,
+        workers: workers,
+        modules: modules,
+        imageName: e.name + "." + e.expansion,
+        width: e.width,
+        height: e.height,
+      };
+    }
+
+    return res.status(200).json(returnData);
   } catch (error) {
-    console.error(error);
+    console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-const groupData = (sensorModules, users) => {
-  const groupedData = {};
-
-  // 센서 모듈 그룹화
-  sensorModules.forEach((module) => {
-    const schemeName = module.scheme_name || "default"; // 기본값은 "default"로 설정
-    if (!groupedData[schemeName]) {
-      groupedData[schemeName] = {
-        workers: new Set(), // 중복 방지를 위해 Set 사용
-        modules: [],
-      };
-    }
-
-    groupedData[schemeName].modules.push({
-      x: module.x,
-      y: module.y,
-      level: module.level || "",
-      description: {
-        name: module.module_name,
-        tvoc: module.last_tvoc || "",
-        co2: module.last_co2 || "",
-        temperature: module.last_temperature || "",
-        finedust: module.last_pm2_5 || "",
-      },
-    });
-  });
-
-  // 사용자 데이터 추가
-  users.forEach((user) => {
-    const schemeName = user.scheme_name || "default"; // 기본값은 "default"로 설정
-    if (!groupedData[schemeName]) {
-      groupedData[schemeName] = {
-        workers: new Set(), // 중복 방지를 위해 Set 사용
-        modules: [],
-      };
-    }
-
-    // 중복 방지를 위해 Set에 추가
-    groupedData[schemeName].workers.add(
-      JSON.stringify({
-        x: user.user_x,
-        y: user.user_y,
-        level: user.level || "",
-        description: {
-          name: user.worker_name,
-          heartrate: user.last_heart_rate || "",
-          temperature: user.last_body_temperature || "",
-          oxygen: user.last_oxygen_saturation || "",
-        },
-      })
-    );
-  });
-
-  // Set을 배열로 변환하여 반환
-  for (const key in groupedData) {
-    groupedData[key].workers = Array.from(groupedData[key].workers).map(
-      (worker) => JSON.parse(worker)
-    );
-
-    // imageName 추가
-    groupedData[key].imageName =
-      users.find((user) => user.scheme_name === key)?.imageName || "";
-    // groupedData[key].width =
-    //   users.find((user) => user.scheme_name === key)?.width || "";
-    // groupedData[key].height =
-    //   users.find((user) => user.scheme_name === key)?.height || "";
-  }
-
-  delete groupedData.default;
-
-  return groupedData;
-};
 
 const executeQuery = (query, params) => {
   return new Promise((resolve, reject) => {
@@ -401,7 +392,7 @@ api.get("/floorset/:factoryId", async (req, res) => {
 
     // floorplans 데이터 조회 쿼리
     const floorplansQuery = `
-      SELECT sf.page, sf.name AS imageName, sf.width, sf.height, sf.scheme_name,
+      SELECT sf.page, sf.name AS imageName, sf.width, sf.height, sf.scheme_name, sf.expansion,
              u.user_id AS worker_id, u.name AS worker_name, u.x AS worker_x, u.y AS worker_y,
              sm.module_id, sm.module_name, sm.x AS module_x, sm.y AS module_y
       FROM scheme_file sf
@@ -443,7 +434,7 @@ api.get("/floorset/:factoryId", async (req, res) => {
       if (!floorplan) {
         floorplan = {
           page: row.page,
-          imageName: row.imageName,
+          imageName: row.imageName + "." + row.expansion,
           width: row.width,
           height: row.height,
           schemeName: row.scheme_name,
@@ -526,119 +517,127 @@ api.get("/image/:imageName", (req, res) => {
   }
 });
 
-api.post("/saveImage", (req, res) => {
-  const { factoryId, page, image, dimensions, originalImageName } = req.body;
-
-  // 이미지 파일을 저장할 폴더 경로
-  const uploadPath = path.join(__dirname, "../images"); // uploads 폴더가 존재해야 합니다.
-
-  // 파일의 확장자 추출
-  const fileExtension = path
-    .extname(originalImageName)
-    .toLowerCase()
-    .replaceAll(".", "");
-
-  const fileId = uuidv4();
-
-  // 새로운 파일 이름 생성 (uuid 활용)
-  const newFileName = `${fileId}.${fileExtension}`;
-
-  // 이미지 파일의 전체 경로
-  const filePath = path.join(uploadPath, newFileName);
-
-  // 이미지 파일 저장
-  fs.writeFileSync(filePath, image, "base64");
-
-  // MySQL 쿼리 작성
-  const sql = `
-    INSERT INTO scheme_file (id, factory_id, original_name, expansion, width, height, page)
-    VALUES (?, ?, ?, ?, ?, ?, ?);
-  `;
-
-  // 파일 정보 데이터
-  const fileData = [
-    fileId,
-    factoryId, // 이 부분은 scheme_file 테이블에 factory_id 컬럼이 없어서 적절하게 수정이 필요합니다.
-    originalImageName,
-    fileExtension,
-    dimensions.width,
-    dimensions.height,
-    page,
-  ];
-
-  // MySQL 쿼리 실행
-  connection.query(sql, fileData, (error, results) => {
-    if (error) {
-      console.error("Error executing MySQL query:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-      return;
-    }
-
-    res.json({
-      success: true,
-      message: "저장이 완료되었습니다.",
-    });
-  });
-});
-
-api.post("/saveImage2", upload.single("image"), (req, res) => {
+api.post("/addpage", upload.single("image"), (req, res) => {
   const jsonData = JSON.parse(req.body.data);
-  const query = `UPDATE scheme_file
-  SET
-    name = ?,
-    original_name = ?,
-    expansion = ?,
-    width = ?,
-    height = ?,
-    scheme_name = scheme_name
-  WHERE factory_id = ? AND page = ?;
-  `;
-
   const tmp = jsonData.originalImageName.split(".");
 
-  const values = [
-    req.UUID,
-    tmp[0],
-    tmp[1],
-    jsonData.dimensions.width,
-    jsonData.dimensions.height,
-    jsonData.factoryId,
-    jsonData.page,
-  ];
+  if (!jsonData.pageName) {
+    return res.json({
+      success: false,
+      message: "페이지명을 입력하세요.",
+    });
+  }
 
   connection.query(
-    `SELECT name, expansion  FROM scheme_file WHERE factory_id = ? AND page = ?`,
-    [jsonData.factoryId, jsonData.page],
-    async (error, result) => {
+    `SELECT IFNULL(MAX(page), 0) + 1 as newPage FROM scheme_file WHERE factory_id = ?`,
+    jsonData.factoryId,
+    (error, result) => {
       if (error) {
         console.log(error);
         return res.status(500).send("Internal Server Error!");
       }
-      const toDelete = result[0].name + "." + result[0].expansion;
 
-      try {
-        // 파일 경로 구성
-        const filePath = "./images/" + toDelete;
+      const newPageNumber = result[0].newPage; // 새로운 페이지 번호 가져오기
 
-        // 비동기적으로 파일을 삭제합니다.
-        await unlinkAsync(filePath);
-        console.log(`${toDelete} 파일이 성공적으로 삭제되었습니다.`);
-      } catch (unlinkError) {
-        console.error("파일 삭제 오류:", unlinkError);
-      }
+      const query = `INSERT INTO scheme_file
+                      SET
+                        name = ?,
+                        original_name = ?,
+                        expansion = ?,
+                        width = ?,
+                        height = ?,
+                        scheme_name = ?,
+                        factory_id = ?,
+                        page = ?`;
+
+      const values = [
+        req.UUID,
+        tmp[0],
+        tmp[1],
+        jsonData.dimensions.width,
+        jsonData.dimensions.height,
+        jsonData.pageName,
+        jsonData.factoryId,
+        newPageNumber, // 수정된 부분: 새로운 페이지 번호로 대체
+      ];
+
+      connection.query(query, values, (error, result) => {
+        if (error) {
+          console.log(error);
+          return res.json({
+            success: false,
+            message: "사진을 입력하세요.",
+          });
+        }
+        return res.json({
+          success: true,
+          message: "저장이 완료되었습니다.",
+        });
+      });
     }
   );
+});
 
-  connection.query(query, values, (error, result) => {
+api.delete("/deletepage", (req, res) => {
+  const factoryId = req.body.factoryId; // POST 요청에서 body를 통해 factoryId와 page를 받아오도록 변경 가능
+  const page = req.body.page;
+
+  // console.log(factoryId, page);
+
+  // 유효성 검사: factoryId와 page는 필수 파라미터입니다.
+  if (!factoryId || !page) {
+    return res
+      .status(400)
+      .json({ error: "factoryId and page are required parameters." });
+  }
+
+  // DELETE 쿼리 작성
+  const deleteQuery =
+    "DELETE FROM scheme_file WHERE factory_id = ? AND page = ?";
+
+  // DELETE 쿼리 실행
+  connection.query(deleteQuery, [factoryId, page], (error, results) => {
     if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
+      console.error("Error executing MySQL query:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
     }
-    return res.json({
-      success: true,
-      message: "저장이 완료되었습니다.",
-    });
+
+    // TO-DO
+    // 1. 실제 서버의 이미지 삭제하는 로직 추가
+    // 2. users 테이블과 sensor_moudle 테이블의 factoryId로 조회 후 page에 해당하는 값들을 null로 초기화
+
+    // 올바르게 삭제되었다면 결과 반환
+    return res.status(200).json({ message: "Row deleted successfully." });
   });
+});
+
+api.put("/updatepage", async (req, res) => {
+  try {
+    const data = req.body;
+
+    console.log(data);
+
+    // 사용자 정보 업데이트
+    for (const user of data.workers) {
+      await connection.query(
+        `UPDATE users SET x = ?, y = ?, page = ? WHERE user_id = ?`,
+        [user.x, user.y, data.page, user.id]
+      );
+    }
+
+    // 센서 모듈 정보 업데이트
+    for (const module of data.modules) {
+      await connection.query(
+        `UPDATE sensor_modules SET x = ?, y = ?, page = ? WHERE module_id = ?`,
+        [module.x, module.y, data.page, module.id]
+      );
+    }
+
+    res.status(200).send("데이터 업데이트 성공");
+  } catch (error) {
+    console.error("데이터 업데이트 실패:", error);
+    res.status(500).send("데이터 업데이트 실패");
+  }
 });
 
 api.get("/factory/:factoryId/tvoc", (req, res) => {

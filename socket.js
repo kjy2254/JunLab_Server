@@ -277,13 +277,11 @@ function save2(rawData) {
         if (error) {
           console.log(error);
         }
-
+        // console.log("factoryID:", result[0].factory_id);
         if (result.length === 0) {
           console.log("not registered module");
           return false;
         }
-        // console.log("factoryID:", result[0].factory_id);
-
         const insert_query = `INSERT INTO sensor_data (factory_id,
                                           tvoc,
                                           co2,

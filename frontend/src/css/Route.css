@@ -10,6 +10,7 @@
 
 .path {
   margin-right: 20px;
+  color: white;
 }
 
 .path-selected {
@@ -17,5 +18,5 @@
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  background-image: linear-gradient(122deg, #0043ff 0%, #8037f1 100%);
+  background-image: linear-gradient(122deg, #dadada 0%, #bcb0ce 100%);
 }

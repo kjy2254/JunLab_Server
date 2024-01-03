@@ -1,10 +1,11 @@
 import "../css/Panel.css";
+import "../css/Theme.css";
 
 function Panel(props) {
   return (
-    <>
-      <div className="panel-wrapper">
-        <h2 className="total-count">총 작업자: 6명</h2>
+    <div>
+      <div className="panel-wrapper ">
+        <h2 className="text-color">총 작업자: 6명</h2>
         <div className="count text-green">
           <p>정상</p> <p>2명</p>
         </div>
@@ -19,7 +20,7 @@ function Panel(props) {
         <div className="score red" style={{ width: `${(1 / 6) * 100}%` }} />
       </div>
       <div className="panel-wrapper">
-        <h2 className="total-count">현재 구역: 6명</h2>
+        <h2 className=" text-color">현재 구역: 6명</h2>
         <div className="count text-green">
           <p>정상</p> <p>2명</p>
         </div>
@@ -33,7 +34,7 @@ function Panel(props) {
         </div>
         <div className="score red" style={{ width: `${(1 / 6) * 100}%` }} />
       </div>
-    </>
+    </div>
   );
 }
 

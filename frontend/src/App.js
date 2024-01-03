@@ -16,6 +16,7 @@ import Login from "./component/Login";
 import Home from "./component/Home";
 import Settings from "./component/Settings";
 import RealtimeData from "./component/RealtimeData";
+import Header from "./component/Header";
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);

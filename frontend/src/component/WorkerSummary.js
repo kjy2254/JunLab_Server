@@ -1,4 +1,5 @@
 import "../css/WorkerSummary.css";
+import "../css/Theme.css";
 import React from "react";
 
 function WorkerSummary(props) {
@@ -12,7 +13,7 @@ function WorkerSummary(props) {
   const batt = online === "Online" ? Math.round(props.batt) : "-";
 
   return (
-    <div className="summary-card">
+    <div className="summary-card bg5">
       <div className="left">
         <div className="icon">
           <svg

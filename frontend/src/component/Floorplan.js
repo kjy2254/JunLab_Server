@@ -11,6 +11,7 @@ import Tooltip from "./Tooltip";
 
 function Floorplan(props) {
   const [image, setImage] = useState("");
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [tooltip, setTooltip] = useState({
     visible: false,
     x: 0,
@@ -20,10 +21,12 @@ function Floorplan(props) {
 
   useEffect(() => {
     if (props.data) {
+      // console.log(props.data);
       setImage(
         `http://junlab.postech.ac.kr:880/api/image/${props.data.imageName}`
       );
-      console.log(props.data);
+      setDimensions({ width: props.data.width, height: props.data.height });
+      // console.log(props.data);
     }
   }, [props.data]);
 
@@ -48,6 +51,7 @@ function Floorplan(props) {
         className="floor-plan"
         style={{
           backgroundImage: `url(${image})`,
+          aspectRatio: `${dimensions.width / dimensions.height}`,
         }}
       >
         {props.data &&
@@ -130,6 +134,7 @@ function Floorplan(props) {
             );
           })}
       </div>
+      <span>1d</span>
     </div>
   );
 }

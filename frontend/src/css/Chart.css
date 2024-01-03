@@ -20,7 +20,7 @@
 
 .chart-section {
   display: flex;
-  background-color: #f3f6fe;
+  background-color: #12121212;
   margin: 1rem;
   margin-top: 0;
 }
@@ -28,7 +28,7 @@
 .chart-area {
   min-height: 180px;
   border-radius: 10px;
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
   flex: 1;
   margin: 20px;
   box-shadow: 0 1px 15px rgba(0, 0, 0, 0.05);
@@ -40,6 +40,7 @@
   display: flex;
   justify-content: space-between;
   margin: 1rem;
+  color: white;
 }
 
 .chart-name-area {

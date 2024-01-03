@@ -1,5 +1,6 @@
 import Sidebar from "./Sidebar";
 import "../css/RealtimeData.css";
+import "../css/Theme.css";
 import Chart from "./Chart";
 import React, { useEffect, useState } from "react";
 import WorkerSummary from "./WorkerSummary";
@@ -83,7 +84,7 @@ function RealtimeData(props) {
       <div className="dashboard-container">
         <Sidebar header={factoryName} factoryId={factoryId} selected={"2"} />
         <div className="dashboard-content">
-          <div className="main-section">
+          <div className="main-section bg">
             <Header
               placeholder="Type any workers..."
               setData={setFilter}
@@ -97,7 +98,9 @@ function RealtimeData(props) {
                 routelist={["공장", factoryName]}
                 finalroute={"실시간 데이터"}
               />
-              <div className="last-update">Last Update: {lastUpdate}</div>
+              <div className="last-update text-color">
+                Last Update: {lastUpdate}
+              </div>
             </div>
             <div className="module-selector">
               <select className="dropdown">
@@ -145,7 +148,7 @@ function RealtimeData(props) {
               />
             </div>
             <div className="summary-header">작업자 상태 요약</div>
-            <div className="summary-card-area">
+            <div className="summary-card-area bg2">
               {workerData.map((worker, index) => (
                 <WorkerSummary
                   key={index}

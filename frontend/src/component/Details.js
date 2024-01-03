@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment } from "react";
 import axios from "axios";
 import Sidebar from "./Sidebar";
 import "../css/Details.css";
+import "../css/Theme.css";
 import { useParams } from "react-router-dom";
 import Header from "./Header";
 import Route from "./Route";
@@ -196,6 +197,7 @@ function Details(props) {
           },
         },
       },
+      backgroundColor: "#d4d4d4",
     },
     title: {
       text: null, // 'none' 대신에 null로 title을 비활성화합니다.

@@ -1,5 +1,6 @@
 .header {
-  background-color: #fff;
+  /* background-color: #fff; */
+  background-color: #464646;
   color: white;
   text-align: center;
   min-height: 70px;
@@ -16,12 +17,20 @@
   height: 2.5rem;
 }
 
+.input-area input {
+  background: #818181;
+  color: white;
+}
+
+.input-area input::placeholder {
+  color: rgba(255, 255, 255, 0.507);
+}
+
 .input-area svg {
   position: absolute;
   top: 50%; /* 아이콘을 수직 정렬 */
   left: 4rem; /* 아이콘을 왼쪽에 배치 */
   transform: translateY(-50%); /* 아이콘을 수직으로 가운데 정렬 */
-  color: #888;
 }
 
 .search-box {
@@ -39,7 +48,7 @@
 
 /* 포커스 시 스타일 */
 .search-box:focus {
-  box-shadow: 0 0 5px #50b8e4;
+  box-shadow: 0 0 5px #9c9c9c;
   outline: none;
 }
 .home-header {

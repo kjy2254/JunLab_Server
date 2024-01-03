@@ -7,7 +7,9 @@ import Header from "./Header";
 import ForbiddenPage from "./ForbiddenPage";
 import Route from "./Route";
 import "../css/Settings.css";
+import "../css/Theme.css";
 import SetFloorplan from "./SetFloorplan";
+import SetFloorplan2 from "./SetFloorplan2";
 
 function Settings(props) {
   const { factoryId } = useParams();
@@ -41,7 +43,7 @@ function Settings(props) {
     return (
       <div className="settings-container">
         <Sidebar header={factoryName} factoryId={factoryId} selected={"4"} />
-        <div className="settings-content">
+        <div className="settings-content bg">
           <div className="main-section">
             <Header
               placeholder="Type any workers..."
@@ -54,8 +56,8 @@ function Settings(props) {
             <div className="top-section">
               <Route routelist={["공장", factoryName]} finalroute={"설정"} />
             </div>
-            <div className="view-section">
-              <SetFloorplan factoryId={factoryId} />
+            <div className="view-section bg3">
+              <SetFloorplan2 factoryId={factoryId} />
             </div>
           </div>
         </div>

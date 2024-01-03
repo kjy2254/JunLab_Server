@@ -1,5 +1,6 @@
 import Sidebar from "./Sidebar";
 import "../css/Dashboard.css";
+import "../css/Theme.css";
 import React, { useEffect, useState, Fragment } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -13,7 +14,7 @@ function Dashboard(props) {
   const [factoryName, setFactoryName] = useState();
   const [filter, setFilter] = useState("");
   const [data, setData] = useState({});
-  const [page, setPage] = useState("");
+  const [page, setPage] = useState(1);
   const [initialDataFetched, setInitialDataFetched] = useState(false);
 
   const { factoryId } = useParams();
@@ -36,7 +37,6 @@ function Dashboard(props) {
           setData(response.data);
           if (!initialDataFetched) {
             // 최초 데이터를 받아온 경우에만 페이지를 설정
-            setPage(Object.keys(response.data)[0]);
             setInitialDataFetched(true);
           }
         })
@@ -80,10 +80,10 @@ function Dashboard(props) {
     );
   } else {
     return (
-      <div className="dashboard-container">
+      <div className="dashboard-container ">
         <Sidebar header={factoryName} factoryId={factoryId} selected={"1"} />
-        <div className="dashboard-content">
-          <div className="main-section">
+        <div className="dashboard-content ">
+          <div className="dashboard-main-section bg">
             <Header
               placeholder="Type any workers..."
               setData={setFilter}
@@ -98,7 +98,7 @@ function Dashboard(props) {
                 finalroute={"통합상황판"}
               />
             </div>
-            <div className="view-section">
+            <div className="view-section bg2">
               <div className="view-left">
                 <select
                   className="dropdown"
@@ -106,15 +106,15 @@ function Dashboard(props) {
                     setPage(e.target.value);
                   }}
                 >
-                  {Object.keys(data).map((e) => (
-                    <option key={e} value={e}>
-                      {e}
+                  {Object.keys(data).map((index) => (
+                    <option key={index} value={index}>
+                      {data[index].pageName}
                     </option>
                   ))}
                 </select>
                 <Floorplan data={data[page]} />
               </div>
-              <div className="view-right">
+              <div className="view-right bg5 ">
                 <Panel />
               </div>
             </div>
