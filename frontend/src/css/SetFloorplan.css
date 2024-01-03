@@ -1,0 +1,66 @@
+.set-floor-wrapper {
+  /* background: #eedbdb; */
+  width: 100%;
+  display: flex;
+  height: 100%;
+  /* padding: 1rem; */
+  /* justify-content: center; */
+  display: block;
+  position: relative;
+}
+
+.set-floor-plan {
+  margin: 1rem;
+  padding: 1rem;
+  background: #ff00003d;
+  /* background-image: url(../image/floorplan.jpg); */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  /* aspect-ratio: 1101 /831; */
+  /* max-width: fit-content; */
+  max-height: 65vh;
+}
+
+.upload {
+  font-weight: bold;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  /* position: absolute;
+  bottom: 0;
+  right: 0; */
+  color: cornflowerblue;
+  background: #0200;
+}
+
+.set-bottom {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.set-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-save {
+  background: skyblue;
+}
+
+/* 이 부분은 기존의 코드에 추가하세요 */
+.draggable-element {
+  width: 10%; /* 드래그 가능한 요소의 너비 */
+  height: 5%; /* 드래그 가능한 요소의 높이 */
+  background-color: #3498db; /* 드래그 가능한 요소의 배경 색상 */
+  position: absolute;
+  cursor: grab; /* 드래그 가능한 상태에서 마우스 커서 모양 */
+  user-select: none; /* 텍스트 선택 방지 */
+  border-radius: 5px; /* 모서리를 둥글게 만들기 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000; /* 텍스트 색상 */
+}

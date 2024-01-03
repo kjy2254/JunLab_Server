@@ -1,4 +1,5 @@
 import path from "../image/path.svg";
+import "../css/Route.css";
 
 function Route(props) {
   const routelist = props.routelist;
@@ -6,8 +7,8 @@ function Route(props) {
 
   return (
     <div className="path-section">
-      {routelist.map((e) => (
-        <div className="path">
+      {routelist.map((e, index) => (
+        <div className="path" key={index}>
           <img src={path} alt={"path"} />
           &nbsp;{e}
         </div>

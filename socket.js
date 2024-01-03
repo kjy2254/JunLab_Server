@@ -277,13 +277,11 @@ function save2(rawData) {
         if (error) {
           console.log(error);
         }
-
+        // console.log("factoryID:", result[0].factory_id);
         if (result.length === 0) {
           console.log("not registered module");
-          //   return false;
+          return false;
         }
-        // console.log("factoryID:", result[0].factory_id);
-
         const insert_query = `INSERT INTO sensor_data (factory_id,
                                           tvoc,
                                           co2,
@@ -315,8 +313,17 @@ function save2(rawData) {
     );
 
     connection2.query(
-      `update sensor_modules set last_update = ? where module_id = ?`,
-      [new Date(Date.now()), parseInt(values[0])],
+      `update sensor_modules set last_update = ?, last_tvoc = ?, last_co2 = ?, last_temperature = ?, last_pm1_0 = ?, last_pm2_5 = ?, last_pm10 = ? where module_id = ?`,
+      [
+        new Date(Date.now()),
+        parseInt(values[12]),
+        parseInt(values[13]),
+        parseFloat(values[20]),
+        parseInt(values[14]),
+        parseInt(values[15]),
+        parseInt(values[16]),
+        parseInt(values[0]),
+      ],
       (error, result) => {
         if (error) {
           console.log(error);

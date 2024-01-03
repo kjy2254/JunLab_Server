@@ -23,11 +23,8 @@ function Tooltip(props) {
           </div>
           <div className="tooltip-body-line">
             <span>oxygen:</span>
-            <span>{props.description.oxygen}%</span>
+            <span>{parseInt(props.description.oxygen)}%</span>
           </div>
-          {/* <span>Temperature: {props.description.temperature}°C</span>
-          <span>Heartrate: {props.description.heartrate}bpm</span>
-          <span>Oxygen: {props.description.oxygen}%</span> */}
         </div>
       ) : (
         <div className="tooltip-body">
