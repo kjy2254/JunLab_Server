@@ -56,7 +56,7 @@ function Settings(props) {
             <div className="top-section">
               <Route routelist={["공장", factoryName]} finalroute={"설정"} />
             </div>
-            <div className="view-section bg3">
+            <div className="view-section bg2">
               <SetFloorplan2 factoryId={factoryId} />
             </div>
           </div>
