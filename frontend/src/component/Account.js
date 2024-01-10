@@ -25,8 +25,45 @@ function Account(props) {
             name={props.name}
             userId={props.userId}
           />
+          <AccountComponent />
         </div>
-        <span>asdf</span>
+      </div>
+    </div>
+  );
+}
+
+function AccountComponent() {
+  return (
+    <div className="center">
+      <div className="center bg-layer1 ac-bgcolor1">
+        <div className="bg-layer2 ac-bgcolor2">
+          <p className="left-align-text">계정 정보</p>
+          <div className="scroll">
+            <p>테스트</p>
+            <p>테스트</p>
+            <p>테스트</p>
+            <p>테스트</p>
+            <p>테스트</p>
+            <p>테스트</p>
+            <p>테스트</p>
+            <p>테스트</p>
+            <p>테스트</p>
+            <p>테스트</p>
+            <p>테스트</p>
+            <p>테스트</p>
+            <p>테스트</p>
+            <p>케케케</p>
+            <p>케케케</p>
+            <p>케케케</p>
+            <p>케케케</p>
+            <p>케케케</p>
+            <p>케케케</p>
+            <p>케케케</p>
+          </div>
+        </div>
+        <div className="bg-layer2 ac-bgcolor2">
+          <p className="left-align-text">직원 정보</p>
+        </div>
       </div>
     </div>
   );
