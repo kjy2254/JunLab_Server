@@ -1,0 +1,22 @@
+.account-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  /* background-color: rgb(189, 191, 202); */
+}
+
+.account-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: auto;
+  width: 100%; /* 대시보드가 전체 가로를 채우도록 설정 */
+  margin-left: 0; /* 사이드바가 사라질 때 공간을 대시보드가 채우도록 */
+}
+
+.account-main-section {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  /* background-color: #121212; */
+}

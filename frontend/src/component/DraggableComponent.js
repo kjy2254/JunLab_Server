@@ -1,71 +1,68 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Draggable from "react-draggable";
 
 const DraggableComponent = (props) => {
-  const [position, setPosition] = useState({ top: props.x, left: props.y });
-  const [isDragging, setDragging] = useState(false);
-  const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
-
-  const handleMouseDown = (e) => {
+  const handleClick = (e) => {
+    // 클릭 이벤트 핸들러
     const parentElement = e.currentTarget.parentElement;
+
+    // 부모 요소의 크기 가져오기
     const parentRect = parentElement.getBoundingClientRect();
 
-    setDragging(true);
-    setStartPosition({
-      x:
-        ((e.clientX - parentRect.left) / parentRect.width) * 100 -
-        position.left,
-      y:
-        ((e.clientY - parentRect.top) / parentRect.height) * 100 - position.top,
-    });
-  };
+    // 드래그 가능한 요소의 위치 가져오기
+    const elementRect = e.currentTarget.getBoundingClientRect();
 
-  const handleMouseMove = (e) => {
-    if (isDragging) {
-      const parentElement = e.currentTarget.parentElement;
-      const parentRect = parentElement.getBoundingClientRect();
+    // 위치 계산
+    const positionPercentage = {
+      top: ((elementRect.top - parentRect.top) / parentRect.height) * 100,
+      left: ((elementRect.left - parentRect.left) / parentRect.width) * 100,
+    };
 
-      const newPosition = {
-        left:
-          ((e.clientX - parentRect.left) / parentRect.width) * 100 -
-          startPosition.x,
-        top:
-          ((e.clientY - parentRect.top) / parentRect.height) * 100 -
-          startPosition.y,
-      };
+    if (props.type === "worker") {
+      props.setWorkers((prevWorkers) =>
+        prevWorkers.map((worker) =>
+          worker.id === props.id
+            ? {
+                ...worker,
+                x: positionPercentage.left,
+                y: positionPercentage.top,
+              }
+            : worker
+        )
+      );
 
-      // 드래그 요소의 크기 고려하여 한계치 설정
-      const maxX = (parentRect.width / parentElement.clientWidth) * 100 - 5;
-      const maxY = (parentRect.height / parentElement.clientHeight) * 100 - 5;
-
-      // 새로운 위치가 부모 요소 내에 있는지 확인 및 한계치 설정
-      setPosition({
-        left: Math.min(Math.max(newPosition.left, 0), maxX),
-        top: Math.min(Math.max(newPosition.top, 0), maxY),
-      });
+      // console.log(props.workers);
+    } else {
+      props.setModules((prevModules) =>
+        prevModules.map((module) =>
+          module.id === props.id
+            ? {
+                ...module,
+                x: positionPercentage.left,
+                y: positionPercentage.top,
+              }
+            : module
+        )
+      );
     }
-  };
 
-  const handleMouseUp = () => {
-    setDragging(false);
+    console.log(positionPercentage);
   };
 
   return (
-    <div
-      className="draggable-element"
-      style={{
-        position: "absolute",
-        top: `${position.top}%`,
-        left: `${position.left}%`,
-        cursor: isDragging ? "grabbing" : "grab",
-      }}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-    >
-      top:{position.top.toFixed(2)}
-      <br></br>
-      left:{position.left.toFixed(2)}
-    </div>
+    <Draggable bounds={"parent"}>
+      <div
+        className={"draggable-element " + props.type}
+        style={{
+          position: "absolute",
+          top: `${props.y}%`,
+          left: `${props.x}%`,
+        }}
+        onClick={handleClick}
+      >
+        {props.name}
+      </div>
+    </Draggable>
   );
 };
 

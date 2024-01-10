@@ -14,8 +14,10 @@ function Dashboard(props) {
   const [factoryName, setFactoryName] = useState();
   const [filter, setFilter] = useState("");
   const [data, setData] = useState({});
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState("none");
   const [initialDataFetched, setInitialDataFetched] = useState(false);
+  const [total, setTotal] = useState({});
+  const [current, setCurrent] = useState({});
 
   const { factoryId } = useParams();
 
@@ -35,6 +37,27 @@ function Dashboard(props) {
         )
         .then((response) => {
           setData(response.data);
+          const total = { green: 0, yellow: 0, red: 0 };
+          Object.values(response.data).forEach((page) => {
+            page.workers.forEach((worker) => {
+              switch (worker.level.work_level) {
+                case 1:
+                case 2:
+                  total.green += 1;
+                  break;
+                case 3:
+                case 4:
+                  total.yellow += 1;
+                  break;
+                case 5:
+                  total.red += 1;
+                  break;
+                default:
+                  break;
+              }
+            });
+          });
+          setTotal(total);
           if (!initialDataFetched) {
             // 최초 데이터를 받아온 경우에만 페이지를 설정
             setInitialDataFetched(true);
@@ -55,7 +78,7 @@ function Dashboard(props) {
     }
 
     // 페이지가 변경될 때마다 호출
-    setPage(Object.keys(data)[0]);
+    // setPage(Object.keys(data)[0]);
 
     const interval = setInterval(() => {
       fetchData();
@@ -91,6 +114,7 @@ function Dashboard(props) {
               isLogin={props.isLogin}
               role={props.role}
               name={props.name}
+              userId={props.userId}
             />
             <div className="top-section">
               <Route
@@ -106,16 +130,21 @@ function Dashboard(props) {
                     setPage(e.target.value);
                   }}
                 >
+                  <option value="none">= 선택 =</option>
                   {Object.keys(data).map((index) => (
                     <option key={index} value={index}>
                       {data[index].pageName}
                     </option>
                   ))}
                 </select>
-                <Floorplan data={data[page]} />
+                <Floorplan
+                  data={data[page]}
+                  setCurrent={setCurrent}
+                  factoryId={factoryId}
+                />
               </div>
               <div className="view-right bg5 ">
-                <Panel />
+                <Panel total={total} current={current} />
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import "../css/Header.css";
 import profile_default from "../image/profile_default.png";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function Header(props) {
   const updateSearchBox = (e) => props.setData(e.target.value);
@@ -55,7 +56,9 @@ function Header(props) {
                 </div>
               </div>
               <hr width={`80%`} />
-              <a href="#">Account</a>
+              <Link to={`/iitp/factoryManagement/account/${props.userId}`}>
+                Account
+              </Link>
               <button onClick={logout}>Log Out</button>
             </div>
           </div>

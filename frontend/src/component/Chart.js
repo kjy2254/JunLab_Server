@@ -17,6 +17,7 @@ function Chart(props) {
     chartColor,
     factoryId,
     data,
+    selectedModule,
   } = props;
 
   const link = chartSubname.replaceAll(" ", "");
@@ -24,36 +25,75 @@ function Chart(props) {
 
   const [sensorData, setSensorData] = useState({});
 
-  const fetchData = async () => {
-    try {
-      axios
-        .get(
-          `http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}2?count=200`
-        ) //today로 수정 필요
-        .then((response) => {
-          // API 응답에서 데이터를 추출합니다.
-          const dataResponse = response.data;
+  // const fetchData = async () => {
+  //   try {
+  //     axios
+  //       .get(
+  //         `http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}2?count=200`
+  //       ) //today로 수정 필요
+  //       .then((response) => {
+  //         // API 응답에서 데이터를 추출합니다.
+  //         const module = selectedModule || 0;
+  //         console.log("props", props);
+  //         console.log("module", selectedModule);
+  //         console.log("test", response.data[module]);
 
-          // API 응답에서 원하는 데이터를 추출합니다. 예시에서는 1번 모듈의 데이터를 사용합니다.
-          const dataArray =
-            Object.values(dataResponse)[0] &&
-            Object.values(dataResponse)[0][data]
-              ? Object.values(dataResponse)[0][data]
-              : [];
+  //         // API 응답에서 원하는 데이터를 추출합니다. 예시에서는 1번 모듈의 데이터를 사용합니다.
+  //         // const dataArray =
+  //         //   Object.values(response.data)[0] &&
+  //         //   Object.values(response.data)[0][data]
+  //         //     ? Object.values(response.data)[0][data]
+  //         //     : [];
 
-          // 데이터를 상태에 설정합니다.
-          setSensorData(dataArray.reverse());
-        })
-        .catch((error) => {
-          console.error("API 요청 실패:", error);
-        });
-    } catch (error) {
-      console.error("API 요청 실패:", error);
-    }
-  };
+  //         const dataArray =
+  //           response.data[0] && response.data[0][data]
+  //             ? response.data[0][data]
+  //             : [];
+
+  //         console.log(response.data);
+
+  //         // 데이터를 상태에 설정합니다.
+  //         setSensorData(dataArray.reverse());
+  //       })
+  //       .catch((error) => {
+  //         console.error("API 요청 실패:", error);
+  //       });
+  //   } catch (error) {
+  //     console.error("API 요청 실패:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   // API 요청을 보내고 데이터를 가져옵니다.
+  //   fetchData();
+  //   const interval = setInterval(() => {
+  //     fetchData();
+  //   }, 7000);
+  //   // 컴포넌트가 언마운트될 때 clearInterval을 호출하여 인터벌 정리
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, []);
 
   useEffect(() => {
-    // API 요청을 보내고 데이터를 가져옵니다.
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://junlab.postech.ac.kr:880/api/factory/${factoryId}/${endPoint}2?count=200`
+        );
+
+        const module = selectedModule;
+        const dataArray =
+          response.data[module] && response.data[module][data]
+            ? response.data[module][data]
+            : [];
+
+        setSensorData(dataArray.reverse());
+      } catch (error) {
+        console.error("API 요청 실패:", error);
+      }
+    };
+
     fetchData();
     const interval = setInterval(() => {
       fetchData();
@@ -62,7 +102,7 @@ function Chart(props) {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [selectedModule]);
 
   let chartValue;
   let chartDiff = 0;
@@ -181,9 +221,7 @@ function Chart(props) {
         </div>
       </div>
       <div className="chart">
-        <Fragment>
-          <HighchartsReact highcharts={Highcharts} options={options} />
-        </Fragment>
+        <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
     </Link>
   );

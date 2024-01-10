@@ -16,17 +16,13 @@ function Sidebar(props) {
   useEffect(() => {
     let hoverTimeout;
 
-    if (isHovering) {
-      hoverTimeout = setTimeout(() => {
-        setExpanded(true);
-      }, 500);
+    hoverTimeout = setTimeout(() => {
+      setExpanded(isHovering);
+    }, 1000);
 
-      return () => {
-        clearTimeout(hoverTimeout);
-      };
-    } else {
-      setExpanded(false);
-    }
+    return () => {
+      clearTimeout(hoverTimeout);
+    };
   }, [isHovering]);
 
   return (

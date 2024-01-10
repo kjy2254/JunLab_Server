@@ -3,7 +3,7 @@
   /* background-color: #1f263e; */
   background-color: #1a1a1a;
   color: white;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;

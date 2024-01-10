@@ -199,6 +199,18 @@ function Details(props) {
       },
       backgroundColor: "#d4d4d4",
     },
+    color: [
+      "#0074D9",
+      "#2ECC40",
+      "#FFDC00",
+      "#FF851B",
+      "#FF4136",
+      "#B10DC9",
+      "#85144b",
+      "#39CCCC",
+      "#3D9970",
+      "#AAAAAA",
+    ],
     title: {
       text: null, // 'none' 대신에 null로 title을 비활성화합니다.
     },
@@ -308,6 +320,7 @@ function Details(props) {
             isLogin={props.isLogin}
             name={props.name}
             role={props.role}
+            userId={props.userId}
           />
           <Route routelist={["공장", factoryName]} finalroute={data} />
           <div className="detail-section">

@@ -9,7 +9,6 @@ import Route from "./Route";
 import "../css/Settings.css";
 import "../css/Theme.css";
 import SetFloorplan from "./SetFloorplan";
-import SetFloorplan2 from "./SetFloorplan2";
 
 function Settings(props) {
   const { factoryId } = useParams();
@@ -52,12 +51,13 @@ function Settings(props) {
               isLogin={props.isLogin}
               role={props.role}
               name={props.name}
+              userId={props.userId}
             />
             <div className="top-section">
               <Route routelist={["공장", factoryName]} finalroute={"설정"} />
             </div>
-            <div className="view-section bg3">
-              <SetFloorplan2 factoryId={factoryId} />
+            <div className="view-section bg2">
+              <SetFloorplan factoryId={factoryId} />
             </div>
           </div>
         </div>

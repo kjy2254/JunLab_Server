@@ -47,6 +47,7 @@ function Factories(props) {
             isLogin={props.isLogin}
             name={props.name}
             role={props.role}
+            userId={props.userId}
           />
           <div className="path-section">
             <div className="path-selected">
