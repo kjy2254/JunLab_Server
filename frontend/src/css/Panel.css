@@ -33,8 +33,6 @@
 
 .score {
   height: 0.5rem;
-  /* width: 50%; */
-  border-radius: 10px;
-  /* background: #000; */
+  border-radius: 1rem;
   float: right;
 }

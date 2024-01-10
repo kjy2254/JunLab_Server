@@ -16,12 +16,14 @@ import Login from "./component/Login";
 import Home from "./component/Home";
 import Settings from "./component/Settings";
 import RealtimeData from "./component/RealtimeData";
+import Account from "./component/Account";
 import Header from "./component/Header";
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
   const [role, setRole] = useState("");
   const [name, setName] = useState("");
+  const [userId, setUserId] = useState("");
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -35,10 +37,11 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      //const authData = await authcheck();
+      // const authData = await authcheck();
       setIsLogin(true);
       setRole("Admin");
       setName("JunLab");
+      setUserId(10);
     };
     fetchData();
   }, []);
@@ -52,38 +55,99 @@ function App() {
             element={
               isLogin ? (
                 role == "Admin" ? (
-                  <Factories isLogin={isLogin} role={role} name={name} />
+                  <Factories
+                    isLogin={isLogin}
+                    role={role}
+                    name={name}
+                    userId={userId}
+                  />
                 ) : role.includes("Factory") ? (
                   <Navigate
                     to={`/iitp/factoryManagement/factory/${role.split("_")[1]}`}
                   />
                 ) : (
-                  <Home isLogin={isLogin} role={role} name={name} />
+                  <Home
+                    isLogin={isLogin}
+                    role={role}
+                    name={name}
+                    userId={userId}
+                  />
                 )
               ) : (
-                <Login isLogin={isLogin} role={role} name={name} />
+                <Login
+                  isLogin={isLogin}
+                  role={role}
+                  name={name}
+                  userId={userId}
+                />
               )
             }
           />
           <Route
             path="/iitp/factoryManagement/factory"
-            element={<Factories isLogin={isLogin} role={role} name={name} />}
+            element={
+              <Factories
+                isLogin={isLogin}
+                role={role}
+                name={name}
+                userId={userId}
+              />
+            }
           />
           <Route
             path="/iitp/factoryManagement/factory/:factoryId"
-            element={<Dashboard isLogin={isLogin} role={role} name={name} />}
+            element={
+              <Dashboard
+                isLogin={isLogin}
+                role={role}
+                name={name}
+                userId={userId}
+              />
+            }
           />
           <Route
             path="/iitp/factoryManagement/factory/:factoryId/realtimedata"
-            element={<RealtimeData isLogin={isLogin} role={role} name={name} />}
+            element={
+              <RealtimeData
+                isLogin={isLogin}
+                role={role}
+                name={name}
+                userId={userId}
+              />
+            }
           />
           <Route
             path="/iitp/factoryManagement/factory/:factoryId/:data"
-            element={<Details isLogin={isLogin} role={role} name={name} />}
+            element={
+              <Details
+                isLogin={isLogin}
+                role={role}
+                name={name}
+                userId={userId}
+              />
+            }
           />
           <Route
             path="/iitp/factoryManagement/factory/:factoryId/settings"
-            element={<Settings isLogin={isLogin} role={role} name={name} />}
+            element={
+              <Settings
+                isLogin={isLogin}
+                role={role}
+                name={name}
+                userId={userId}
+              />
+            }
+          />
+          <Route
+            path="/iitp/factoryManagement/account/:userId"
+            element={
+              <Account
+                isLogin={isLogin}
+                role={role}
+                name={name}
+                userId={userId}
+              />
+            }
           />
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -10,6 +10,7 @@ function ForbiddenPage(props) {
           isLogin={props.isLogin}
           name={props.name}
           role={props.role}
+          userId={props.userId}
         />
         <div className="milky"> 권한 없음 </div>
       </div>

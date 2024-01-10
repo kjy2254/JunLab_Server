@@ -1,6 +1,15 @@
 import "../css/Tooltip.css";
 
 function Tooltip(props) {
+  if (!props.isOnline) {
+    props.description.heartrate = "-";
+    props.description.temperature = "-";
+    props.description.oxygen = "-";
+    props.description.tvoc = "-";
+    props.description.co2 = "-";
+    props.description.finedust = "-";
+  }
+
   return (
     <div
       className="tooltip"
@@ -8,7 +17,7 @@ function Tooltip(props) {
     >
       <div className="tooltip-header">
         <span>{props.description.name}</span>
-        <span>{props.level}</span>
+        <span>{props.isOnline ? props.level : "Offline"}</span>
       </div>
       <hr />
       {props.type === "worker" ? (
@@ -23,7 +32,9 @@ function Tooltip(props) {
           </div>
           <div className="tooltip-body-line">
             <span>oxygen:</span>
-            <span>{parseInt(props.description.oxygen)}%</span>
+            <span>
+              {props.isOnline ? parseInt(props.description.oxygen) : "-"}%
+            </span>
           </div>
         </div>
       ) : (

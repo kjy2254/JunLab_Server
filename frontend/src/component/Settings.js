@@ -51,6 +51,7 @@ function Settings(props) {
               isLogin={props.isLogin}
               role={props.role}
               name={props.name}
+              userId={props.userId}
             />
             <div className="top-section">
               <Route routelist={["공장", factoryName]} finalroute={"설정"} />

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "../css/Floorplan.css";
 import module1 from "../image/module1.svg";
 import module2 from "../image/module2.svg";
@@ -7,7 +6,10 @@ import module3 from "../image/module3.svg";
 import worker1 from "../image/worker1.svg";
 import worker2 from "../image/worker2.svg";
 import worker3 from "../image/worker3.svg";
+import workerOff from "../image/worker_off.svg";
+import moduleOff from "../image/module_off.svg";
 import Tooltip from "./Tooltip";
+import axios from "axios";
 
 function Floorplan(props) {
   const [image, setImage] = useState("");
@@ -18,16 +20,49 @@ function Floorplan(props) {
     y: 0,
     name: null,
   });
+  const [statistic, setStatistic] = useState({});
 
   useEffect(() => {
+    const current = { green: 0, yellow: 0, red: 0 };
     if (props.data) {
-      // console.log(props.data);
       setImage(
         `http://junlab.postech.ac.kr:880/api/image/${props.data.imageName}`
       );
       setDimensions({ width: props.data.width, height: props.data.height });
-      // console.log(props.data);
+
+      props.data.workers.forEach((worker) => {
+        switch (worker.level.work_level) {
+          case 1:
+          case 2:
+            current.green += 1;
+            break;
+          case 3:
+          case 4:
+            current.yellow += 1;
+            break;
+          case 5:
+            current.red += 1;
+            break;
+          default:
+            break;
+        }
+      });
+    } else {
+      setImage("");
+      setDimensions({ width: 0, height: 0 });
+
+      axios
+        .get(
+          `http://junlab.postech.ac.kr:880/api/factory/statistic/${props.factoryId}`
+        )
+        .then((response) => {
+          setStatistic(response.data);
+        })
+        .catch((error) => {
+          console.error("API 요청 실패:", error);
+        });
     }
+    props.setCurrent(current);
   }, [props.data]);
 
   const handleDotHover = (event, dot) => {
@@ -56,20 +91,28 @@ function Floorplan(props) {
       >
         {props.data &&
           props.data.modules.map((module, index) => {
+            const lastUpdateDate = new Date(module.lastUpdate);
+            const isOnline = Date.now() - lastUpdateDate.getTime() < 60000;
+
             let dotImage;
-            switch (module.level) {
+
+            switch (module.level.env_level) {
               case 1:
+              case 2:
                 dotImage = <img src={module1} />;
                 break;
-              case 2:
+              case 3:
+              case 4:
                 dotImage = <img src={module2} />;
                 break;
-              case 3:
+              case 5:
                 dotImage = <img src={module3} />;
                 break;
               default:
-                dotImage = null;
+                break;
             }
+
+            dotImage = isOnline ? dotImage : <img src={moduleOff} />;
 
             return (
               <div
@@ -86,8 +129,10 @@ function Floorplan(props) {
                     <Tooltip
                       x={tooltip.x}
                       y={tooltip.y}
-                      level={module.level}
+                      level={module.level.env_level}
                       description={module.description}
+                      lastUpdate={module.lastUpdate}
+                      isOnline={isOnline}
                     />
                   )}
               </div>
@@ -95,20 +140,27 @@ function Floorplan(props) {
           })}
         {props.data &&
           props.data.workers.map((worker, index) => {
+            const lastUpdateDate = new Date(worker.lastUpdate);
+            const isOnline = Date.now() - lastUpdateDate.getTime() < 60000;
+
             let dotImage;
-            switch (worker.level) {
+            switch (worker.level.work_level) {
               case 1:
+              case 2:
                 dotImage = <img src={worker1} />;
                 break;
-              case 2:
+              case 3:
+              case 4:
                 dotImage = <img src={worker2} />;
                 break;
-              case 3:
+              case 5:
                 dotImage = <img src={worker3} />;
                 break;
               default:
-                dotImage = null;
+                break;
             }
+
+            dotImage = isOnline ? dotImage : <img src={workerOff} />;
 
             return (
               <div
@@ -125,16 +177,17 @@ function Floorplan(props) {
                     <Tooltip
                       x={tooltip.x}
                       y={tooltip.y}
-                      level={worker.level}
+                      level={worker.level.work_level}
                       type={"worker"}
                       description={worker.description}
+                      isOnline={isOnline}
                     />
                   )}
               </div>
             );
           })}
+        {!props.data && statistic.users && statistic.users[0].name}
       </div>
-      <span>1d</span>
     </div>
   );
 }

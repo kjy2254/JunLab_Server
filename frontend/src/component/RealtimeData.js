@@ -18,43 +18,59 @@ function RealtimeData(props) {
   const [workerData, setWorkerData] = useState([]);
   const [factoryName, setFactoryName] = useState();
   const [lastUpdate, setLastUpdate] = useState();
+  const [modules, setModules] = useState([]);
+  const [selectedModule, setSelectedModule] = useState("");
   const [filter, setFilter] = useState("");
 
   const { factoryId } = useParams();
 
+  // const fetchData = async () => {
+  //   try {
+  //     axios
+  //       .get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}`)
+  //       .then((response) => {
+  //         setFactoryName(response.data.factoryName);
+  //         setLastUpdate(response.data.last_update);
+  //         setModules(response.data.modules);
+  //         setSelectedModule(response.data.modules[0]);
+  //       })
+  //       .catch((error) => {
+  //         console.error("API 요청 실패:", error);
+  //       });
+  //     axios
+  //       .get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/users`)
+  //       .then((response) => {
+  //         setWorkerData(response.data);
+  //       })
+  //       .catch((error) => {
+  //         console.error("API 요청 실패:", error);
+  //       });
+  //   } catch (error) {
+  //     console.error("API 요청 실패:", error);
+  //   }
+  // };
+
   const fetchData = async () => {
     try {
-      axios
-        .get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}`)
-        .then((response) => {
-          setFactoryName(response.data.factoryName);
-          setLastUpdate(response.data.last_update);
-        })
-        .catch((error) => {
-          console.error("API 요청 실패:", error);
-        });
-      axios
-        .get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/users`)
-        .then((response) => {
-          setWorkerData(response.data);
-        })
-        .catch((error) => {
-          console.error("API 요청 실패:", error);
-        });
+      const [factoryResponse, usersResponse] = await Promise.all([
+        axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}`),
+        axios.get(
+          `http://junlab.postech.ac.kr:880/api/factory/${factoryId}/users`
+        ),
+      ]);
+
+      // 공장 데이터 설정
+      setFactoryName(factoryResponse.data.factoryName);
+      setLastUpdate(factoryResponse.data.last_update);
+      setModules(factoryResponse.data.modules);
+      setSelectedModule(factoryResponse.data.modules[0]);
+
+      // 사용자 데이터 설정
+      setWorkerData(usersResponse.data);
     } catch (error) {
       console.error("API 요청 실패:", error);
     }
   };
-
-  // useEffect(() => {
-  //     axios.get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/users`)
-  //         .then((response) => {
-  //             setWorkerData(response.data);
-  //         })
-  //         .catch((error) => {
-  //             console.error('API 요청 실패:', error);
-  //         });
-  // }, []);
 
   useEffect(() => {
     // API 요청을 보내고 데이터를 가져옵니다.
@@ -67,6 +83,10 @@ function RealtimeData(props) {
       clearInterval(interval);
     };
   }, []);
+
+  // useEffect(() => {
+  //   console.log(selectedModule);
+  // }, [selectedModule]);
 
   if (
     !props.isLogin ||
@@ -83,8 +103,8 @@ function RealtimeData(props) {
     return (
       <div className="dashboard-container">
         <Sidebar header={factoryName} factoryId={factoryId} selected={"2"} />
-        <div className="dashboard-content">
-          <div className="main-section bg">
+        <div className="dashboard-content bg">
+          <div className="main-section">
             <Header
               placeholder="Type any workers..."
               setData={setFilter}
@@ -92,6 +112,7 @@ function RealtimeData(props) {
               isLogin={props.isLogin}
               name={props.name}
               role={props.role}
+              userId={props.userId}
             />
             <div className="top-section">
               <Route
@@ -103,10 +124,15 @@ function RealtimeData(props) {
               </div>
             </div>
             <div className="module-selector">
-              <select className="dropdown">
-                <option value="1">A동</option>
-                <option value="1">B동</option>
-                <option value="1">C동</option>
+              <select
+                className="dropdown"
+                onChange={(e) => setSelectedModule(e.target.value)}
+              >
+                {modules?.map((e, index) => (
+                  <option key={index} value={e}>
+                    {e}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="chart-section">
@@ -118,6 +144,7 @@ function RealtimeData(props) {
                 data="tvoc"
                 chartColor="#FFC246"
                 factoryId={factoryId}
+                selectedModule={selectedModule}
               />
               <Chart
                 chartIcon={co2}
@@ -127,6 +154,7 @@ function RealtimeData(props) {
                 data="co2"
                 chartColor="#5470DE"
                 factoryId={factoryId}
+                selectedModule={selectedModule}
               />
               <Chart
                 chartIcon={temperature}
@@ -136,6 +164,7 @@ function RealtimeData(props) {
                 data="temperature"
                 chartColor="#07BEAA"
                 factoryId={factoryId}
+                selectedModule={selectedModule}
               />
               <Chart
                 chartIcon={finedust}
@@ -145,6 +174,7 @@ function RealtimeData(props) {
                 data="pm10"
                 chartColor="#1786C4"
                 factoryId={factoryId}
+                selectedModule={selectedModule}
               />
             </div>
             <div className="summary-header">작업자 상태 요약</div>

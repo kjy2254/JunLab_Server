@@ -52,7 +52,7 @@ const DraggableComponent = (props) => {
   return (
     <Draggable bounds={"parent"}>
       <div
-        className="draggable-element"
+        className={"draggable-element " + props.type}
         style={{
           position: "absolute",
           top: `${props.y}%`,
@@ -61,8 +61,6 @@ const DraggableComponent = (props) => {
         onClick={handleClick}
       >
         {props.name}
-        <br />
-        {props.x},{props.y}
       </div>
     </Draggable>
   );

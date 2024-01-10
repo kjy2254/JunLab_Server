@@ -11,13 +11,17 @@
 .summary-header {
   padding-left: 3rem;
   padding-right: 3rem;
-  color: #1f263e;
+  color: #ffffff;
   font-size: 18px;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
   display: flex;
   justify-content: space-between;
+}
+
+.summary-footer {
+  height: 1rem;
 }
 
 .summary-card {

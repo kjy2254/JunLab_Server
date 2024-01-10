@@ -6,8 +6,6 @@ const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const multer = require("multer");
 const util = require("util");
-const { json } = require("body-parser");
-const unlinkAsync = util.promisify(fs.unlink);
 
 function getCurrentDate() {
   const currentDate = new Date();
@@ -113,6 +111,8 @@ api.get("/factory/:factoryId", (req, res) => {
         );
     `;
 
+  const query3 = "SELECT module_name FROM sensor_modules WHERE factory_id = ?;";
+
   connection.query(query1, [factoryId], (error, result1) => {
     if (error) {
       console.log(error);
@@ -126,23 +126,34 @@ api.get("/factory/:factoryId", (req, res) => {
     const factoryName = result1[0].factory_name;
 
     // 두 번째 쿼리 실행
-    connection.query(query2, [factoryId], (error, result2) => {
-      if (error) {
-        console.log(error);
-        return res.status(500).send("Internal Server Error!");
+    connection.query(
+      query2 + query3,
+      [factoryId, factoryId],
+      (error, result2) => {
+        // console.log(result2[0], result2[1]);
+
+        if (error) {
+          console.log(error);
+          return res.status(500).send("Internal Server Error!");
+        }
+
+        let last_update, modules;
+
+        if (result2[0].length != 0) {
+          last_update = new Date(result2[0][0].last_update).toLocaleString(
+            "ko-KR",
+            { timeZone: "Asia/Seoul" }
+          );
+        }
+
+        if (result2[1].length != 0) {
+          modules = result2[1].map((e) => e.module_name);
+        }
+
+        // 결과를 JSON 형태로 반환
+        res.status(200).json({ factoryName, last_update, modules });
       }
-
-      // const last_update = result2[0].last_update;
-
-      // const utcLastUpdate = result2[0].last_update;
-      const last_update = new Date(result2[0].last_update).toLocaleString(
-        "ko-KR",
-        { timeZone: "Asia/Seoul" }
-      );
-
-      // 결과를 JSON 형태로 반환
-      res.status(200).json({ factoryName, last_update });
-    });
+    );
   });
 });
 
@@ -173,89 +184,6 @@ api.get("/factory/:factoryId/schemes", (req, res) => {
 
     // 결과 반환
     res.json({ images });
-  });
-});
-
-api.get("/factory/:factoryId/dashboard", (req, res) => {
-  const factoryId = req.params.factoryId;
-
-  const query1 = `SELECT
-  u.name,
-  w.watch_id,
-  w.last_sync,
-  w.last_heart_rate,
-  w.last_body_temperature,
-  w.last_oxygen_saturation,
-  w.last_battery_level,
-  w.last_tvoc AS watch_last_tvoc,
-  w.last_co2 AS watch_last_co2
-FROM
-  users u
-JOIN
-  watches w ON u.user_id = w.user_id
-WHERE
-  u.factory_id = 5;
-
-`;
-
-  const query2 = `SELECT
-  sm.module_id,
-  sm.module_name,
-  sm.module_description,
-  sm.last_update AS module_last_update,
-  sm.last_tvoc AS module_last_tvoc,
-  sm.last_co2 AS module_last_co2,
-  sm.last_temperature,
-  sm.last_pm1_0,
-  sm.last_pm2_5,
-  sm.last_pm10
-FROM
-  sensor_modules sm
-WHERE
-  sm.factory_id = ?;
-`;
-
-  const dots = [];
-
-  // Function to convert user data to dot format
-  const userToDot = (user) => ({
-    x: 10,
-    y: 10,
-    type: "worker",
-    level: "2", // You may set the level based on some condition
-    description: {
-      name: user.name,
-      heartrate: user.last_heart_rate,
-      temperature: user.last_body_temperature,
-      oxygen: parseInt(user.last_oxygen_saturation),
-    },
-  });
-
-  // Function to convert module data to dot format
-  const moduleToDot = (module) => ({
-    x: 20,
-    y: 20,
-    type: "module",
-    level: "3", // You may set the level based on some condition
-    description: {
-      name: module.module_name,
-      tvoc: module.module_last_tvoc,
-      co2: module.module_last_co2,
-      temperature: module.last_temperature,
-      finedust: module.last_pm2_5,
-    },
-  });
-
-  connection.query(query1 + query2, [factoryId, factoryId], (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-    const dots = [];
-    dots.push(...result[0].map(userToDot));
-    dots.push(...result[1].map(moduleToDot));
-
-    return res.status(200).json(dots);
   });
 });
 
@@ -294,7 +222,10 @@ api.get("/factory/dashboard/:factoryId", async (req, res) => {
                             u.name,
                             w.last_heart_rate,
                             w.last_body_temperature,
-                            w.last_oxygen_saturation
+                            w.last_oxygen_saturation,
+                            w.last_tvoc,
+                            w.last_co2,
+                            w.last_sync
                       FROM users u JOIN watches w ON u.watch_id = w.watch_id
                       WHERE u.factory_id = ? AND u.page = ?`;
 
@@ -313,13 +244,17 @@ api.get("/factory/dashboard/:factoryId", async (req, res) => {
         return {
           x: w.x,
           y: w.y,
-          level: w.level,
+          level: calclevel(
+            calcEnviromentIndex(w.last_tvoc, w.last_co2, 0, 0, 0),
+            calcWorkLoadIndex(w.last_heart_rate, 0, 0)
+          ),
           description: {
             name: w.name,
             heartrate: w.last_heart_rate,
             temperature: w.last_body_temperature,
             oxygen: parseInt(w.last_oxygen_saturation),
           },
+          lastUpdate: w.last_sync,
         };
       });
 
@@ -330,7 +265,10 @@ api.get("/factory/dashboard/:factoryId", async (req, res) => {
                             m.last_tvoc,
                             m.last_co2,
                             m.last_temperature,
-                            m.last_pm10
+                            m.last_pm10,
+                            m.last_pm1_0,
+                            m.last_pm2_5,
+                            m.last_update
                       FROM sensor_modules m
                       WHERE m.factory_id = ? AND m.page = ?`;
 
@@ -349,7 +287,16 @@ api.get("/factory/dashboard/:factoryId", async (req, res) => {
         return {
           x: m.x,
           y: m.y,
-          level: m.level,
+          level: calclevel(
+            calcEnviromentIndex(
+              m.last_tvoc,
+              m.last_co2,
+              m.last_pm1_0,
+              m.last_pm2_5,
+              m.last_pm10
+            ),
+            0
+          ),
           description: {
             name: m.module_name,
             tvoc: m.last_tvoc,
@@ -357,6 +304,7 @@ api.get("/factory/dashboard/:factoryId", async (req, res) => {
             temperature: m.last_temperature,
             finedust: m.last_pm10,
           },
+          lastUpdate: m.last_update,
         };
       });
 
@@ -375,6 +323,14 @@ api.get("/factory/dashboard/:factoryId", async (req, res) => {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+});
+
+api.get("/factory/statistic/:factoryId", async (req, res) => {
+  const factoryId = req.params.factoryId;
+
+  const returnData = { users: [{ name: "테스트", level: 3 }] };
+
+  return res.status(200).json(returnData);
 });
 
 const executeQuery = (query, params) => {
@@ -640,72 +596,6 @@ api.put("/updatepage", async (req, res) => {
   }
 });
 
-api.get("/factory/:factoryId/tvoc", (req, res) => {
-  const factoryId = parseInt(req.params.factoryId);
-  const queryDate = req.query.date || getCurrentDate();
-  const count = req.query.count || "all";
-  // count가 'all'이 아닌 경우에는 최대 개수를 적용
-  const limit = count === "all" ? "" : "LIMIT " + parseInt(count);
-
-  const partitionName = "p" + queryDate.replaceAll("/", "").replaceAll("-", "");
-
-  const today = new Date().toISOString().split("T")[0].replaceAll("-", "/");
-
-  if (queryDate > today) {
-    console.log("Out-of-bounds data request!");
-    return res.status(200).json({});
-  }
-
-  // TVOC 데이터를 가져오는 쿼리를 작성합니다.
-  const query = `
-        SELECT
-            sd.sensor_module_id,
-            sd.tvoc AS tvoc_value,
-            DATE_FORMAT(sd.timestamp, '%Y/%m/%d %H:%i:%s') AS timestamp_value
-        FROM (
-            SELECT
-                sensor_module_id,
-                tvoc,
-                timestamp
-            FROM
-                sensor_data PARTITION(${partitionName})
-            WHERE
-                factory_id = ? AND DATE(timestamp) = ?
-            ORDER BY
-                timestamp DESC  -- 최신 데이터가 먼저 나오도록 정렬
-        ) AS sd
-    `;
-
-  // 쿼리 실행
-  connection.query(query + limit, [factoryId, queryDate], (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-
-    // 결과 데이터를 원하는 형태로 가공
-    const formattedData = {};
-    result.forEach((row) => {
-      const moduleId = row.sensor_module_id;
-      if (!formattedData[moduleId]) {
-        formattedData[moduleId] = {
-          tvoc: [],
-        };
-      }
-      // 모듈 별로 최신 데이터 30개만 선택
-      if (formattedData[moduleId].tvoc.length < count || count === "all") {
-        formattedData[moduleId].tvoc.push({
-          name: row.timestamp_value,
-          y: parseFloat(row.tvoc_value), // 문자열을 숫자로 변환
-        });
-      }
-    });
-
-    // TVOC 데이터를 반환
-    return res.status(200).json(formattedData);
-  });
-});
-
 api.get("/factory/:factoryId/tvoc2", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
   const queryDate = req.query.date || getCurrentDate();
@@ -766,71 +656,6 @@ api.get("/factory/:factoryId/tvoc2", (req, res) => {
         formattedData[moduleName].tvoc.push({
           name: row.timestamp_value,
           y: parseFloat(row.tvoc_value), // 문자열을 숫자로 변환
-        });
-      }
-    });
-
-    // TVOC 데이터를 반환
-    return res.status(200).json(formattedData);
-  });
-});
-
-api.get("/factory/:factoryId/co2", (req, res) => {
-  const factoryId = parseInt(req.params.factoryId);
-  const queryDate = req.query.date || getCurrentDate();
-  const count = req.query.count || "all";
-  // count가 'all'이 아닌 경우에는 최대 개수를 적용
-  const limit = count === "all" ? "" : "LIMIT " + parseInt(count);
-  const partitionName = "p" + queryDate.replaceAll("/", "").replaceAll("-", "");
-
-  const today = new Date().toISOString().split("T")[0].replaceAll("-", "/");
-
-  if (queryDate > today) {
-    console.log("Out-of-bounds data request!");
-    return res.status(200).json({});
-  }
-
-  // TVOC 데이터를 가져오는 쿼리를 작성합니다.
-  const query = `
-        SELECT
-            sd.sensor_module_id,
-            sd.co2 AS co2_value,
-            DATE_FORMAT(sd.timestamp, '%Y/%m/%d %H:%i:%s') AS timestamp_value
-        FROM (
-            SELECT
-                sensor_module_id,
-                co2,
-                timestamp
-            FROM
-                sensor_data PARTITION(${partitionName})
-            WHERE
-                factory_id = ? AND DATE(timestamp) = ?
-            ORDER BY
-                timestamp DESC  -- 최신 데이터가 먼저 나오도록 정렬
-        ) AS sd
-    `;
-
-  // 쿼리 실행
-  connection.query(query + limit, [factoryId, queryDate], (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-
-    // 결과 데이터를 원하는 형태로 가공
-    const formattedData = {};
-    result.forEach((row) => {
-      const moduleId = row.sensor_module_id;
-      if (!formattedData[moduleId]) {
-        formattedData[moduleId] = {
-          co2: [],
-        };
-      }
-      // 모듈 별로 최신 데이터 30개만 선택
-      if (formattedData[moduleId].co2.length < count || count === "all") {
-        formattedData[moduleId].co2.push({
-          name: row.timestamp_value,
-          y: parseFloat(row.co2_value), // 문자열을 숫자로 변환
         });
       }
     });
@@ -908,78 +733,6 @@ api.get("/factory/:factoryId/co22", (req, res) => {
   });
 });
 
-api.get("/factory/:factoryId/temperature", (req, res) => {
-  const factoryId = parseInt(req.params.factoryId);
-  let queryDate = req.query.date || getCurrentDate();
-  const count = req.query.count || "all";
-  // count가 'all'이 아닌 경우에는 최대 개수를 적용
-  const limit = count === "all" ? "" : "LIMIT " + parseInt(count);
-  const partitionName = "p" + queryDate.replaceAll("/", "").replaceAll("-", "");
-
-  if (queryDate === "undefined") {
-    queryDate = getCurrentDate();
-  }
-
-  const today = new Date().toISOString().split("T")[0].replaceAll("-", "/");
-
-  if (queryDate > today) {
-    console.log("Out-of-bounds data request!");
-    return res.status(200).json({});
-  }
-
-  // TVOC 데이터를 가져오는 쿼리를 작성합니다.
-  const query = `
-        SELECT
-            sd.sensor_module_id,
-            sd.temperature AS temperature_value,
-            DATE_FORMAT(sd.timestamp, '%Y/%m/%d %H:%i:%s') AS timestamp_value
-        FROM (
-            SELECT
-                sensor_module_id,
-                temperature,
-                timestamp
-            FROM
-                sensor_data PARTITION(${partitionName})
-            WHERE
-                factory_id = ? AND DATE(timestamp) = ?
-            ORDER BY
-                timestamp DESC  -- 최신 데이터가 먼저 나오도록 정렬
-        ) AS sd
-    `;
-
-  // 쿼리 실행
-  connection.query(query + limit, [factoryId, queryDate], (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-
-    // 결과 데이터를 원하는 형태로 가공
-    const formattedData = {};
-    result.forEach((row) => {
-      const moduleId = row.sensor_module_id;
-      if (!formattedData[moduleId]) {
-        formattedData[moduleId] = {
-          temperature: [],
-        };
-      }
-      // 모듈 별로 최신 데이터 30개만 선택
-      if (
-        formattedData[moduleId].temperature.length < count ||
-        count === "all"
-      ) {
-        formattedData[moduleId].temperature.push({
-          name: row.timestamp_value,
-          y: parseFloat(row.temperature_value), // 문자열을 숫자로 변환
-        });
-      }
-    });
-
-    // TVOC 데이터를 반환
-    return res.status(200).json(formattedData);
-  });
-});
-
 api.get("/factory/:factoryId/temperature2", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
   let queryDate = req.query.date || getCurrentDate();
@@ -1051,91 +804,6 @@ api.get("/factory/:factoryId/temperature2", (req, res) => {
     });
 
     // 온도 데이터를 반환
-    return res.status(200).json(formattedData);
-  });
-});
-
-api.get("/factory/:factoryId/finedust", (req, res) => {
-  const factoryId = parseInt(req.params.factoryId);
-  const queryDate = req.query.date || getCurrentDate();
-  const count = req.query.count || "all";
-  // count가 'all'이 아닌 경우에는 최대 개수를 적용
-  const limit = count === "all" ? "" : "LIMIT " + parseInt(count);
-  const partitionName = "p" + queryDate.replaceAll("/", "").replaceAll("-", "");
-
-  const today = new Date().toISOString().split("T")[0].replaceAll("-", "/");
-
-  if (queryDate > today) {
-    console.log("Out-of-bounds data request!");
-    return res.status(200).json({});
-  }
-
-  // TVOC 데이터를 가져오는 쿼리를 작성합니다.
-  const query = `
-        SELECT
-            sd.sensor_module_id,
-            sd.pm1_0 AS pm1_0_value,
-            sd.pm2_5 AS pm2_5_value,
-            sd.pm10 AS pm10_value,
-            DATE_FORMAT(sd.timestamp, '%Y/%m/%d %H:%i:%s') AS timestamp_value
-        FROM (
-            SELECT
-                sensor_module_id,
-                pm1_0,
-                pm2_5,
-                pm10,
-                timestamp
-            FROM
-                sensor_data PARTITION(${partitionName})
-            WHERE
-                factory_id = ? AND DATE(timestamp) = ?
-            ORDER BY
-                timestamp DESC  -- 최신 데이터가 먼저 나오도록 정렬
-        ) AS sd
-    `;
-
-  // 쿼리 실행
-  connection.query(query + limit, [factoryId, queryDate], (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-
-    // 결과 데이터를 원하는 형태로 가공
-    const formattedData = {};
-    result.forEach((row) => {
-      const moduleId = row.sensor_module_id;
-      if (!formattedData[moduleId]) {
-        formattedData[moduleId] = {
-          pm1_0: [],
-          pm2_5: [],
-          pm10: [],
-        };
-      }
-      // 모듈 별로 최신 데이터 30개만 선택
-      if (formattedData[moduleId].pm1_0.length < count || count === "all") {
-        formattedData[moduleId].pm1_0.push({
-          name: row.timestamp_value,
-          y: parseFloat(row.pm1_0_value), // 문자열을 숫자로 변환
-        });
-      }
-
-      if (formattedData[moduleId].pm2_5.length < count || count === "all") {
-        formattedData[moduleId].pm2_5.push({
-          name: row.timestamp_value,
-          y: parseFloat(row.pm2_5_value), // 문자열을 숫자로 변환
-        });
-      }
-
-      if (formattedData[moduleId].pm10.length < count || count === "all") {
-        formattedData[moduleId].pm10.push({
-          name: row.timestamp_value,
-          y: parseFloat(row.pm10_value), // 문자열을 숫자로 변환
-        });
-      }
-    });
-
-    // TVOC 데이터를 반환
     return res.status(200).json(formattedData);
   });
 });
@@ -1227,5 +895,110 @@ api.get("/factory/:factoryId/finedust2", (req, res) => {
     return res.status(200).json(formattedData);
   });
 });
+
+const weight = {
+  workload: { w1: 1, w2: 0, w3: 0 },
+  enviroment: { w1: 1, w2: 1, w3: 1 },
+};
+
+const minmax = {
+  tvoc: { min: 0, max: 17384.8 },
+  co2: { min: 400, max: 7256.2 },
+  pm1: { min: 0, max: 464.4 },
+  pm25: { min: 0, max: 500 },
+  pm100: { min: 0, max: 464.4 },
+  heartrate: { min: 51, max: 146 },
+  // irun: { min: 51, max: 146 },
+  // temp: { min: 51, max: 146 },
+};
+
+const thresholds = {
+  x: { x1: 0.033, x2: 0.084, x3: 0.173, x4: 0.317 },
+  y: { y1: 0.284, y2: 0.389, y3: 0.473, y4: 0.589 },
+};
+
+function calcWorkLoadIndex(h, i, t) {
+  h =
+    (h - minmax.heartrate.min) / (minmax.heartrate.max - minmax.heartrate.min);
+  // i = i - minmax.irun.min / minmax.irun.max - minmax.irun.min;
+  // t = t - minmax.temp.min / minmax.temp.max - minmax.temp.min;
+
+  const calculated =
+    (h * weight.workload.w1 + i * weight.workload.w2 + t * weight.workload.w3) /
+    (weight.workload.w1 + weight.workload.w2 + weight.workload.w3);
+  return calculated;
+}
+
+function calcEnviromentIndex(t, c, p1, p2, p3) {
+  t = (t - minmax.tvoc.min) / (minmax.tvoc.max - minmax.tvoc.min);
+  c = (c - minmax.co2.min) / (minmax.co2.max - minmax.co2.min);
+  p1 = (p1 - minmax.pm1.min) / (minmax.pm1.max - minmax.pm1.min);
+  p2 = (p2 - minmax.pm25.min) / (minmax.pm25.max - minmax.pm25.min);
+  p3 = (p3 - minmax.pm100.min) / (minmax.pm100.max - minmax.pm100.min);
+
+  const p = p1 + p2 + p3 / 3;
+
+  const calculated =
+    (t * weight.workload.w1 + c * weight.workload.w2 + p * weight.workload.w3) /
+    (weight.enviroment.w1 + weight.enviroment.w2 + weight.enviroment.w3);
+  return calculated;
+}
+
+function calclevel(e, w) {
+  let env_level = 1;
+  for (test in thresholds.x) {
+    if (thresholds.x[test] > e) break;
+    env_level++;
+  }
+  let work_level = 1;
+  for (test in thresholds.y) {
+    if (thresholds.y[test] > w) break;
+    work_level++;
+  }
+
+  let level = 0;
+
+  if (
+    (env_level === 1 && work_level === 1) ||
+    (env_level === 2 && work_level === 1) ||
+    (env_level === 3 && work_level === 1) ||
+    (env_level === 1 && work_level === 2) ||
+    (env_level === 1 && work_level === 3) ||
+    (env_level === 2 && work_level === 2)
+  ) {
+    level = 1;
+  } else if (
+    (env_level === 1 && work_level === 4) ||
+    (env_level === 1 && work_level === 5) ||
+    (env_level === 2 && work_level === 3) ||
+    (env_level === 2 && work_level === 4) ||
+    (env_level === 3 && work_level === 2) ||
+    (env_level === 3 && work_level === 3) ||
+    (env_level === 4 && work_level === 1) ||
+    (env_level === 4 && work_level === 2) ||
+    (env_level === 5 && work_level === 1)
+  ) {
+    level = 2;
+  } else if (
+    (env_level === 2 && work_level === 5) ||
+    (env_level === 3 && work_level === 4) ||
+    (env_level === 3 && work_level === 5) ||
+    (env_level === 4 && work_level === 3) ||
+    (env_level === 4 && work_level === 4) ||
+    (env_level === 5 && work_level === 3) ||
+    (env_level === 5 && work_level === 2)
+  ) {
+    level = 3;
+  } else if (
+    (env_level === 4 && work_level === 5) ||
+    (env_level === 5 && work_level === 4)
+  ) {
+    level = 4;
+  } else if (env_level === 5 && work_level === 5) {
+    level = 5;
+  }
+
+  return { env_level, work_level, level };
+}
 
 module.exports = api;
