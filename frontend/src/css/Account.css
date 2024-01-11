@@ -29,51 +29,56 @@
   background-color: #5c5c5c;
 }
 
+.margin-left-1{
+  margin-left: 1rem;
+}
+
 .center {
   align-items: center;
   justify-content: center;
   display: flex;
-  width: 100%;
   height: 100%;
 }
 
 .bg-layer1 {
+  position: relative;
   display: flex;
   flex-direction: column; /* 세로 정렬 */
-  gap: 5rem;
-  height: 85%;
+  gap: 2rem;
+  height: 95%;
   width: 85%;
   border-radius: 2rem;
   padding-top: 5rem;
   padding-bottom: 5rem;
+  box-sizing: border-box;
 }
 
 .bg-layer2 {
+  position: relative;
   display: flex;
-  flex-direction: column; /* 세로 정렬 */
-  gap: 5rem;
-  width: 70%;
-  height: 25vh;
+  flex-direction: column;
+  gap: 2rem;
+  width: 80%;
+  height: 35vh;
   border-radius: 2rem;
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  box-sizing: border-box;
 }
 
+
 .left-align-text {
+  display: flex;
   text-align: left;
   margin: 0; /* 기본 마진 제거 */
-  padding-left: 5rem;
+  padding-left: 3rem;
   color: white;
 }
 
-.scroll {
-  margin-top: 1rem;
+.Account-scroll {
   margin-left: 2.3rem;
   margin-right: 2.3rem;
-  margin-bottom: 3rem;
-  min-height: 10rem;
-  height: 100%;
-  /* background: white; */
+  background: white;
   box-shadow: 0 1px 15px rgba(0, 0, 0, 0.05);
   border-radius: 10px;
   overflow-y: scroll;
@@ -83,15 +88,52 @@
   scrollbar-width: none; /* 파이어폭스 */
 }
 
-.scroll::-webkit-scrollbar {
+.Account-scroll::-webkit-scrollbar {
   width: 10px;
 }
 
-.scroll::-webkit-scrollbar-thumb {
+.Account-scroll::-webkit-scrollbar-thumb {
   background-color: #c4c4c4; /* 스크롤바 색상 */
   border-radius: 6px; /* 스크롤바 모서리 둥글게 만듦 */
 }
 
-.scroll::-webkit-scrollbar-track {
+.Account-scroll::-webkit-scrollbar-track {
   background-color: #f1f1f1; /* 스크롤바 트랙 색상 */
+}
+
+.img-form {
+  margin-left: 1rem;
+  transition: transform 0.3s ease-in-out;
+  display: block; /* 이미지의 디스플레이 속성을 블록으로 설정 */
+}
+
+.input-form {
+  width: 700px;
+  height: 32px;
+  font-size: 15px;
+  border: 0;
+  border-radius: 15px;
+  outline: none;
+  padding-left: 10px;
+  background-color: rgb(233, 233, 233);
+  margin-left: 6rem;
+}
+
+.display-flex {
+  display: flex;
+}
+
+.account-title {
+  display: flex;
+  text-align: left;
+  margin: 0; /* 기본 마진 제거 */
+  padding-left: 6rem;
+}
+
+.btn-container {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
