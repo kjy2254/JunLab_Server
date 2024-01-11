@@ -19,36 +19,10 @@ function RealtimeData(props) {
   const [factoryName, setFactoryName] = useState();
   const [lastUpdate, setLastUpdate] = useState();
   const [modules, setModules] = useState([]);
-  const [selectedModule, setSelectedModule] = useState("");
-  const [filter, setFilter] = useState("");
+  const [selectedModule, setSelectedModule] = useState();
+  const [filter, setFilter] = useState();
 
   const { factoryId } = useParams();
-
-  // const fetchData = async () => {
-  //   try {
-  //     axios
-  //       .get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}`)
-  //       .then((response) => {
-  //         setFactoryName(response.data.factoryName);
-  //         setLastUpdate(response.data.last_update);
-  //         setModules(response.data.modules);
-  //         setSelectedModule(response.data.modules[0]);
-  //       })
-  //       .catch((error) => {
-  //         console.error("API 요청 실패:", error);
-  //       });
-  //     axios
-  //       .get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}/users`)
-  //       .then((response) => {
-  //         setWorkerData(response.data);
-  //       })
-  //       .catch((error) => {
-  //         console.error("API 요청 실패:", error);
-  //       });
-  //   } catch (error) {
-  //     console.error("API 요청 실패:", error);
-  //   }
-  // };
 
   const fetchData = async () => {
     try {
@@ -63,7 +37,6 @@ function RealtimeData(props) {
       setFactoryName(factoryResponse.data.factoryName);
       setLastUpdate(factoryResponse.data.last_update);
       setModules(factoryResponse.data.modules);
-      setSelectedModule(factoryResponse.data.modules[0]);
 
       // 사용자 데이터 설정
       setWorkerData(usersResponse.data);
@@ -78,15 +51,16 @@ function RealtimeData(props) {
     const interval = setInterval(() => {
       fetchData();
     }, 7000);
+
     // 컴포넌트가 언마운트될 때 clearInterval을 호출하여 인터벌 정리
     return () => {
       clearInterval(interval);
     };
   }, []);
 
-  // useEffect(() => {
-  //   console.log(selectedModule);
-  // }, [selectedModule]);
+  useEffect(() => {
+    setSelectedModule(modules[0]);
+  }, [modules.length]);
 
   if (
     !props.isLogin ||
@@ -128,11 +102,13 @@ function RealtimeData(props) {
                 className="dropdown"
                 onChange={(e) => setSelectedModule(e.target.value)}
               >
-                {modules?.map((e, index) => (
-                  <option key={index} value={e}>
-                    {e}
-                  </option>
-                ))}
+                {modules?.map((e, index) => {
+                  return (
+                    <option key={index} value={e}>
+                      {e}
+                    </option>
+                  );
+                })}
               </select>
             </div>
             <div className="chart-section">
