@@ -34,93 +34,58 @@ function Account(props) {
 }
 
 function AccountComponent() {
+  const container = document.querySelector(".Account-scroll");
+
+  const renderInputFields = (count) => {
+    const inputFields = [];
+
+    for (let i = 1; i < count; i++) {
+      inputFields.push(
+        <p className="flex-container margin-left-2" key={i}>
+          작업자{i} <input className="input-form"/>
+        </p>
+      );
+    }
+
+    return inputFields;
+  };
+
   return (
-    <div className="center">
-      <div className="center bg-layer1 ac-bgcolor1">
-        <div className="bg-layer2 ac-bgcolor2">
-          <p className="left-align-text">
-            계정 정보
-            <button className="btn-container" onClick={() => {}}>
-              <img src={edit} width={20} className="img-form" />
-            </button>
+    <div className="center bg-layer1">
+      <div className="bg-layer2 ac-bgcolor2">
+        <p className="left-align-text">
+          계정 정보
+          <button className="btn-container" onClick={() => {}}>
+            <img src={edit} width={20} className="img-form" />
+          </button>
+        </p>
+        <div className="Account-scroll">
+          <p className="flex-container margin-left-2 display-flex">
+            권한
+            <p className="flex-container account-title">미승인</p>
           </p>
-          <div className="Account-scroll">
-            <p className="margin-left-1 display-flex">
-              권한
-              <p className="account-title">미승인</p>
-            </p>
-            <p className="margin-left-1">
-              공장
-              <input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              관리자
-              <input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              연락처<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              이메일<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              생년월일<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              추가<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              추가<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              추가<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              추가<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              추가<input className="input-form"></input>
-            </p>
-          </div>
+          <p className="margin-left-2">
+            공장
+            <input className="input-form"></input>
+          </p>
+          <p className="flex-container margin-left-2">
+            관리자
+            <input className="input-form"></input>
+          </p>
+          <p className="flex-container margin-left-2">
+            연락처<input className="input-form"></input>
+          </p>
+          <p className="flex-container margin-left-2">
+            이메일<input className="input-form"></input>
+          </p>
+          <p className="flex-container margin-left-2">
+            생년월일<input className="input-form"></input>
+          </p>
         </div>
-        <div className="bg-layer2 ac-bgcolor2">
-          <p className="left-align-text">직원 정보</p>
-          <div className="Account-scroll">
-            <p className="margin-left-1">
-              이름<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              이름<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              이름<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              이름<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              이름<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              이름<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              이름<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              이름<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              이름<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              이름<input className="input-form"></input>
-            </p>
-            <p className="margin-left-1">
-              이름<input className="input-form"></input>
-            </p>
-          </div>
-        </div>
+      </div>
+      <div className="bg-layer2 ac-bgcolor2">
+        <p className="left-align-text">직원 정보</p>
+        <div className="Account-scroll">{renderInputFields(40)}</div>{" "}
       </div>
     </div>
   );
