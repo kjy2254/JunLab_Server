@@ -335,7 +335,7 @@ function Details(props) {
                 </div>
               </div>
               <div className="flex">
-                <div className={endPoint === "finedust" ? "" : "none"}>
+                <div className={endPoint === "finedust" ? "finedust" : "none"}>
                   <button
                     className={
                       "button " +

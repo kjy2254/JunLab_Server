@@ -21,7 +21,9 @@ function Panel(props) {
           className="score green"
           style={{
             width: `${
-              currentCount == 0 ? 0 : (props.current.green / currentCount) * 100
+              currentCount === 0
+                ? 0
+                : (props.current.green / currentCount) * 100
             }%`,
           }}
         />
@@ -32,7 +34,7 @@ function Panel(props) {
           className="score yellow"
           style={{
             width: `${
-              currentCount == 0
+              currentCount === 0
                 ? 0
                 : (props.current.yellow / currentCount) * 100
             }%`,
@@ -45,7 +47,7 @@ function Panel(props) {
           className="score red"
           style={{
             width: `${
-              currentCount == 0 ? 0 : (props.current.red / currentCount) * 100
+              currentCount === 0 ? 0 : (props.current.red / currentCount) * 100
             }%`,
           }}
         />
