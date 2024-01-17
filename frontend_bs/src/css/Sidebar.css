@@ -1,0 +1,118 @@
+.custom-sidebar {
+  width: 250px;
+  background-color: rgb(25, 36, 48);
+  box-sizing: border-box;
+  transition: width 0.2s ease;
+  flex-shrink: 0;
+  position: fixed; /* 화면에 고정 */
+  height: 100%; /* 전체 높이 */
+  z-index: 1000; /* 다른 요소들 위에 표시 */
+  overflow: hidden;
+}
+
+.custom-sidebar.expanded {
+  width: 250px;
+}
+
+.custom-sidebar.collapsed {
+  width: 62px;
+}
+
+.custom-sidebar.collapsed:hover {
+  width: 250px;
+}
+
+.custom-sidebar.collapsed:hover .menu-text,
+.custom-sidebar.collapsed:hover .log-toggle {
+  display: block !important;
+}
+
+.sub.collapsed {
+  height: 0;
+  overflow: hidden;
+}
+
+.custom-sidebar .header {
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  opacity: 0.75;
+  text-align: left;
+  font-size: large;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.item li {
+  text-align: left;
+  color: white;
+  /* background: #000; */
+  padding: 1rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.item li:hover {
+  .menu-icon {
+    opacity: 1;
+  }
+  font-weight: bold;
+}
+
+.link-unstyled {
+  text-decoration: none;
+  color: inherit;
+}
+
+.menu-icon {
+  opacity: 0.6;
+}
+
+.custom-sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item .menu-icon {
+  width: 25px;
+  margin-right: 0.8rem;
+  margin-left: 0.2rem;
+}
+
+.custom-sidebar .wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.sub li {
+  padding: 0.5rem 0 0.5rem 3.5rem;
+}
+
+.d-none {
+  .menu-text {
+    display: none;
+  }
+}
+
+@media (max-width: 800px) {
+  .custom-sidebar.expanded,
+  .custom-sidebar.collapsed {
+    width: 0;
+  }
+
+  .custom-sidebar.sv-expanded {
+    width: 250px;
+  }
+
+  .menu-text {
+    display: block !important;
+  }
+}
