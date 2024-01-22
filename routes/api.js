@@ -30,6 +30,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+api.get("/factory/:factoryId/name", (req, res) => {
+  const factoryId = parseInt(req.params.factoryId);
+  const query = `SELECT factory_name FROM factories WHERE factory_id = ?`;
+
+  connection.query(query, [factoryId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+
+    return res.status(200).json(result[0]);
+  });
+});
+
 api.get("/factory/:factoryId/users", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
 

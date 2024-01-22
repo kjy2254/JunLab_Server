@@ -1,5 +1,11 @@
 .custom-navbar {
   background-color: rgb(25, 36, 48);
+  position: fixed;
+  top: 0;
+  /* width: 100% */
+  left: 0;
+  right: 0;
+  z-index: 1;
 }
 
 .custom-navbar .logo {
@@ -7,7 +13,7 @@
   color: white;
 }
 
-.custom-navbar .login {
+.custom-navbar .login-btn {
   margin-right: 1rem;
 }
 
@@ -17,4 +23,10 @@
 
 .custom-navbar .toggle:hover {
   background: none;
+}
+
+.custom-navbar .header-text {
+  color: white;
+  margin-left: 1rem;
+  font-weight: bold;
 }

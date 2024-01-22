@@ -2,9 +2,24 @@ import React from "react";
 import { Nav } from "react-bootstrap";
 import "../css/Sidebar.css";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
 function Sidebar(props) {
   const [toggleLog, setToggleLog] = useState(true);
+  const [factoryName, setFactoryName] = useState("");
+  const { factoryId } = useParams();
+
+  useEffect(() => {
+    axios
+      .get(`http://junlab.postech.ac.kr:880/api2/factory/${factoryId}/name`)
+      .then((response) => {
+        const data = response.data;
+        setFactoryName(data.factory_name);
+      })
+      .catch((error) => {
+        console.error("API 요청 실패:", error);
+      });
+  }, []);
 
   return (
     <div
@@ -15,7 +30,7 @@ function Sidebar(props) {
       `}
     >
       <Nav className="flex-column">
-        <div className="header">{props.factoryName}</div>
+        <div className="header">{factoryName}</div>
         <ul className="item">
           <Link
             className="link-unstyled"
@@ -47,7 +62,7 @@ function Sidebar(props) {
               </div>
             </li>
           </Link>
-          <Link
+          {/* <Link
             className="link-unstyled"
             to={`/factoryManagement/factory/${props.factoryId}/livedata`}
           >
@@ -136,7 +151,7 @@ function Sidebar(props) {
                 </div>
               </div>
             </li>
-          </Link>
+          </Link> */}
           <li onClick={() => setToggleLog(!toggleLog)}>
             <div className="wrapper">
               <div className="menu-icon">
@@ -189,11 +204,10 @@ function Sidebar(props) {
                   width="16"
                   height="16"
                   fill="currentColor"
-                  class="bi bi-chevron-down"
                   viewBox="0 0 16 16"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"
                   />
                 </svg>
@@ -203,11 +217,10 @@ function Sidebar(props) {
                   width="16"
                   height="16"
                   fill="currentColor"
-                  class="bi bi-chevron-right"
                   viewBox="0 0 16 16"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"
                   />
                 </svg>
@@ -215,7 +228,7 @@ function Sidebar(props) {
             </div>
           </li>
           <ul className={`sub ${toggleLog ? "" : "collapsed"}`}>
-            <Link
+            {/* <Link
               className="link-unstyled"
               to={`/factoryManagement/factory/${props.factoryId}/tvoc`}
             >
@@ -228,8 +241,8 @@ function Sidebar(props) {
               to={`/factoryManagement/factory/${props.factoryId}/co2`}
             >
               <li className={`menu-text ${props.show ? "" : "d-none"}`}>CO2</li>
-            </Link>
-            <Link
+            </Link> */}
+            {/* <Link
               className="link-unstyled"
               to={`/factoryManagement/factory/${props.factoryId}/temperature`}
             >
@@ -243,6 +256,22 @@ function Sidebar(props) {
             >
               <li className={`menu-text ${props.show ? "" : "d-none"}`}>
                 Fine Dust
+              </li>
+            </Link> */}
+            <Link
+              className="link-unstyled"
+              to={`/factoryManagement/factory/${props.factoryId}/airwall`}
+            >
+              <li className={`menu-text ${props.show ? "" : "d-none"}`}>
+                고정식
+              </li>
+            </Link>
+            <Link
+              className="link-unstyled"
+              to={`/factoryManagement/factory/${props.factoryId}/airwatch`}
+            >
+              <li className={`menu-text ${props.show ? "" : "d-none"}`}>
+                이동식
               </li>
             </Link>
           </ul>

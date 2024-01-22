@@ -7,6 +7,8 @@ import Login from "./component/Login";
 import Factory from "./component/Factory";
 import Dashboard from "./component/Dashboard";
 import LiveData from "./component/LiveData";
+import AirWall from "./component/AirWall";
+import AirWatch from "./component/AirWatch";
 import TVOC from "./component/TVOC";
 import CO2 from "./component/CO2";
 import Finedust from "./component/Finedust";
@@ -24,6 +26,7 @@ function App() {
   const [toggleSide, setToggleSide] = useState(true);
   const [toggleSmallSide, setToggleSmallSide] = useState(false);
   const [smallView, setSmallView] = useState(window.innerWidth < 800);
+  const [headerText, setHeaderText] = useState("");
 
   const toggleSidebar = () => {
     setToggleSide(!toggleSide);
@@ -55,6 +58,7 @@ function App() {
                 toggleSidebar={toggleSidebar}
                 smallView={smallView}
                 toggleSmallSidebar={toggleSmallSidebar}
+                headerText={headerText}
               />
             }
           />
@@ -62,7 +66,7 @@ function App() {
         <div className="content">
           <Routes>
             <Route
-              path="/factoryManagement/factory/*"
+              path="/factoryManagement/factory/:factoryId/*"
               element={
                 <Sidebar
                   show={toggleSide}
@@ -85,44 +89,96 @@ function App() {
           </Routes>
 
           <Routes>
-            <Route path="/factoryManagement/login" element={<Login />} />
-            <Route path="/factoryManagement/signup" element={<Signup />} />
+            <Route path="/factorymanagement/login" element={<Login />} />
+            <Route path="/factorymanagement/signup" element={<Signup />} />
             <Route
-              path="/factoryManagement/factory"
+              path="/factorymanagement/factory"
               element={
-                <CustomRoute Component={Factory} toggleSide={toggleSide} />
+                <CustomRoute
+                  Component={Factory}
+                  toggleSide={toggleSide}
+                  setHeaderText={setHeaderText}
+                />
               }
             />
             <Route
-              path="/factoryManagement/factory/:factoryId/dashboard"
+              path="/factorymanagement/factory/:factoryId/dashboard"
               element={
-                <CustomRoute Component={Dashboard} toggleSide={toggleSide} />
+                <CustomRoute
+                  Component={Dashboard}
+                  toggleSide={toggleSide}
+                  setHeaderText={setHeaderText}
+                />
+              }
+            />
+            {/* <Route
+              path="/factorymanagement/factory/:factoryId/livedata"
+              element={
+                <CustomRoute
+                  Component={LiveData}
+                  toggleSide={toggleSide}
+                  setHeaderText={setHeaderText}
+                />
+              }
+            /> */}
+            {/* <Route
+              path="/factorymanagement/factory/:factoryId/tvoc"
+              element={
+                <CustomRoute
+                  Component={TVOC}
+                  toggleSide={toggleSide}
+                  setHeaderText={setHeaderText}
+                />
               }
             />
             <Route
-              path="/factoryManagement/factory/:factoryId/livedata"
+              path="/factorymanagement/factory/:factoryId/co2"
               element={
-                <CustomRoute Component={LiveData} toggleSide={toggleSide} />
+                <CustomRoute
+                  Component={CO2}
+                  toggleSide={toggleSide}
+                  setHeaderText={setHeaderText}
+                />
               }
             />
             <Route
-              path="/factoryManagement/factory/:factoryId/tvoc"
-              element={<CustomRoute Component={TVOC} toggleSide={toggleSide} />}
-            />
-            <Route
-              path="/factoryManagement/factory/:factoryId/co2"
-              element={<CustomRoute Component={CO2} toggleSide={toggleSide} />}
-            />
-            <Route
-              path="/factoryManagement/factory/:factoryId/temperature"
+              path="/factorymanagement/factory/:factoryId/temperature"
               element={
-                <CustomRoute Component={Temperature} toggleSide={toggleSide} />
+                <CustomRoute
+                  Component={Temperature}
+                  toggleSide={toggleSide}
+                  setHeaderText={setHeaderText}
+                />
               }
             />
             <Route
-              path="/factoryManagement/factory/:factoryId/finedust"
+              path="/factorymanagement/factory/:factoryId/finedust"
               element={
-                <CustomRoute Component={Finedust} toggleSide={toggleSide} />
+                <CustomRoute
+                  Component={Finedust}
+                  toggleSide={toggleSide}
+                  setHeaderText={setHeaderText}
+                />
+              }
+            /> */}
+            <Route
+              path="/factorymanagement/factory/:factoryId/airwall"
+              element={
+                <CustomRoute
+                  Component={AirWall}
+                  toggleSide={toggleSide}
+                  setHeaderText={setHeaderText}
+                />
+              }
+            />
+            <Route
+              path="/factorymanagement/factory/:factoryId/airwatch"
+              element={
+                <CustomRoute
+                  Component={AirWatch}
+                  toggleSide={toggleSide}
+                  setHeaderText={setHeaderText}
+                />
               }
             />
           </Routes>
@@ -132,10 +188,10 @@ function App() {
   );
 }
 
-function CustomRoute({ Component, toggleSide }) {
+function CustomRoute({ Component, toggleSide, setHeaderText }) {
   return (
     <div className={`main ${toggleSide ? "collapsed" : "expanded"}`}>
-      <Component />
+      <Component setHeaderText={setHeaderText} />
     </div>
   );
 }

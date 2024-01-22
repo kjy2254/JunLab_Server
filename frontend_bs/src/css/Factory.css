@@ -21,7 +21,7 @@
 .filter-zone,
 .list-zone,
 .detail-zone {
-  height: 100%;
+  min-height: 100%;
   border: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
   flex-direction: column;
@@ -96,7 +96,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.search input {
+input:not([type="radio"]) {
   display: block;
   width: 100%;
   padding: 0.375rem 0.75rem;
@@ -111,7 +111,8 @@
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.factory-card {
+.factory-card,
+.detail-zone .header {
   display: flex;
   padding: 1rem 1rem 1rem 1.5rem;
   justify-content: space-between;
@@ -120,26 +121,33 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.factory-card .text {
+.factory-card .text,
+.header .text {
   display: flex;
   flex-direction: column;
   text-align: left;
 }
 
-.factory-card .name {
+.factory-card {
+  cursor: pointer;
 }
 
-.factory-card .industry {
+.factory-card .industry,
+.header .industry {
   font-weight: lighter;
   font-size: 13px;
 }
 
-.detail-zone .header {
+/* .detail-zone .header {
   padding: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+} */
+
+.selected {
+  background: rgb(48, 58, 69);
 }
 
-.detail-zone .factory-card {
+.detail-zone .header {
   padding-top: 0.8rem;
   padding-bottom: 0.8rem;
 }
@@ -171,5 +179,57 @@
 }
 
 .detail .td1 {
-  width: 10rem;
+  width: 9rem;
+}
+
+.detail-zone .buttons {
+  /* background: #000; */
+  height: 100%;
+  display: flex;
+  padding: 2rem;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.edit {
+  background: rgb(116, 90, 242);
+  height: 2.5rem;
+  width: 5rem;
+}
+
+.move {
+  background: rgb(57, 139, 247);
+  height: 2.5rem;
+  width: 5rem;
+}
+
+.add-factory {
+  background: rgb(242, 90, 90);
+}
+
+.edit:hover {
+  background: rgb(95, 74, 201);
+}
+
+.move:hover {
+  background: rgb(52, 108, 172);
+}
+
+.add-factory:hover {
+  background: rgb(180, 67, 67);
+}
+
+button,
+button {
+  padding: 0.3rem 0.8rem 0.3rem 0.8rem;
+  color: white;
+  border-radius: 0.3rem;
+  border-style: none;
+  text-wrap: nowrap;
+  /* height: 2.5rem;
+  width: 5rem; */
+}
+
+button:hover {
+  transition: all 0.2s;
 }

@@ -12,28 +12,31 @@ function Header(props) {
         id="basic-navbar-nav"
         className="d-flex justify-content-between"
       >
-        {props.smallView ? (
-          <Button
-            variant="outline-secondary"
-            onClick={props.toggleSmallSidebar}
-            className="toggle"
-          >
-            ☰
-          </Button>
-        ) : (
-          <Button
-            variant="outline-secondary"
-            onClick={props.toggleSidebar}
-            className="toggle"
-          >
-            ☰
-          </Button>
-        )}
+        <div>
+          {props.smallView ? (
+            <Button
+              variant="outline-secondary"
+              onClick={props.toggleSmallSidebar}
+              className="toggle"
+            >
+              ☰
+            </Button>
+          ) : (
+            <Button
+              variant="outline-secondary"
+              onClick={props.toggleSidebar}
+              className="toggle"
+            >
+              ☰
+            </Button>
+          )}
+          <span className="header-text">{props.headerText}</span>
+        </div>
 
         <Nav className="ml-auto">
           <Button
             variant="outline-secondary"
-            className="login"
+            className="login-btn"
             href="/factorymanagement/login"
           >
             로그인

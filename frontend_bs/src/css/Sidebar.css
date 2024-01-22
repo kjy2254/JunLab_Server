@@ -8,6 +8,7 @@
   height: 100%; /* 전체 높이 */
   z-index: 1000; /* 다른 요소들 위에 표시 */
   overflow: hidden;
+  box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.2);
 }
 
 .custom-sidebar.expanded {
