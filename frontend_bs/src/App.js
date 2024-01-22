@@ -6,13 +6,8 @@ import SidebarAD from "./component/SidebarAD";
 import Login from "./component/Login";
 import Factory from "./component/Factory";
 import Dashboard from "./component/Dashboard";
-import LiveData from "./component/LiveData";
 import AirWall from "./component/AirWall";
 import AirWatch from "./component/AirWatch";
-import TVOC from "./component/TVOC";
-import CO2 from "./component/CO2";
-import Finedust from "./component/Finedust";
-import Temperature from "./component/Temperature";
 import { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -34,6 +29,10 @@ function App() {
 
   const toggleSmallSidebar = () => {
     setToggleSmallSide(!toggleSmallSide);
+  };
+
+  const closeSmallSidebar = () => {
+    setToggleSmallSide(false);
   };
 
   useEffect(() => {
@@ -68,12 +67,7 @@ function App() {
             <Route
               path="/factoryManagement/factory/:factoryId/*"
               element={
-                <Sidebar
-                  show={toggleSide}
-                  showInSmall={toggleSmallSide}
-                  factoryId={5}
-                  factoryName={"한금"}
-                />
+                <Sidebar show={toggleSide} showInSmall={toggleSmallSide} />
               }
             />
             <Route
@@ -98,6 +92,7 @@ function App() {
                   Component={Factory}
                   toggleSide={toggleSide}
                   setHeaderText={setHeaderText}
+                  closeSmallSidebar={closeSmallSidebar}
                 />
               }
             />
@@ -108,59 +103,10 @@ function App() {
                   Component={Dashboard}
                   toggleSide={toggleSide}
                   setHeaderText={setHeaderText}
+                  closeSmallSidebar={closeSmallSidebar}
                 />
               }
             />
-            {/* <Route
-              path="/factorymanagement/factory/:factoryId/livedata"
-              element={
-                <CustomRoute
-                  Component={LiveData}
-                  toggleSide={toggleSide}
-                  setHeaderText={setHeaderText}
-                />
-              }
-            /> */}
-            {/* <Route
-              path="/factorymanagement/factory/:factoryId/tvoc"
-              element={
-                <CustomRoute
-                  Component={TVOC}
-                  toggleSide={toggleSide}
-                  setHeaderText={setHeaderText}
-                />
-              }
-            />
-            <Route
-              path="/factorymanagement/factory/:factoryId/co2"
-              element={
-                <CustomRoute
-                  Component={CO2}
-                  toggleSide={toggleSide}
-                  setHeaderText={setHeaderText}
-                />
-              }
-            />
-            <Route
-              path="/factorymanagement/factory/:factoryId/temperature"
-              element={
-                <CustomRoute
-                  Component={Temperature}
-                  toggleSide={toggleSide}
-                  setHeaderText={setHeaderText}
-                />
-              }
-            />
-            <Route
-              path="/factorymanagement/factory/:factoryId/finedust"
-              element={
-                <CustomRoute
-                  Component={Finedust}
-                  toggleSide={toggleSide}
-                  setHeaderText={setHeaderText}
-                />
-              }
-            /> */}
             <Route
               path="/factorymanagement/factory/:factoryId/airwall"
               element={
@@ -168,6 +114,7 @@ function App() {
                   Component={AirWall}
                   toggleSide={toggleSide}
                   setHeaderText={setHeaderText}
+                  closeSmallSidebar={closeSmallSidebar}
                 />
               }
             />
@@ -178,6 +125,7 @@ function App() {
                   Component={AirWatch}
                   toggleSide={toggleSide}
                   setHeaderText={setHeaderText}
+                  closeSmallSidebar={closeSmallSidebar}
                 />
               }
             />
@@ -188,9 +136,17 @@ function App() {
   );
 }
 
-function CustomRoute({ Component, toggleSide, setHeaderText }) {
+function CustomRoute({
+  Component,
+  toggleSide,
+  setHeaderText,
+  closeSmallSidebar,
+}) {
   return (
-    <div className={`main ${toggleSide ? "collapsed" : "expanded"}`}>
+    <div
+      className={`main ${toggleSide ? "collapsed" : "expanded"}`}
+      onClick={closeSmallSidebar}
+    >
       <Component setHeaderText={setHeaderText} />
     </div>
   );

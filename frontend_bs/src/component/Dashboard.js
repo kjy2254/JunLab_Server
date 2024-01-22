@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useTable } from "react-table";
 import "../css/Dashboard.css";
 import finedust from "../image/finedust.svg";
 import temperature from "../image/temperature.svg";
@@ -146,7 +147,7 @@ function WorkerSummary() {
 
   return (
     <div className="worker-summary">
-      <span class="bar"></span>
+      <span class="bar" />
       <div className="header">
         <span>작업자 상태</span>
       </div>

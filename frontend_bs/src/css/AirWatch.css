@@ -242,7 +242,7 @@ select {
     align-items: center;
   }
 
-  .buttons {
+  .airwatch .buttons {
     margin-top: 1rem;
   }
   .download {

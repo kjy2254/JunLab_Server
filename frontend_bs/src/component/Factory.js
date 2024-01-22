@@ -1,11 +1,27 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
+import Modal from "react-modal";
 import "../css/Factory.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar as fS1 } from "@fortawesome/free-regular-svg-icons";
+import {
+  faStar as fS2,
+  faFilter,
+  faRightToBracket,
+} from "@fortawesome/free-solid-svg-icons";
 
-function Factory(props) {
+function Factory() {
   const [factories, setFactories] = useState([]);
   const [detail, setDetail] = useState({});
+  const [filterZone, setFilterZone] = useState({
+    smallview: window.innerWidth < 1300,
+    overlay: false,
+  });
+  const [detailZone, setDetailZone] = useState({
+    smallview: window.innerWidth < 1100,
+    overlay: false,
+  });
 
   useEffect(() => {
     axios
@@ -20,15 +36,52 @@ function Factory(props) {
       });
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setFilterZone((prevState) => ({
+        ...prevState,
+        smallview: window.innerWidth < 1300,
+      }));
+      setDetailZone((prevState) => ({
+        ...prevState,
+        smallview: window.innerWidth < 1100,
+      }));
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const handleCardClick = (factory) => {
     setDetail(factory);
+    setDetailZone({ ...detailZone, overlay: true });
   };
 
   return (
     <div className="factory">
       <div className="factory-wrapper">
-        <div className="filter-zone">
-          <button className="add-factory">공장 추가</button>
+        <div
+          className={
+            "filter-zone " +
+            (filterZone.smallview && filterZone.overlay ? "overlay" : "")
+          }
+        >
+          <div className="buttons">
+            <button className="add-factory">공장 추가</button>
+            {filterZone.smallview ? (
+              <button
+                className="close"
+                onClick={() =>
+                  setFilterZone({ ...filterZone, overlay: !filterZone.overlay })
+                }
+              >
+                x
+              </button>
+            ) : (
+              <></>
+            )}
+          </div>
           <div className="filter">
             <span>Filter</span>
             <li>All</li>
@@ -48,8 +101,24 @@ function Factory(props) {
             <li>충남</li>
           </div>
         </div>
-        <div className="list-zone">
+        <div
+          className={
+            "list-zone " +
+            (detailZone.overlay && detailZone.smallview ? "hide" : "")
+          }
+        >
           <div className="search">
+            {filterZone.smallview ? (
+              <button
+                onClick={() =>
+                  setFilterZone({ ...filterZone, overlay: !filterZone.overlay })
+                }
+              >
+                <FontAwesomeIcon icon={faFilter} />
+              </button>
+            ) : (
+              <></>
+            )}
             <input placeholder="Search Factory..." />
           </div>
           {factories.map((f) => (
@@ -57,16 +126,30 @@ function Factory(props) {
               name={f.factory_name}
               industry={f.industry}
               factoryId={f.factory_id}
+              detail={detail}
               onClick={() => handleCardClick(f)}
             />
           ))}
         </div>
-        <div className="detail-zone">
+        <div
+          className={
+            "detail-zone " +
+            (detailZone.overlay && detailZone.smallview ? "view" : "")
+          }
+        >
           <div className="header">
             <div className="text">
               <span className="name">{detail.factory_name}</span>
               <span className="industry">ID: {detail.factory_id}</span>
             </div>
+            {detailZone.smallview ? (
+              <FontAwesomeIcon
+                icon={faRightToBracket}
+                onClick={() => setDetailZone({ ...detailZone, overlay: false })}
+              />
+            ) : (
+              <></>
+            )}
           </div>
           <FactoryDetail detail={detail} />
           <div className="buttons">
@@ -87,22 +170,26 @@ function Factory(props) {
 }
 
 function FactoryCard(props) {
+  const [stared, setStared] = useState(false);
+
   return (
-    <div className="factory-card" onClick={props.onClick}>
+    <div
+      className={
+        "factory-card" +
+        (props.detail.factory_id == props.factoryId ? " selected" : "")
+      }
+      onClick={props.onClick}
+    >
       <div className="text">
         <span className="name">{props.name}</span>
         <span className="industry">{props.industry}</span>
       </div>
-      <div>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          viewBox="0 0 16 16"
-        >
-          <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
-        </svg>
+      <div onClick={() => setStared(!stared)}>
+        {stared ? (
+          <FontAwesomeIcon icon={fS2} style={{ color: "yellow" }} />
+        ) : (
+          <FontAwesomeIcon icon={fS1} />
+        )}
       </div>
     </div>
   );
@@ -114,7 +201,35 @@ function FactoryDetail({ detail }) {
       <img
         src={`http://junlab.postech.ac.kr:880/api/image/factory_${detail.factory_id}.png`}
       />
-      <table>
+      <div className="text">
+        <div className="wrapper">
+          <div className="key">Name</div>
+          <span>: {detail.factory_name}</span>
+        </div>
+        <div className="wrapper">
+          <div className="key">Industry</div>
+          <span>: {detail.industry}</span>
+        </div>
+        <div className="wrapper">
+          <div className="key">Manager</div>
+          <span>: {detail.manager}</span>
+        </div>
+        <div className="wrapper">
+          <div className="key">Contact</div>
+          <span>: {detail.contact_number}</span>
+        </div>
+        <div className="wrapper">
+          <div className="key">Location</div>
+          <span>: {detail.location}</span>
+        </div>
+        <div className="wrapper">
+          <div className="key">Join Date</div>
+          <span>
+            : {new Date(detail.join_date).toLocaleDateString("ko-KR")}
+          </span>
+        </div>
+      </div>
+      {/* <table>
         <thead />
         <tbody>
           <tr>
@@ -142,7 +257,7 @@ function FactoryDetail({ detail }) {
             <td>: {new Date(detail.join_date).toLocaleDateString("ko-KR")}</td>
           </tr>
         </tbody>
-      </table>
+      </table> */}
     </div>
   );
 }

@@ -15,13 +15,15 @@
   border-radius: 0.3rem;
   max-width: 90rem;
   display: flex;
-  overflow: hidden;
+  max-height: calc(100vh - 200px);
+  min-height: 60rem;
+  position: relative;
 }
 
 .filter-zone,
 .list-zone,
 .detail-zone {
-  min-height: 100%;
+  /* min-height: 100%; */
   border: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
   flex-direction: column;
@@ -30,7 +32,7 @@
 .filter-zone::-webkit-scrollbar,
 .list-zone::-webkit-scrollbar,
 .detail-zone::-webkit-scrollbar {
-  width: 1px;
+  width: 5px;
 }
 
 .filter-zone::-webkit-scrollbar-thumb,
@@ -50,21 +52,36 @@
   width: 15rem;
   min-width: 15rem;
   border-right: none;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .list-zone {
   width: 20rem;
   min-width: 20rem;
   border-right: none;
+  overflow-y: auto;
 }
 
 .detail-zone {
   flex-grow: 1;
+  overflow-y: auto;
 }
 
 .filter-zone button {
   margin: 1rem;
+}
+
+.filter-zone .buttons .close {
+  background: rgba(255, 255, 255, 0.2);
+  margin-left: 0;
+}
+
+.filter-zone.overlay {
+  display: flex;
+  position: absolute;
+  background-color: rgb(25, 36, 48);
+  height: calc(100% - 3rem);
+  box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.2);
 }
 
 .filter {
@@ -88,8 +105,21 @@
   padding: 0.6rem 0 0.6rem 1rem;
 }
 
+.list-zone button {
+  margin-right: 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+}
+.list-zone button:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
 .list-zone .search {
   padding: 1rem;
+  display: flex;
+}
+
+.list-zone.hide {
+  display: none;
 }
 
 .search {
@@ -132,6 +162,10 @@ input:not([type="radio"]) {
   cursor: pointer;
 }
 
+.factory-card.selected {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .factory-card .industry,
 .header .industry {
   font-weight: lighter;
@@ -159,27 +193,30 @@ input:not([type="radio"]) {
   align-items: start;
 }
 
+.detail-zone.view {
+  display: flex;
+}
+
 .detail img {
   width: 100%;
+  /* max-height: 50%; */
+  margin-bottom: 1rem;
 }
 
-.detail table {
-  margin-top: 2rem;
+.detail .text {
+  display: flex;
+  flex-direction: column;
   width: 100%;
 }
 
-.detail tr {
-  width: 100%;
-  /* background: #000; */
-}
-
-.detail td {
-  padding: 1rem;
+.detail .text .wrapper {
+  display: flex;
   text-align: left;
+  padding: 1rem;
 }
 
-.detail .td1 {
-  width: 9rem;
+.detail .text .wrapper .key {
+  min-width: 9rem;
 }
 
 .detail-zone .buttons {
@@ -205,6 +242,7 @@ input:not([type="radio"]) {
 
 .add-factory {
   background: rgb(242, 90, 90);
+  width: 100%;
 }
 
 .edit:hover {
@@ -232,4 +270,42 @@ button {
 
 button:hover {
   transition: all 0.2s;
+}
+
+.detail-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  color: #000;
+  padding: 10rem;
+}
+
+@media (max-width: 1300px) {
+  .filter-zone {
+    display: none;
+    transition: 100ms all;
+  }
+}
+
+@media (max-width: 1100px) {
+  .detail-zone {
+    display: none;
+    transition: 100ms all;
+  }
+
+  .list-zone {
+    width: 100%;
+    min-width: 10rem;
+    transition: 100ms all;
+    border: none;
+    flex-grow: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
+@media (max-width: 480px) {
+  .detail .text .wrapper {
+    flex-direction: column;
+  }
 }
