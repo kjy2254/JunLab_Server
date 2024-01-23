@@ -91,3 +91,13 @@
 .App ::-webkit-scrollbar-corner {
   display: none;
 }
+
+:root {
+  --layer1-color-light: rgb(244, 246, 249); /* 레이어 1 색상 */
+  --layer2-color-light: rgb(255, 255, 255); /* 레이어 2 색상 */
+}
+
+.dark-mode {
+  --layer1-color-dark: rgb(48, 58, 69); /* 레이어 1 색상 */
+  --layer2-color-dark: rgb(25, 36, 48); /* 레이어 2 색상 */
+}

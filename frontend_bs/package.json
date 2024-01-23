@@ -16,12 +16,18 @@
     "highcharts": "^11.3.0",
     "highcharts-react-official": "^3.2.1",
     "react": "^18.2.0",
+    "react-animated-numbers": "^0.17.1",
     "react-bootstrap": "^2.9.2",
     "react-dom": "^18.2.0",
+    "react-flip-numbers": "^3.0.8",
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.21.2",
     "react-scripts": "5.0.1",
+    "react-slick": "^0.29.0",
+    "react-spring": "^9.7.3",
     "react-table": "^7.8.0",
+    "slick-carousel": "^1.8.1",
+    "swiper": "^11.0.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

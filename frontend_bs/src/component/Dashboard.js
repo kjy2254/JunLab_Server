@@ -1,7 +1,7 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { useTable } from "react-table";
+import { useTable, useSortBy } from "react-table";
 import "../css/Dashboard.css";
 import finedust from "../image/finedust.svg";
 import temperature from "../image/temperature.svg";
@@ -9,34 +9,78 @@ import co2 from "../image/co2.svg";
 import tvoc from "../image/tvoc.svg";
 import defaultProfile from "../image/profile_default.png";
 import axios from "axios";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSort,
+  faSortDown,
+  faSortUp,
+  faBatteryThreeQuarters,
+  faPause,
+  faPlay,
+} from "@fortawesome/free-solid-svg-icons";
 
 function Dashboard(props) {
   props.setHeaderText("통합상황판");
+  const [onlineData, setOnlineData] = useState([]);
+
+  const [isPaused, setIsPaused] = useState(false);
+  const handlePlayPause = () => {
+    setIsPaused((p) => !p);
+  };
+
   return (
     <div className="dashboard">
       <div className="dashboard-wrapper">
-        {/* <h5>통합상황판</h5> */}
+        <div className="play-pause">
+          {isPaused ? (
+            <FontAwesomeIcon icon={faPlay} onClick={handlePlayPause} />
+          ) : (
+            <FontAwesomeIcon icon={faPause} onClick={handlePlayPause} />
+          )}
+        </div>
+
         <div className="first-row">
-          <EnvCard title={"TVOC"} unit={"ppb"} endpoint={"tvoc"} img={tvoc} />
-          <EnvCard title={"CO2"} unit={"ppb"} endpoint={"co2"} img={co2} />
+          <EnvCard
+            title={"TVOC"}
+            unit={"ppb"}
+            endpoint={"tvoc"}
+            img={tvoc}
+            isPaused={isPaused}
+          />
+          <EnvCard
+            title={"CO2"}
+            unit={"ppb"}
+            endpoint={"co2"}
+            img={co2}
+            isPaused={isPaused}
+          />
           <EnvCard
             title={"Temperature"}
             unit={"°C"}
             endpoint={"temperature"}
             img={temperature}
+            isPaused={isPaused}
           />
           <EnvCard
             title={"Fine Dust"}
             unit={"㎍/㎥"}
             endpoint={"finedust"}
             img={finedust}
+            isPaused={isPaused}
           />
         </div>
         <div className="second-row">
-          <WorkerSummary />
-          <WorkerStatistic />
+          <WorkerSummary
+            onlineData={onlineData}
+            setOnlineData={setOnlineData}
+          />
+          <WorkerStatistic data={onlineData} />
         </div>
         <div className="third-row">
           <Advice />
@@ -46,10 +90,23 @@ function Dashboard(props) {
   );
 }
 
-function EnvCard({ title, unit, endpoint, img }) {
+function EnvCard({ title, unit, endpoint, img, isPaused }) {
   const { factoryId } = useParams();
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
   const [index, setIndex] = useState(0);
+  const swiperRef = useRef(null);
+
+  useEffect(() => {
+    if (swiperRef.current) {
+      const swiper = swiperRef.current;
+      if (isPaused) {
+        swiper.autoplay.stop();
+      } else {
+        swiper.autoplay.start();
+      }
+    } else {
+    }
+  }, [isPaused]);
 
   useEffect(() => {
     const fetchData = () => {
@@ -58,7 +115,6 @@ function EnvCard({ title, unit, endpoint, img }) {
           `http://junlab.postech.ac.kr:880/api2/factory/${factoryId}/${endpoint}`
         )
         .then((response) => {
-          // console.log(response.data);
           setData(response.data);
         })
         .catch((error) => {
@@ -71,159 +127,319 @@ function EnvCard({ title, unit, endpoint, img }) {
     return () => clearInterval(interval);
   }, []);
 
+  const [displayValue, setDisplayValue] = useState(0);
+  const [fade, setFade] = useState(false);
+
+  useEffect(() => {
+    if (data.length > 0) {
+      const newValue = data[index][endpoint];
+      if (displayValue != newValue) {
+        setFade(true);
+        setTimeout(() => {
+          setFade(false);
+          setDisplayValue(newValue);
+        }, 300);
+      }
+    }
+  }, [data, displayValue]);
+
+  const settings = {
+    spaceBetween: 20,
+    slidesPerView: 1,
+    onSlideChange: (swiper) => setIndex(swiper.realIndex),
+    pagination: {
+      clickable: true,
+    },
+    autoplay: {
+      delay: 5000, // 5초 간격
+      disableOnInteraction: true, // 사용자 상호작용 후에도 계속 재생
+    },
+    modules: [Pagination, Autoplay],
+  };
+
   return (
     <div className="env-card">
-      <span class="bar" />
-      <img src={img} />
-      <div className="text">
-        <span className="title">{title}</span>
-        <span className="value">
-          {data.length > 0 &&
-          new Date() - new Date(data[index].last_update) < 30000
-            ? `${data[index][endpoint]} ${unit}`
-            : "Offline"}
-        </span>
-      </div>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="18"
-        fill="currentColor"
-        viewBox="0 0 16 16"
-        className={`left ${index === 0 ? "disabled" : "able"}`}
-        onClick={() => {
-          if (0 < index) setIndex(index - 1);
-        }}
-      >
-        <path
-          fillRule="evenodd"
-          d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"
-        />
-      </svg>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="18"
-        fill="currentColor"
-        viewBox="0 0 16 16"
-        className={`right ${index == data.length - 1 ? "disabled" : ""}`}
-        onClick={() => {
-          if (data.length - 1 > index) setIndex(index + 1);
-        }}
-      >
-        <path
-          fillRule="evenodd"
-          d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"
-        />
-      </svg>
+      <span className="bar" />
+      <img src={img} alt={title} />
+      <Swiper {...settings} onSwiper={(swiper) => (swiperRef.current = swiper)}>
+        {data.length > 0 &&
+          data.map((e, idx) => (
+            <SwiperSlide key={idx} className="text">
+              <span className="title">{title}</span>
+              <span className={`value ${fade ? "fade-out" : "fade-in"}`}>
+                {new Date() - new Date(e.last_update) < 30000
+                  ? e[endpoint] + unit
+                  : "Offline"}
+              </span>
+            </SwiperSlide>
+          ))}
+      </Swiper>
       <span className="module-name">{data[index]?.module_name}</span>
     </div>
   );
 }
 
-function WorkerSummary() {
+function WorkerSummary({ onlineData, setOnlineData }) {
   const { factoryId } = useParams();
-  const [data, setData] = useState({});
+  const [offlineData, setOfflineData] = useState([]);
 
   useEffect(() => {
-    const fetchData = () => {
-      axios
-        .get(
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
           `http://junlab.postech.ac.kr:880/api2/factory/${factoryId}/workers`
-        )
-        .then((response) => {
-          console.log(response.data);
-          setData(response.data);
-        })
-        .catch((error) => {
-          console.error("API 요청 실패:", error);
-        });
+        );
+        const fetchedData = response.data;
+
+        // 데이터를 online과 offline으로 분리
+        const onlineWorkers = fetchedData.filter((worker) => worker.online);
+        const offlineWorkers = fetchedData
+          .filter((worker) => !worker.online)
+          .map((worker) => ({
+            ...worker,
+            last_heart_rate: "-",
+            last_body_temperature: "-",
+            last_oxygen_saturation: "-",
+            work_level: "-",
+          }));
+
+        setOnlineData(onlineWorkers);
+        setOfflineData(offlineWorkers);
+      } catch (error) {
+        console.error("API 요청 실패:", error);
+      }
     };
 
     fetchData();
     const interval = setInterval(fetchData, 7000);
     return () => clearInterval(interval);
-  }, []);
+  }, [factoryId]);
+
+  function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleString(); // 기본 로컬 시간 형식 사용
+  }
+
+  const columns = useMemo(
+    () => [
+      {
+        Header: "작업자",
+        accessor: "name",
+        Cell: ({ row }) => (
+          <div className="table-worker">
+            <img src={defaultProfile} width={42} height={42} />
+            <div className="info">
+              <span className="name">{row.original.name}</span>
+              <span className="watch">Watch: {row.original.watch_id}</span>
+            </div>
+          </div>
+        ),
+      },
+      {
+        Header: "심박수(bpm)",
+        accessor: "last_heart_rate",
+        Cell: ({ row }) =>
+          row.original.online ? (
+            <div className="left">{row.original.last_heart_rate}</div>
+          ) : (
+            <div className="left">-</div>
+          ),
+      },
+      {
+        Header: "체온(°C)",
+        accessor: "last_body_temperature",
+        Cell: ({ row }) =>
+          row.original.online ? (
+            <div className="left">{row.original.last_body_temperature}</div>
+          ) : (
+            <div className="left">-</div>
+          ),
+      },
+      {
+        Header: "산소포화도(%)",
+        accessor: "last_oxygen_saturation",
+        Cell: ({ row }) =>
+          row.original.online ? (
+            <div className="left">
+              {parseInt(row.original.last_oxygen_saturation)}
+            </div>
+          ) : (
+            <div className="left">-</div>
+          ),
+      },
+      {
+        Header: "위험도",
+        accessor: "work_level",
+        Cell: ({ row }) => (
+          <div>
+            {row.original.online ? (
+              <div className={"level lv" + row.original.work_level}>
+                {row.original.work_level}단계
+              </div>
+            ) : (
+              <div>-</div>
+            )}
+          </div>
+        ),
+      },
+      {
+        Header: "상태",
+        accessor: "online",
+        Cell: ({ row }) => (
+          <div
+            className="state"
+            title={`마지막 동기화: ${formatTimestamp(row.original.last_sync)}`}
+          >
+            {row.original.online ? (
+              <>
+                <div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="13"
+                    height="13"
+                    viewBox="0 0 13 13"
+                    fill="none"
+                  >
+                    <circle cx="6.5" cy="6.5" r="6.5" fill="#81FF02" />
+                  </svg>
+                  Online
+                </div>
+                <div>
+                  <FontAwesomeIcon icon={faBatteryThreeQuarters} />
+                  {row.original.adjusted_battery_level}%
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="13"
+                    height="13"
+                    viewBox="0 0 13 13"
+                    fill="none"
+                  >
+                    <circle cx="6.5" cy="6.5" r="6.5" fill="#FF0000" />
+                  </svg>
+                  Offline
+                </div>
+                <div>
+                  <FontAwesomeIcon icon={faBatteryThreeQuarters} />- %
+                </div>
+              </>
+            )}
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  // 모든 열에 적용될 사용자 정의 정렬 함수
+  function customSort(rowA, rowB, columnId, desc) {
+    // 하나라도 offline이면, offline인 행을 뒤로
+    if (!rowA.original.online && rowB.original.online) {
+      return 1; // A가 offline이면 B가 뒤로 갑니다.
+    }
+    if (rowA.original.online && !rowB.original.online) {
+      return -1; // B가 offline이면 A가 뒤로 갑니다.
+    }
+
+    // 두 행 모두 online이면, 기존의 정렬 로직 적용
+    if (rowA.original[columnId] > rowB.original[columnId]) {
+      return desc ? -1 : 1;
+    }
+    if (rowA.original[columnId] < rowB.original[columnId]) {
+      return desc ? 1 : -1;
+    }
+
+    // 값이 동일하거나 둘 다 offline인 경우, 원래 순서 유지
+    return 0;
+  }
+
+  const tableInstance = useTable(
+    { columns, data: [...onlineData, ...offlineData], autoResetSortBy: false },
+    useSortBy
+  );
+
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    tableInstance;
 
   return (
     <div className="worker-summary">
-      <span class="bar" />
+      <span className="bar" />
       <div className="header">
         <span>작업자 상태</span>
       </div>
-
-      <table>
+      <table {...getTableProps()}>
         <thead>
-          <tr>
-            <th width={200}>작업자</th>
-            <th width={120}>
-              <circle cx="6.5" cy="6.5" r="6.5" fill="#FF0000"></circle>
-              심박수(bpm)
-            </th>
-            <th width={120}>체온(°C)</th>
-            <th width={120}>산소포화도(%)</th>
-            <th width={90}>위험도</th>
-            <th width={100}>상태</th>
-          </tr>
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => (
+                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {column.render("Header")} &nbsp;
+                  <span>
+                    {column.isSorted ? (
+                      column.isSortedDesc ? (
+                        <FontAwesomeIcon icon={faSortDown} />
+                      ) : (
+                        <FontAwesomeIcon icon={faSortUp} />
+                      )
+                    ) : (
+                      <FontAwesomeIcon icon={faSort} />
+                    )}
+                  </span>
+                </th>
+              ))}
+            </tr>
+          ))}
         </thead>
-        <tbody>
-          {data.length > 0 &&
-            data.map((e) => (
-              <tr>
-                <td>
-                  <div className="table-worker">
-                    <img src={defaultProfile} width={42} height={42} />
-                    <div className="info">
-                      <span className="name">{e.name}</span>
-                      <span className="watch">Watch: {e.watch_id}</span>
-                    </div>
-                  </div>
-                </td>
-                <td>{e.last_heart_rate}</td>
-                <td>{e.last_body_temperature}</td>
-                <td>{parseInt(e.last_oxygen_saturation)}</td>
-                <td>
-                  <div className="level lv1">1단계</div>
-                </td>
-                <td>
-                  {e.online ? (
-                    <div className="state">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="13"
-                        height="13"
-                        viewBox="0 0 13 13"
-                        fill="none"
-                      >
-                        <circle cx="6.5" cy="6.5" r="6.5" fill="#81FF02" />
-                      </svg>
-                      Online
-                    </div>
-                  ) : (
-                    <div className="state">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="13"
-                        height="13"
-                        viewBox="0 0 13 13"
-                        fill="none"
-                      >
-                        <circle cx="6.5" cy="6.5" r="6.5" fill="#FF0000" />
-                      </svg>
-                      Offline
-                    </div>
-                  )}
-                </td>
+        <tbody {...getTableBodyProps()}>
+          {rows.map((row) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map((cell) => (
+                  <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                ))}
               </tr>
-            ))}
+            );
+          })}
         </tbody>
       </table>
     </div>
   );
 }
 
-function WorkerStatistic() {
-  const { factoryId } = useParams();
+function WorkerStatistic({ data }) {
+  const levelCounts = data.reduce((acc, worker) => {
+    const level = worker.work_level;
+    acc[level] = (acc[level] || 0) + 1;
+    return acc;
+  }, {});
+
+  const chartData = Object.keys(levelCounts).map((level) => ({
+    name: `${level}단계`,
+    y: levelCounts[level],
+    color: getLevelColor(level), // 색상은 작업 단계에 따라 정의
+  }));
+
+  function getLevelColor(level) {
+    switch (level) {
+      case "1":
+        return "rgb(34,180,237)";
+      case "2":
+        return "rgb(150,208,96)";
+      case "3":
+        return "rgb(255,252,75)";
+      case "4":
+        return "rgb(253,188,58)";
+      case "5":
+        return "rgb(250,0,25)";
+      default:
+        return "rgb(200,200,200)";
+    }
+  }
 
   const options = {
     chart: {
@@ -272,20 +488,14 @@ function WorkerStatistic() {
       {
         name: "Share",
         colorByPoint: true,
-        data: [
-          { name: "1단계", y: 3, color: "rgb(34,180,237)" },
-          { name: "2단계", y: 2, color: "rgb(150,208,96)" },
-          { name: "3단계", y: 1, color: "rgb(255,252,75)" },
-          { name: "4단계", y: 1, color: "rgb(253,188,58)" },
-          { name: "5단계", y: 1, color: "rgb(250,0,25)" },
-        ],
+        data: chartData,
       },
     ],
   };
 
   return (
     <div className="worker-statistic">
-      <span class="bar"></span>
+      <span className="bar"></span>
       <div className="header">
         <span>작업자 통계</span>
       </div>
@@ -294,23 +504,23 @@ function WorkerStatistic() {
       </div>
       <div className="description">
         <span>1단계</span>
-        <span>3명</span>
+        <span>{levelCounts[1] || 0} 명</span>
       </div>
       <div className="description">
         <span>2단계</span>
-        <span>2명</span>
+        <span>{levelCounts[2] || 0} 명</span>
       </div>
       <div className="description">
         <span>3단계</span>
-        <span>1명</span>
+        <span>{levelCounts[3] || 0} 명</span>
       </div>
       <div className="description">
         <span>4단계</span>
-        <span>1명</span>
+        <span>{levelCounts[4] || 0} 명</span>
       </div>
       <div className="description">
         <span>5단계</span>
-        <span>1명</span>
+        <span>{levelCounts[5] || 0} 명</span>
       </div>
     </div>
   );
@@ -319,7 +529,7 @@ function WorkerStatistic() {
 function Advice() {
   return (
     <div className="advice">
-      <span class="bar" />
+      <span className="bar" />
       <div className="header">
         <span>권고사항</span>
       </div>

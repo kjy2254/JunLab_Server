@@ -1,6 +1,11 @@
 const express = require("express");
 const api = express.Router();
 const connection = require("../database/apiConnection");
+const {
+  calcWorkLoadIndex,
+  calcEnviromentIndex,
+  calclevel,
+} = require("../util/logic.js");
 
 api.get("/factories", (req, res) => {
   const query = "SELECT * FROM factories";
@@ -127,6 +132,11 @@ api.get("/factory/:factoryId/workers", (req, res) => {
     const updatedResult = result.map((user) => ({
       ...user,
       online: Math.abs(currentTime - new Date(user.last_sync)) < 30000,
+      // online: true,
+      work_level: calclevel(
+        calcWorkLoadIndex(user.last_heart_rate, 0, 0),
+        calcEnviromentIndex(user.last_tvoc, user.last_co2, 0, 0, 0)
+      ).level,
     }));
 
     // 결과를 JSON 형식으로 응답

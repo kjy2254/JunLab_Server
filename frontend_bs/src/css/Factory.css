@@ -177,9 +177,9 @@ input:not([type="radio"]) {
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 } */
 
-.selected {
+/* .selected {
   background: rgb(48, 58, 69);
-}
+} */
 
 .detail-zone .header {
   padding-top: 0.8rem;
