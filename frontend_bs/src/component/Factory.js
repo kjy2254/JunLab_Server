@@ -11,7 +11,7 @@ import {
   faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
 
-function Factory() {
+function Factory({ setHeaderText }) {
   const [factories, setFactories] = useState([]);
   const [detail, setDetail] = useState({});
   const [filterZone, setFilterZone] = useState({
@@ -22,6 +22,8 @@ function Factory() {
     smallview: window.innerWidth < 1100,
     overlay: false,
   });
+
+  setHeaderText("공장관리");
 
   useEffect(() => {
     axios
@@ -60,7 +62,7 @@ function Factory() {
 
   return (
     <div className="factory">
-      <div className="factory-wrapper">
+      <div className="factory-wrapper layer2">
         <div
           className={
             "filter-zone " +
@@ -119,7 +121,7 @@ function Factory() {
             ) : (
               <></>
             )}
-            <input placeholder="Search Factory..." />
+            <input placeholder="Search Factory..." className="layer2" />
           </div>
           {factories.map((f) => (
             <FactoryCard

@@ -1,4 +1,4 @@
-.airwatch {
+.logs {
   /* color: white; */
   width: 100%;
   height: 100%;
@@ -8,7 +8,7 @@
   /* background: #000; */
 }
 
-.airwatch-wrapper {
+.logs-wrapper {
   width: 100%;
   min-height: 750px;
   flex-direction: column;
@@ -23,10 +23,10 @@
   border-radius: 0.3rem;
   position: relative;
   align-items: flex-start;
-  max-width: 67rem;
+  max-width: 121rem;
 }
 
-.airwatch .header {
+.logs .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -54,7 +54,7 @@
   height: 30px;
 }
 
-.airwatch-wrapper form {
+.logs-wrapper form {
   /* background: #000; */
   width: calc(100% - 3rem);
   margin-left: 1.5rem;
@@ -62,19 +62,20 @@
   align-items: center;
   justify-content: space-between;
 }
-.airwatch-wrapper form .date {
+.logs-wrapper form .date {
   display: flex;
+  flex-wrap: nowrap;
 }
-.airwatch-wrapper form label {
+.logs-wrapper form label {
   margin-right: 0.5rem;
   display: flex;
   align-items: center;
   text-align: right;
 }
-.airwatch-wrapper form label input {
+.logs-wrapper form label input {
   margin-left: 0.2rem;
 }
-.airwatch-wrapper form label span {
+.logs-wrapper form label span {
   width: 4rem;
   margin-right: 0.2rem;
 }
@@ -158,7 +159,7 @@
   text-wrap: nowrap;
 }
 
-.airwatch-table {
+.logs-table {
   width: calc(100% - 3rem);
   margin: 1.5rem;
   margin-bottom: 0;
@@ -168,7 +169,7 @@
   text-align: center;
 }
 
-.airwatch-table table {
+.logs-table table {
   /* width: calc(100% - 3rem); */
   min-width: 59rem;
   text-align: left;
@@ -177,46 +178,20 @@
   /* background: #000; */
 }
 
-.airwatch-table thead th {
+.logs-table thead th {
   padding: 0 0.5rem 1rem 0.5rem;
   font-weight: 100;
+  text-wrap: nowrap;
 }
 
-.airwatch-table td {
+.logs-table td {
   border-top: 1px solid var(--border-color-dark);
   height: 3rem;
   padding: 0.5rem;
 }
 
-.light-mode .airwatch-table td {
+.light-mode .logs-table td {
   border-top: 1px solid var(--border-color-light);
-}
-
-select {
-  /* background: #303a45; */
-  /* color: #fff; */
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 5px 7px;
-  font-size: inherit;
-  border-radius: 3px;
-  font-weight: 400;
-  outline: none;
-}
-
-#spinner {
-  margin: auto;
-  width: 50px;
-  height: 50px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  box-sizing: border-box;
-  border-top-color: white;
-  border-radius: 100%;
-  animation: spin 1s ease-in-out infinite;
-}
-
-.light-mode #spinner {
-  border: 3px solid rgb(228, 231, 234);
-  border-top-color: gray;
 }
 
 @keyframes spin {
@@ -225,22 +200,28 @@ select {
   }
 }
 
+@media (max-width: 1600px) {
+  .hide {
+    display: none;
+  }
+}
+
 @media (max-width: 1330px) {
   .date {
     flex-direction: column;
   }
-  .airwatch-wrapper form .date label {
+  .logs-wrapper form .date label {
     margin-bottom: 0.7rem;
   }
 }
 
 @media (max-width: 1040px) {
-  .airwatch-wrapper form {
+  .logs-wrapper form {
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: 0;
   }
-  .airwatch-wrapper form .date {
+  .logs-wrapper form .date {
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: 0;
@@ -248,12 +229,12 @@ select {
 }
 
 @media (max-width: 490px) {
-  .airwatch-wrapper form .buttons {
+  .logs-wrapper form .buttons {
     display: flex;
     align-items: center;
   }
 
-  .airwatch .buttons {
+  .logs .buttons {
     margin-top: 1rem;
   }
   .download {
@@ -282,7 +263,7 @@ select {
     flex-direction: column;
   }
 
-  .airwatch-wrapper form {
+  .logs-wrapper form {
     align-items: center;
   }
 }

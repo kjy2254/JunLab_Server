@@ -1,5 +1,5 @@
 .factory {
-  color: white;
+  /* color: white; */
   width: 100%;
   height: 100%;
   padding: 2rem;
@@ -11,7 +11,7 @@
   width: 100%;
   height: 100%;
   padding: 1.5rem;
-  background-color: rgb(25, 36, 48);
+  /* background-color: rgb(25, 36, 48); */
   border-radius: 0.3rem;
   max-width: 90rem;
   display: flex;
@@ -23,10 +23,15 @@
 .filter-zone,
 .list-zone,
 .detail-zone {
-  /* min-height: 100%; */
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-color-dark);
   display: flex;
   flex-direction: column;
+}
+
+.light-mode .filter-zone,
+.light-mode .list-zone,
+.light-mode .detail-zone {
+  border: 1px solid var(--border-color-light);
 }
 
 .filter-zone::-webkit-scrollbar,
@@ -38,27 +43,27 @@
 .filter-zone::-webkit-scrollbar-thumb,
 .list-zone::-webkit-scrollbar-thumb,
 .detail-zone::-webkit-scrollbar-thumb {
-  background-color: #888;
+  background-color: #979797;
   border-radius: 6px;
 }
 
 .filter-zone::-webkit-scrollbar-thumb:hover,
 .list-zone::-webkit-scrollbar-thumb:hover,
 .detail-zone::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #8b8b8b;
 }
 
 .filter-zone {
   width: 15rem;
   min-width: 15rem;
-  border-right: none;
+  border-right: none !important;
   overflow-y: auto;
 }
 
 .list-zone {
   width: 20rem;
   min-width: 20rem;
-  border-right: none;
+  border-right: none !important;
   overflow-y: auto;
 }
 
@@ -72,24 +77,31 @@
 }
 
 .filter-zone .buttons .close {
-  background: rgba(255, 255, 255, 0.2);
   margin-left: 0;
 }
 
 .filter-zone.overlay {
   display: flex;
   position: absolute;
-  background-color: rgb(25, 36, 48);
+  background-color: inherit;
   height: calc(100% - 3rem);
-  box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 3px 1px 5px 1px rgba(0, 0, 0, 0.2); */
+  border-right: 1px solid var(--border-color-dark) !important;
+}
+
+.light-mode .filter-zone.overlay {
+  border-right: 1px solid var(--border-color-light) !important;
 }
 
 .filter {
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  /* padding: 1rem; */
+  border-top: 1px solid var(--border-color-dark);
   display: flex;
   flex-direction: column;
   align-items: start;
+}
+
+.light-mode .filter {
+  border-top: 1px solid var(--border-color-light);
 }
 
 .filter li {
@@ -107,10 +119,16 @@
 
 .list-zone button {
   margin-right: 0.5rem;
-  background: rgba(255, 255, 255, 0.2);
 }
+
+.filter-zone .close,
+.list-zone button {
+  background: rgb(167, 167, 167);
+}
+
+.filter-zone .close:hover,
 .list-zone button:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(167, 167, 167, 0.4);
 }
 
 .list-zone .search {
@@ -122,8 +140,16 @@
   display: none;
 }
 
+.filter-button {
+  background: gray;
+}
+
 .search {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--border-color-dark);
+}
+
+.light-mode .search {
+  border-bottom: 1px solid var(--border-color-light);
 }
 
 input:not([type="radio"]) {
@@ -133,12 +159,15 @@ input:not([type="radio"]) {
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.5;
-  color: white;
   appearance: none;
-  background-color: #192430;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-color-dark);
   border-radius: 0.3rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.light-mode input:not([type="radio"]) {
+  border: 1px solid var(--border-color-light);
+  box-shadow: none;
+  color: black;
 }
 
 .factory-card,
@@ -148,7 +177,12 @@ input:not([type="radio"]) {
   justify-content: space-between;
   align-items: center;
   /* background: #000; */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--border-color-dark);
+}
+
+.light-mode .factory-card,
+.light-mode .detail-zone .header {
+  border-bottom: 1px solid var(--border-color-light);
 }
 
 .factory-card .text,
@@ -163,7 +197,11 @@ input:not([type="radio"]) {
 }
 
 .factory-card.selected {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--border-color-dark);
+}
+
+.light-mode .factory-card.selected {
+  background: var(--border-color-light);
 }
 
 .factory-card .industry,
@@ -298,9 +336,12 @@ button:hover {
     width: 100%;
     min-width: 10rem;
     transition: 100ms all;
-    border: none;
     flex-grow: 0;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-right: 1px solid var(--border-color-dark) !important;
+  }
+
+  .light-mode .list-zone {
+    border-right: 1px solid var(--border-color-light) !important;
   }
 }
 

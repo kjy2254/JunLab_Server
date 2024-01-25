@@ -74,6 +74,9 @@
 
 .menu-icon {
   opacity: 0.6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .custom-sidebar ul {
@@ -84,8 +87,10 @@
 
 .item .menu-icon {
   width: 25px;
-  margin-right: 0.8rem;
-  margin-left: 0.2rem;
+}
+
+.menu-text {
+  margin-left: 1rem;
 }
 
 .custom-sidebar .wrapper {

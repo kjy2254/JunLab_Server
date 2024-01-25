@@ -1,5 +1,5 @@
 .dashboard {
-  color: white;
+  /* color: white; */
   width: 100%;
   height: 100%;
   padding: 2rem;
@@ -30,6 +30,10 @@
   padding-right: 0.5rem;
 }
 
+.play-pause svg {
+  cursor: pointer;
+}
+
 .first-row,
 .second-row,
 .third-row {
@@ -45,7 +49,7 @@
 .advice {
   /* padding: 1rem; */
   background: rgb(25, 36, 48);
-  color: white;
+  /* color: white; */
   display: flex;
   flex-direction: row;
   min-width: calc(25% - 1.2rem);
@@ -77,10 +81,6 @@
 }
 .env-card .text .value {
   font-size: 22px;
-}
-
-.env-card .swiper {
-  /* overflow: visible; */
 }
 
 .env-card img {
@@ -116,7 +116,7 @@
 }
 
 .env-card .swiper-pagination-bullet-active {
-  background: #ffffff; /* 활성화된 점의 색상 */
+  background: #e4e4e4; /* 활성화된 점의 색상 */
   opacity: 1;
 }
 
@@ -182,9 +182,13 @@
 }
 
 .worker-summary td {
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid var(--border-color-dark);
   height: 3rem;
   padding: 0.5rem;
+}
+
+.light-mode .worker-summary td {
+  border-top: 1px solid var(--border-color-light);
 }
 
 .worker-summary .level {
@@ -243,7 +247,11 @@
   justify-content: space-between;
   padding: 0 1rem 0.7rem 1rem;
   margin: 0 2rem 1rem 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--border-color-dark);
+}
+
+.light-mode .description {
+  border-bottom: 1px solid var(--border-color-light);
 }
 
 .advice {

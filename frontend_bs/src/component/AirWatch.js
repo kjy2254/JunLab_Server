@@ -57,23 +57,11 @@ function AirWatch(props) {
     []
   );
 
-  const hiddenColumns = [
-    "MAGx",
-    "MAGy",
-    "MAGz",
-    "ZYROx",
-    "ZYROy",
-    "ZYROz",
-    "ACC",
-    "ACCy",
-    "ACCz",
-  ];
-
   const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div className="airwatch">
-      <div className="airwatch-wrapper">
+      <div className="airwatch-wrapper layer2">
         <span class="bar" />
         <div className="header">
           <span>이동식 로그 검색</span>
@@ -84,12 +72,7 @@ function AirWatch(props) {
           setIsLoading={setIsLoading}
           data={data}
         />
-        <MyTable
-          columns={columns}
-          data={data}
-          hiddenColumns={hiddenColumns}
-          isLoading={isLoading}
-        />
+        <MyTable columns={columns} data={data} isLoading={isLoading} />
       </div>
     </div>
   );
@@ -253,7 +236,7 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
   );
 }
 
-function MyTable({ columns, data, hiddenColumns, isLoading }) {
+function MyTable({ columns, data, isLoading }) {
   const {
     getTableProps,
     getTableBodyProps,
@@ -304,14 +287,6 @@ function MyTable({ columns, data, hiddenColumns, isLoading }) {
     setInputPageIndex(pageIndex + 1);
   }, [pageIndex]);
 
-  function getClassName(columnId, hiddenColumns) {
-    return hiddenColumns.includes(columnId) ? (
-      "hide"
-    ) : (
-      <FontAwesomeIcon icon="fa-solid fa-sort" />
-    );
-  }
-
   function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
     return date.toLocaleString(); // 기본 로컬 시간 형식 사용
@@ -325,10 +300,7 @@ function MyTable({ columns, data, hiddenColumns, isLoading }) {
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
-                  <th
-                    {...column.getHeaderProps(column.getSortByToggleProps())}
-                    className={getClassName(column.id, hiddenColumns)}
-                  >
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                     {column.render("Header")} &nbsp;
                     <span>
                       {column.isSorted ? (
@@ -353,10 +325,7 @@ function MyTable({ columns, data, hiddenColumns, isLoading }) {
                 <tr {...row.getRowProps()}>
                   {row.cells.map((cell) => {
                     return (
-                      <td
-                        {...cell.getCellProps()}
-                        className={getClassName(cell.column.id, hiddenColumns)}
-                      >
+                      <td {...cell.getCellProps()}>
                         {cell.column.id === "timestamp"
                           ? formatTimestamp(cell.value)
                           : cell.render("Cell")}

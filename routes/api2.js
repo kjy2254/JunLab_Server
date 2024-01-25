@@ -1,6 +1,7 @@
 const express = require("express");
 const api = express.Router();
 const connection = require("../database/apiConnection");
+const connection2 = require("../database/mysql");
 const {
   calcWorkLoadIndex,
   calcEnviromentIndex,
@@ -262,6 +263,45 @@ api.get("/airwalldata", (req, res) => {
     }
     return res.status(200).json(result);
   });
+});
+
+api.get("/factory/logs", (req, res) => {
+  let id = req.query.id;
+  let start = req.query.start;
+  let end = req.query.end;
+
+  let query = ``;
+
+  if (!start || !end || !id) {
+    query += `SELECT DISTINCT ID FROM sensor_data ORDER BY CAST(ID AS SIGNED) ASC;`;
+    connection2.query(query, (error, result) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error!");
+      }
+
+      return res.status(200).json(result);
+    });
+  } else {
+    query += `SELECT * FROM sensor_data WHERE CREATED_AT >= ? AND CREATED_AT <= ?`;
+    let queryParams = [start, end];
+
+    if (id && id != "전체") {
+      query += ` AND id = ?`;
+      queryParams.push(id);
+    }
+
+    query += ` ORDER BY CREATED_AT DESC;`;
+
+    connection2.query(query, queryParams, (error, result) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error!");
+      }
+
+      return res.status(200).json(result);
+    });
+  }
 });
 
 module.exports = api;

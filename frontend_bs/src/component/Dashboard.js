@@ -151,14 +151,14 @@ function EnvCard({ title, unit, endpoint, img, isPaused }) {
       clickable: true,
     },
     autoplay: {
-      delay: 5000, // 5초 간격
+      delay: 14000, // 5초 간격
       disableOnInteraction: true, // 사용자 상호작용 후에도 계속 재생
     },
     modules: [Pagination, Autoplay],
   };
 
   return (
-    <div className="env-card">
+    <div className="env-card layer2">
       <span className="bar" />
       <img src={img} alt={title} />
       <Swiper {...settings} onSwiper={(swiper) => (swiperRef.current = swiper)}>
@@ -366,7 +366,7 @@ function WorkerSummary({ onlineData, setOnlineData }) {
     tableInstance;
 
   return (
-    <div className="worker-summary">
+    <div className="worker-summary layer2">
       <span className="bar" />
       <div className="header">
         <span>작업자 상태</span>
@@ -494,7 +494,7 @@ function WorkerStatistic({ data }) {
   };
 
   return (
-    <div className="worker-statistic">
+    <div className="worker-statistic layer2">
       <span className="bar"></span>
       <div className="header">
         <span>작업자 통계</span>
@@ -528,7 +528,7 @@ function WorkerStatistic({ data }) {
 
 function Advice() {
   return (
-    <div className="advice">
+    <div className="advice layer2">
       <span className="bar" />
       <div className="header">
         <span>권고사항</span>

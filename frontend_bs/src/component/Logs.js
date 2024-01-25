@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useTable, usePagination, useSortBy } from "react-table";
-import "../css/AirWall.css";
+import "../css/Logs.css";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,57 +10,125 @@ import {
   faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
 
-function AirWall(props) {
+function Logs(props) {
   const [data, setData] = useState([]);
 
-  props.setHeaderText("로그 / 고정식");
+  props.setHeaderText("로그");
 
   const columns = useMemo(
     () => [
       {
-        Header: "이름",
-        accessor: "module_name",
+        Header: "ID",
+        accessor: "ID",
       },
       {
-        Header: "온도",
-        accessor: "temperature",
+        Header: "BATT",
+        accessor: "BATT",
+      },
+      {
+        Header: "MAGx",
+        accessor: "MAGx",
+      },
+      {
+        Header: "MAGy",
+        accessor: "MAGy",
+      },
+      {
+        Header: "MAGz",
+        accessor: "MAGz",
+      },
+      {
+        Header: "ZYROx",
+        accessor: "ZYROx",
+      },
+      {
+        Header: "ZYROy",
+        accessor: "ZYROy",
+      },
+      {
+        Header: "ZYROz",
+        accessor: "ZYROz",
+      },
+      {
+        Header: "ACCx",
+        accessor: "ACCx",
+      },
+      {
+        Header: "ACCy",
+        accessor: "ACCy",
+      },
+      {
+        Header: "ACCz",
+        accessor: "ACCz",
+      },
+      {
+        Header: "AQI",
+        accessor: "AQI",
       },
       {
         Header: "TVOC",
-        accessor: "tvoc",
+        accessor: "TVOC",
       },
       {
-        Header: "CO2",
-        accessor: "co2",
+        Header: "EC2",
+        accessor: "EC2",
       },
       {
         Header: "PM1.0",
-        accessor: "pm1_0",
+        accessor: "PM10",
       },
       {
         Header: "PM2.5",
-        accessor: "pm2_5",
+        accessor: "PM25",
       },
       {
         Header: "PM10",
-        accessor: "pm10",
+        accessor: "PM100",
       },
       {
-        Header: "TimeStamp",
-        accessor: "timestamp",
+        Header: "IRUN",
+        accessor: "IRUN",
+      },
+      {
+        Header: "RED",
+        accessor: "RED",
+      },
+      {
+        Header: "ECG",
+        accessor: "ECG",
+      },
+      {
+        Header: "TEMP",
+        accessor: "TEMP",
+      },
+      {
+        Header: "CREATED_AT",
+        accessor: "CREATED_AT",
       },
     ],
     []
   );
 
+  const hiddenColumns = [
+    "MAGx",
+    "MAGy",
+    "MAGz",
+    "ZYROx",
+    "ZYROy",
+    "ZYROz",
+    "ACCx",
+    "ACCy",
+    "ACCz",
+  ];
+
   const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <div className="airwall">
-      <div className="airwall-wrapper layer2">
+    <div className="logs">
+      <div className="logs-wrapper layer2">
         <span class="bar" />
         <div className="header">
-          <span>고정식 로그 검색</span>
+          <span>로그 검색</span>
         </div>
         <DateAndTimeForm
           setData={setData}
@@ -68,7 +136,12 @@ function AirWall(props) {
           setIsLoading={setIsLoading}
           data={data}
         />
-        <MyTable columns={columns} data={data} isLoading={isLoading} />
+        <MyTable
+          columns={columns}
+          data={data}
+          hiddenColumns={hiddenColumns}
+          isLoading={isLoading}
+        />
       </div>
     </div>
   );
@@ -98,11 +171,11 @@ function downloadCSV(data, filename) {
 function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
   const { factoryId } = useParams();
   const [list, setList] = useState([]);
-  const [selected, setSelected] = useState({ type: "name", value: "전체" });
+  const [selected, setSelected] = useState({ type: "id", value: "전체" });
 
   useEffect(() => {
     axios
-      .get(`http://junlab.postech.ac.kr:880/api2/factory/${factoryId}/airwalls`)
+      .get(`http://junlab.postech.ac.kr:880/api2/factory/logs`)
       .then((response) => {
         setList(response.data);
       })
@@ -132,7 +205,7 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
       setData([]);
       axios
         .get(
-          `http://junlab.postech.ac.kr:880/api2/airwalldata?start=${startDate}&end=${endDate}&factoryId=${factoryId}&${selected.type}=${selected.value}`
+          `http://junlab.postech.ac.kr:880/api2/factory/logs?start=${startDate}&end=${endDate}&id=${selected.value}`
         )
         .then((response) => {
           setIsLoading(false);
@@ -174,9 +247,9 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
             }
           >
             <option value="전체">전체</option>
-            {list.map((e) => (
-              <option key={e.id} value={e.module_name}>
-                {e.module_name}
+            {list.map((e, idx) => (
+              <option key={idx} value={e.ID}>
+                {e.ID}
               </option>
             ))}
           </select>
@@ -198,7 +271,7 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
   );
 }
 
-function MyTable({ columns, data, isLoading }) {
+function MyTable({ columns, data, hiddenColumns, isLoading }) {
   const {
     getTableProps,
     getTableBodyProps,
@@ -249,6 +322,14 @@ function MyTable({ columns, data, isLoading }) {
     setInputPageIndex(pageIndex + 1);
   }, [pageIndex]);
 
+  function getClassName(columnId, hiddenColumns) {
+    return hiddenColumns.includes(columnId) ? (
+      "hide"
+    ) : (
+      <FontAwesomeIcon icon="fa-solid fa-sort" />
+    );
+  }
+
   function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
     return date.toLocaleString(); // 기본 로컬 시간 형식 사용
@@ -256,13 +337,16 @@ function MyTable({ columns, data, isLoading }) {
 
   return (
     <div className="table-pagenation">
-      <div className="airwall-table">
+      <div className="logs-table">
         <table {...getTableProps()}>
           <thead>
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  <th
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                    className={getClassName(column.id, hiddenColumns)}
+                  >
                     {column.render("Header")} &nbsp;
                     <span>
                       {column.isSorted ? (
@@ -287,8 +371,11 @@ function MyTable({ columns, data, isLoading }) {
                 <tr {...row.getRowProps()}>
                   {row.cells.map((cell) => {
                     return (
-                      <td {...cell.getCellProps()}>
-                        {cell.column.id === "timestamp"
+                      <td
+                        {...cell.getCellProps()}
+                        className={getClassName(cell.column.id, hiddenColumns)}
+                      >
+                        {cell.column.id === "CREATED_AT"
                           ? formatTimestamp(cell.value)
                           : cell.render("Cell")}
                       </td>
@@ -352,4 +439,4 @@ function MyTable({ columns, data, isLoading }) {
   );
 }
 
-export default AirWall;
+export default Logs;

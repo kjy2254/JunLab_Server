@@ -5,6 +5,7 @@ import Sidebar from "./component/Sidebar";
 import SidebarAD from "./component/SidebarAD";
 import Login from "./component/Login";
 import Factory from "./component/Factory";
+import Logs from "./component/Logs";
 import Dashboard from "./component/Dashboard";
 import AirWall from "./component/AirWall";
 import AirWatch from "./component/AirWatch";
@@ -48,10 +49,10 @@ function App() {
 
   return (
     <Router>
-      <div className="App">
+      <div className="App layer1">
         <Routes>
           <Route
-            path="/factoryManagement/factory/*"
+            path="/factoryManagement/*"
             element={
               <Header
                 toggleSidebar={toggleSidebar}
@@ -71,7 +72,7 @@ function App() {
               }
             />
             <Route
-              path="/factoryManagement/factory"
+              path="/factoryManagement/admin/*"
               element={
                 <SidebarAD
                   show={toggleSide}
@@ -86,10 +87,21 @@ function App() {
             <Route path="/factorymanagement/login" element={<Login />} />
             <Route path="/factorymanagement/signup" element={<Signup />} />
             <Route
-              path="/factorymanagement/factory"
+              path="/factorymanagement/admin/factory"
               element={
                 <CustomRoute
                   Component={Factory}
+                  toggleSide={toggleSide}
+                  setHeaderText={setHeaderText}
+                  closeSmallSidebar={closeSmallSidebar}
+                />
+              }
+            />
+            <Route
+              path="/factorymanagement/admin/logs"
+              element={
+                <CustomRoute
+                  Component={Logs}
                   toggleSide={toggleSide}
                   setHeaderText={setHeaderText}
                   closeSmallSidebar={closeSmallSidebar}
