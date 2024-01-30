@@ -59,6 +59,8 @@
   align-items: center;
   border-radius: 0.3rem;
   position: relative;
+  z-index: 1;
+  justify-content: flex-start;
 }
 
 .env-card {
@@ -105,6 +107,8 @@
   font-size: smaller;
   font-weight: lighter;
   opacity: 0.3;
+  z-index: 1;
+  user-select: none;
 }
 
 .env-card .swiper-pagination-bullet {
@@ -185,6 +189,7 @@
   border-top: 1px solid var(--border-color-dark);
   height: 3rem;
   padding: 0.5rem;
+  cursor: pointer;
 }
 
 .light-mode .worker-summary td {

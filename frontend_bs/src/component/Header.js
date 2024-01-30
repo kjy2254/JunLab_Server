@@ -8,18 +8,18 @@ import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 function ThemeToggleButton() {
   const [lightMode, setLightMode] = useState(false);
 
+  useEffect(() => {
+    const isLightMode = localStorage.getItem("lightMode") === "true";
+    setLightMode(isLightMode);
+    document.body.classList.toggle("light-mode", isLightMode);
+  }, []);
+
   const toggleTheme = () => {
     const newLightMode = !lightMode;
     setLightMode(newLightMode);
     localStorage.setItem("lightMode", newLightMode ? "true" : "false");
     document.body.classList.toggle("light-mode", newLightMode);
   };
-
-  useEffect(() => {
-    const isLightMode = localStorage.getItem("lightMode") === "true";
-    setLightMode(isLightMode);
-    document.body.classList.toggle("light-mode", isLightMode);
-  }, []);
 
   return (
     <div className="theme-toggle-button" onClick={toggleTheme}>

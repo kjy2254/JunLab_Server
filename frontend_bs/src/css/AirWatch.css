@@ -226,7 +226,7 @@ select {
 }
 
 @media (max-width: 1330px) {
-  .date {
+  .airwatch-wrapper .date {
     flex-direction: column;
   }
   .airwatch-wrapper form .date label {
@@ -256,28 +256,28 @@ select {
   .airwatch .buttons {
     margin-top: 1rem;
   }
-  .download {
+  .airwatch-wrapper .download {
     margin-left: 0.5rem;
   }
 
-  .options {
+  .airwatch-wrapper .options {
     flex-wrap: wrap;
     width: 100%;
     justify-content: center;
   }
 
-  .type-area label {
+  .airwatch-wrapper .type-area label {
     display: flex;
     flex-direction: row;
   }
 
-  .type-area {
+  .airwatch-wrapper .type-area {
     margin-right: 0;
     width: 240px;
     justify-content: space-around;
   }
 
-  .date label {
+  .airwatch-wrapper .date label {
     display: flex;
     flex-direction: column;
   }

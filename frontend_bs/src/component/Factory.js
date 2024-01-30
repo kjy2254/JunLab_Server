@@ -10,6 +10,9 @@ import {
   faFilter,
   faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import { createFuzzyMatcher } from "../util";
 
 function Factory({ setHeaderText }) {
   const [factories, setFactories] = useState([]);
@@ -22,6 +25,7 @@ function Factory({ setHeaderText }) {
     smallview: window.innerWidth < 1100,
     overlay: false,
   });
+  const [filter, setFilter] = useState("");
 
   setHeaderText("공장관리");
 
@@ -121,17 +125,26 @@ function Factory({ setHeaderText }) {
             ) : (
               <></>
             )}
-            <input placeholder="Search Factory..." className="layer2" />
-          </div>
-          {factories.map((f) => (
-            <FactoryCard
-              name={f.factory_name}
-              industry={f.industry}
-              factoryId={f.factory_id}
-              detail={detail}
-              onClick={() => handleCardClick(f)}
+            <input
+              placeholder="Search Factory..."
+              className="layer2"
+              type="text"
+              onChange={(e) => setFilter(e.target.value)}
             />
-          ))}
+          </div>
+          {factories
+            .filter((v) =>
+              createFuzzyMatcher(filter).test(v.factory_name.toLowerCase())
+            )
+            .map((f) => (
+              <FactoryCard
+                name={f.factory_name}
+                industry={f.industry}
+                factoryId={f.factory_id}
+                detail={detail}
+                onClick={() => handleCardClick(f)}
+              />
+            ))}
         </div>
         <div
           className={

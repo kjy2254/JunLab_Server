@@ -9,6 +9,7 @@ import Logs from "./component/Logs";
 import Dashboard from "./component/Dashboard";
 import AirWall from "./component/AirWall";
 import AirWatch from "./component/AirWatch";
+import Settings from "./component/Settings";
 import { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -135,6 +136,17 @@ function App() {
               element={
                 <CustomRoute
                   Component={AirWatch}
+                  toggleSide={toggleSide}
+                  setHeaderText={setHeaderText}
+                  closeSmallSidebar={closeSmallSidebar}
+                />
+              }
+            />
+            <Route
+              path="/factorymanagement/factory/:factoryId/settings"
+              element={
+                <CustomRoute
+                  Component={Settings}
                   toggleSide={toggleSide}
                   setHeaderText={setHeaderText}
                   closeSmallSidebar={closeSmallSidebar}

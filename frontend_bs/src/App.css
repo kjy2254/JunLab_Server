@@ -62,6 +62,7 @@
   --layer2-color-dark: rgb(25, 36, 48); /* 레이어 2 색상 */
   --layerSB-color-dark: rgb(25, 36, 48); /* 레이어 2 색상 */
   --layerHD-color-dark: rgb(25, 36, 48); /* 레이어 2 색상 */
+  --layerModal-color-dark: rgb(48, 58, 69);
   --border-color-dark: rgba(255, 255, 255, 0.2);
 }
 
@@ -70,6 +71,7 @@
   --layer2-color-light: rgb(255, 255, 255); /* 레이어 2 색상 */
   --layerSB-color-light: rgb(36, 42, 51); /* 레이어 2 색상 */
   --layerHD-color-light: rgb(255, 255, 255); /* 레이어 2 색상 */
+  --layerModal-color-light: rgb(244, 246, 249);
   --border-color-light: rgb(228, 231, 234); /* 레이어 2 색상 */
 }
 
@@ -92,6 +94,11 @@
   color: black !important;
 }
 
+.light-mode .layerModal {
+  background-color: var(--layerModal-color-light);
+  color: black;
+}
+
 .layer1 {
   background-color: var(--layer1-color-dark);
   color: white !important;
@@ -110,13 +117,43 @@
   color: white !important;
 }
 
-input:not([type="radio"]) {
+.layerModal {
+  background-color: var(--layerModal-color-dark);
+  color: white;
+}
+
+/* input:is([type="text"]) {
   background-color: var(--layer2-color-dark);
   color: inherit;
 }
 
 .light-mode input:not([type="radio"]) {
   background-color: var(--layer2-color-light);
+} */
+
+input[type="text"],
+input[type="number"],
+input[type="datetime-local"] {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  appearance: none;
+  border: 1px solid var(--border-color-dark);
+  background-color: var(--layer2-color-dark);
+  color: inherit;
+  border-radius: 0.3rem;
+}
+
+.light-mode input[type="text"],
+.light-mode input[type="number"],
+.light-mode input[type="datetime-local"] {
+  border: 1px solid var(--border-color-light);
+  background-color: var(--layer2-color-light);
+  box-shadow: none;
+  color: black;
 }
 
 select {

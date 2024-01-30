@@ -36,7 +36,9 @@ api.get("/factory/:factoryId/name", (req, res) => {
 
 api.get("/factory/:factoryId/tvoc", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
-  const query = `SELECT module_id, module_name, last_update, last_tvoc as tvoc FROM sensor_modules WHERE factory_id = ?`;
+  const query = `SELECT module_id, module_name, last_update, last_tvoc as tvoc, module_description 
+  FROM sensor_modules 
+  WHERE factory_id = ? AND enable = 1`;
 
   connection.query(query, [factoryId], (error, result) => {
     if (error) {
@@ -50,7 +52,9 @@ api.get("/factory/:factoryId/tvoc", (req, res) => {
 
 api.get("/factory/:factoryId/co2", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
-  const query = `SELECT module_id, module_name, last_update, last_co2 as co2 FROM sensor_modules WHERE factory_id = ?`;
+  const query = `SELECT module_id, module_name, last_update, last_co2 as co2, module_description 
+  FROM sensor_modules 
+  WHERE factory_id = ? AND enable = 1`;
 
   connection.query(query, [factoryId], (error, result) => {
     if (error) {
@@ -64,7 +68,9 @@ api.get("/factory/:factoryId/co2", (req, res) => {
 
 api.get("/factory/:factoryId/temperature", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
-  const query = `SELECT module_id, module_name, last_update, last_temperature as temperature FROM sensor_modules WHERE factory_id = ?`;
+  const query = `SELECT module_id, module_name, last_update, last_temperature as temperature, module_description 
+  FROM sensor_modules 
+  WHERE factory_id = ? AND enable = 1`;
 
   connection.query(query, [factoryId], (error, result) => {
     if (error) {
@@ -78,7 +84,9 @@ api.get("/factory/:factoryId/temperature", (req, res) => {
 
 api.get("/factory/:factoryId/finedust", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
-  const query = `SELECT module_id, module_name, last_update, last_pm1_0 as finedust FROM sensor_modules WHERE factory_id = ?`;
+  const query = `SELECT module_id, module_name, last_update, last_pm1_0 as finedust, module_description 
+  FROM sensor_modules 
+  WHERE factory_id = ? AND enable = 1`;
 
   connection.query(query, [factoryId], (error, result) => {
     if (error) {
@@ -109,7 +117,7 @@ api.get("/factory/:factoryId/workers", (req, res) => {
       w.last_battery_level,
       w.last_tvoc,
       w.last_co2,
-      u.name,
+      u.name, u.user_id,
       w.last_sync
     FROM
       watches w
@@ -302,6 +310,215 @@ api.get("/factory/logs", (req, res) => {
       return res.status(200).json(result);
     });
   }
+});
+
+api.get("/user/:userId/info", (req, res) => {
+  const userId = parseInt(req.params.userId);
+
+  const query = `
+    SELECT
+      u.user_id, u.name, w.watch_id, w.last_sync, w.level
+    FROM
+      watches w
+    JOIN
+      users u ON w.user_id = u.user_id
+    WHERE
+      u.user_id = ?;
+  `;
+
+  connection.query(query, [userId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json(result[0]);
+  });
+});
+
+api.get("/user/:userId/heartrate", (req, res) => {
+  const userId = parseInt(req.params.userId);
+  let start = req.query.start;
+  let end = req.query.end;
+  let timeSlot = req.query.timeSlot;
+
+  let queryParams = [userId];
+
+  let query = ``;
+
+  if (start && end) {
+    queryParams.push(start, end);
+    query += `
+      SELECT
+        heart_rate as heartrate, timestamp
+      FROM
+        watch_data w
+      JOIN
+        users u ON w.user_id = u.user_id
+      WHERE
+        u.user_id = ? AND timestamp >= ? AND timestamp <= ? AND w.heart_rate != ".ING.";
+      `;
+  } else {
+    if (!timeSlot) timeSlot = 90;
+    queryParams.push(timeSlot);
+    query += `
+      SELECT
+        heart_rate as heartrate, timestamp
+      FROM
+        watch_data w
+      JOIN
+        users u ON w.user_id = u.user_id
+      WHERE
+        u.user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND w.heart_rate != ".ING.";
+      `;
+  }
+
+  connection.query(query, queryParams, (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json(result);
+  });
+});
+
+api.get("/user/:userId/temperature", (req, res) => {
+  const userId = parseInt(req.params.userId);
+  let start = req.query.start;
+  let end = req.query.end;
+  let timeSlot = req.query.timeSlot;
+
+  let queryParams = [userId];
+
+  let query = ``;
+
+  if (start && end) {
+    queryParams.push(start, end);
+    query += `
+      SELECT
+        body_temperature as temperature, timestamp
+      FROM
+        watch_data w
+      JOIN
+        users u ON w.user_id = u.user_id
+      WHERE
+        u.user_id = ? AND timestamp >= ? AND timestamp <= ?;
+      `;
+  } else {
+    if (!timeSlot) timeSlot = 90;
+    queryParams.push(timeSlot);
+    query += `
+      SELECT
+        body_temperature as temperature, timestamp
+      FROM
+        watch_data w
+      JOIN
+        users u ON w.user_id = u.user_id
+      WHERE
+        u.user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE);
+      `;
+  }
+
+  connection.query(query, queryParams, (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json(result);
+  });
+});
+
+api.get("/user/:userId/oxygen", (req, res) => {
+  const userId = parseInt(req.params.userId);
+  let start = req.query.start;
+  let end = req.query.end;
+  let timeSlot = req.query.timeSlot;
+
+  let queryParams = [userId];
+
+  let query = ``;
+
+  if (start && end) {
+    queryParams.push(start, end);
+    query += `
+      SELECT
+      oxygen_saturation as oxygen, timestamp
+      FROM
+        watch_data w
+      JOIN
+        users u ON w.user_id = u.user_id
+      WHERE
+        u.user_id = ? AND timestamp >= ? AND timestamp <= ? AND w.oxygen_saturation != ".ING.";
+      `;
+  } else {
+    if (!timeSlot) timeSlot = 90;
+    queryParams.push(timeSlot);
+    query += `
+      SELECT
+      oxygen_saturation as oxygen, timestamp
+      FROM
+        watch_data w
+      JOIN
+        users u ON w.user_id = u.user_id
+      WHERE
+        u.user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND w.oxygen_saturation != ".ING.";
+      `;
+  }
+
+  connection.query(query, queryParams, (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json(result);
+  });
+});
+
+api.get("/settings/:factoryId/airwalls", (req, res) => {
+  const factoryId = parseInt(req.params.factoryId);
+
+  query = `SELECT module_id, module_name, module_description, enable
+            FROM sensor_modules
+            WHERE factory_id = ?`;
+
+  connection.query(query, [factoryId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json(result);
+  });
+});
+api.put("/settings/:factoryId/airwalls", (req, res) => {
+  const factoryId = parseInt(req.params.factoryId);
+  const updatedData = req.body; // 클라이언트가 보낸 업데이트할 데이터
+
+  // 업데이트 쿼리 예시 (구체적인 필드와 조건은 데이터베이스에 맞게 조정 필요)
+  const query =
+    "UPDATE sensor_modules SET module_name = ?, module_description = ?, enable = ? WHERE factory_id = ? AND module_id = ?";
+
+  // 모든 업데이트 작업을 순차적으로 처리
+  updatedData.forEach((item) => {
+    connection.query(
+      query,
+      [
+        item.module_name,
+        item.module_description,
+        item.enable,
+        factoryId,
+        item.module_id,
+      ],
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          return res.status(500).send("Internal Server Error!");
+        }
+        // 결과 처리
+      }
+    );
+  });
+
+  // 모든 업데이트가 성공적으로 완료된 후 응답
+  return res.status(200).send("Update successful!");
 });
 
 module.exports = api;

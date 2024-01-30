@@ -6,8 +6,8 @@
   flex-shrink: 0;
   position: fixed; /* 화면에 고정 */
   height: 100%; /* 전체 높이 */
-  z-index: 1000; /* 다른 요소들 위에 표시 */
-  overflow: hidden;
+  z-index: 3; /* 다른 요소들 위에 표시 */
+  overflow: auto;
   box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.2);
 }
 
@@ -46,6 +46,15 @@
   width: 100%;
 }
 
+.item-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  min-height: calc(100% - 8rem);
+  justify-content: space-between;
+}
+
+.bottom-item li,
 .item li {
   text-align: left;
   color: white;
@@ -60,6 +69,7 @@
   overflow: hidden;
 }
 
+.bottom-item li:hover,
 .item li:hover {
   .menu-icon {
     opacity: 1;
@@ -85,6 +95,7 @@
   padding: 0;
 }
 
+.bottom-item .menu-icon,
 .item .menu-icon {
   width: 25px;
 }

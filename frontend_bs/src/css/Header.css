@@ -4,7 +4,7 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1;
+  z-index: 2;
 }
 
 .custom-navbar .logo {
@@ -24,8 +24,21 @@
   align-items: center;
 }
 
+.custom-navbar .toggle {
+  transition: all 0.1s;
+}
+
 .custom-navbar .toggle:hover {
   background: none;
+  color: inherit;
+  font-weight: bold;
+}
+
+.custom-navbar .toggle:focus-visible {
+  /* all: unset; */
+  color: unset;
+  background-color: unset;
+  box-shadow: unset;
 }
 
 .custom-navbar .header-text {

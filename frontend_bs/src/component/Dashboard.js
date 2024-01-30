@@ -13,6 +13,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
+import WorkerModal from "./WorkerModal";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -28,11 +29,13 @@ import {
 function Dashboard(props) {
   props.setHeaderText("통합상황판");
   const [onlineData, setOnlineData] = useState([]);
-
   const [isPaused, setIsPaused] = useState(false);
   const handlePlayPause = () => {
     setIsPaused((p) => !p);
   };
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedWorker, setSelectedWorker] = useState(0);
 
   return (
     <div className="dashboard">
@@ -79,12 +82,19 @@ function Dashboard(props) {
           <WorkerSummary
             onlineData={onlineData}
             setOnlineData={setOnlineData}
+            setModalOpen={setModalOpen}
+            setSelectedWorker={setSelectedWorker}
           />
           <WorkerStatistic data={onlineData} />
         </div>
         <div className="third-row">
           <Advice />
         </div>
+        <WorkerModal
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+          selectedWorker={selectedWorker}
+        />
       </div>
     </div>
   );
@@ -161,25 +171,43 @@ function EnvCard({ title, unit, endpoint, img, isPaused }) {
     <div className="env-card layer2">
       <span className="bar" />
       <img src={img} alt={title} />
-      <Swiper {...settings} onSwiper={(swiper) => (swiperRef.current = swiper)}>
-        {data.length > 0 &&
-          data.map((e, idx) => (
-            <SwiperSlide key={idx} className="text">
-              <span className="title">{title}</span>
-              <span className={`value ${fade ? "fade-out" : "fade-in"}`}>
-                {new Date() - new Date(e.last_update) < 30000
-                  ? e[endpoint] + unit
-                  : "Offline"}
-              </span>
-            </SwiperSlide>
-          ))}
-      </Swiper>
-      <span className="module-name">{data[index]?.module_name}</span>
+      {data.length > 0 && (
+        <Swiper
+          {...settings}
+          onSwiper={(swiper) => (swiperRef.current = swiper)}
+        >
+          {data.length > 0 &&
+            data.map((e, idx) => (
+              <SwiperSlide key={idx} className="text">
+                <span className="title">{title}</span>
+                <span className={`value ${fade ? "fade-out" : "fade-in"}`}>
+                  {new Date() - new Date(e.last_update) < 30000
+                    ? e[endpoint] + unit
+                    : "Offline"}
+                </span>
+              </SwiperSlide>
+            ))}
+        </Swiper>
+      )}
+      {data.length == 0 && (
+        <div className="text">
+          <span className="title">{title}</span>
+          <span className={`value ${fade ? "fade-out" : "fade-in"}`}>-</span>
+        </div>
+      )}
+      <div title={data[index]?.module_description} className="module-name">
+        {data[index]?.module_name}
+      </div>
     </div>
   );
 }
 
-function WorkerSummary({ onlineData, setOnlineData }) {
+function WorkerSummary({
+  onlineData,
+  setOnlineData,
+  setModalOpen,
+  setSelectedWorker,
+}) {
   const { factoryId } = useParams();
   const [offlineData, setOfflineData] = useState([]);
 
@@ -398,7 +426,13 @@ function WorkerSummary({ onlineData, setOnlineData }) {
           {rows.map((row) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
+              <tr
+                {...row.getRowProps()}
+                onClick={() => {
+                  setModalOpen(true);
+                  setSelectedWorker(row.original.user_id);
+                }}
+              >
                 {row.cells.map((cell) => (
                   <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
                 ))}

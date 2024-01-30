@@ -152,24 +152,6 @@
   border-bottom: 1px solid var(--border-color-light);
 }
 
-input:not([type="radio"]) {
-  display: block;
-  width: 100%;
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.5;
-  appearance: none;
-  border: 1px solid var(--border-color-dark);
-  border-radius: 0.3rem;
-}
-
-.light-mode input:not([type="radio"]) {
-  border: 1px solid var(--border-color-light);
-  box-shadow: none;
-  color: black;
-}
-
 .factory-card,
 .detail-zone .header {
   display: flex;
@@ -266,32 +248,32 @@ input:not([type="radio"]) {
   align-items: end;
 }
 
-.edit {
+.factory .buttons .edit {
   background: rgb(116, 90, 242);
   height: 2.5rem;
   width: 5rem;
 }
 
-.move {
+.factory .buttons .move {
   background: rgb(57, 139, 247);
   height: 2.5rem;
   width: 5rem;
 }
 
-.add-factory {
+.factory .add-factory {
   background: rgb(242, 90, 90);
   width: 100%;
 }
 
-.edit:hover {
+.factory .buttons .edit:hover {
   background: rgb(95, 74, 201);
 }
 
-.move:hover {
+.factory .buttons .move:hover {
   background: rgb(52, 108, 172);
 }
 
-.add-factory:hover {
+.factory .add-factory:hover {
   background: rgb(180, 67, 67);
 }
 
