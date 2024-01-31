@@ -79,38 +79,57 @@ function SetFloorplan(props) {
 
   return (
     <div className="set-floor-wrapper">
-      <select
-        className="dropdown"
-        onChange={(e) => {
-          const selectedOption = e.target.options[e.target.selectedIndex];
-          const selectedPage = selectedOption.value;
+      <div className="set-floor-top">
+        <select
+          className="dropdown"
+          onChange={(e) => {
+            const selectedOption = e.target.options[e.target.selectedIndex];
+            const selectedPage = selectedOption.value;
 
-          const selectedFloorplan = setting.floorplans.find(
-            (floorplan) => floorplan.imageName === selectedPage
-          );
+            const selectedFloorplan = setting.floorplans.find(
+              (floorplan) => floorplan.imageName === selectedPage
+            );
 
-          setPage(selectedFloorplan);
-          setImage(
-            `http://junlab.postech.ac.kr:880/api/image/${selectedFloorplan.imageName}`
-          );
-          setDimensions({
-            width: selectedFloorplan.width,
-            height: selectedFloorplan.height,
-          });
-          setWorkers(selectedFloorplan.workers);
-          setModules(selectedFloorplan.modules);
-        }}
-      >
-        {setting.floorplans?.map((e) => (
-          <option
-            key={e.page}
-            value={e.imageName}
-            dimension={JSON.stringify({ width: e.width, height: e.height })}
-          >
-            {e.schemeName}
-          </option>
-        ))}
-      </select>
+            setPage(selectedFloorplan);
+            setImage(
+              `http://junlab.postech.ac.kr:880/api/image/${selectedFloorplan.imageName}`
+            );
+            setDimensions({
+              width: selectedFloorplan.width,
+              height: selectedFloorplan.height,
+            });
+            setWorkers(selectedFloorplan.workers);
+            setModules(selectedFloorplan.modules);
+          }}
+        >
+          {setting.floorplans?.map((e) => (
+            <option
+              key={e.page}
+              value={e.imageName}
+              dimension={JSON.stringify({ width: e.width, height: e.height })}
+            >
+              {e.schemeName}
+            </option>
+          ))}
+        </select>
+
+        <AddPageModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setModalOpen(false);
+          }}
+          factoryId={props.factoryId}
+        />
+
+        <button onClick={handleSave}>저장</button>
+        <button
+          onClick={() => {
+            setModalOpen(true);
+          }}
+        >
+          페이지 추가
+        </button>
+      </div>
 
       <div
         className="floor-plan"
@@ -144,23 +163,6 @@ function SetFloorplan(props) {
           />
         ))}
       </div>
-
-      <button
-        onClick={() => {
-          setModalOpen(true);
-        }}
-      >
-        Add Page
-      </button>
-      <AddPageModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setModalOpen(false);
-        }}
-        factoryId={props.factoryId}
-      />
-
-      <button onClick={handleSave}>save</button>
     </div>
   );
 }

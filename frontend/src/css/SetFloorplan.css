@@ -9,6 +9,13 @@
   position: relative;
 }
 
+.set-floor-top {
+}
+
+.set-floor-top button {
+  float: inline-end;
+}
+
 .set-floor-plan {
   margin: 1rem;
   padding: 1rem;
@@ -46,7 +53,10 @@
   justify-content: space-between;
 }
 
-.button-save {
+.set-floor-wrapper button {
+  border-radius: 1rem;
+  color: white;
+  padding: 0.5rem 0.7rem 0.5rem 0.7rem;
   background: skyblue;
 }
 

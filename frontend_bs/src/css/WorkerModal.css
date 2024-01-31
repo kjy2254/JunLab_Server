@@ -1,0 +1,212 @@
+.ReactModal__Overlay {
+  z-index: 3;
+}
+
+.ReactModal__Content:focus {
+  outline: none; /* 포커스 시 아웃라인 제거 */
+}
+
+.ReactModal__Content::-webkit-scrollbar {
+  width: 4px; /* 스크롤바의 너비 */
+  height: 4px; /* 스크롤바의 높이 */
+}
+
+.ReactModal__Content::-webkit-scrollbar {
+  display: block;
+}
+.ReactModal__Content::-webkit-scrollbar-track,
+.ReactModal__Content::-webkit-scrollbar-button {
+  display: none;
+}
+.ReactModal__Content::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 4px;
+}
+/* 스크롤바 코너를 숨깁니다 */
+.ReactModal__Content::-webkit-scrollbar-corner {
+  display: none;
+}
+
+.workermodal {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+
+  width: calc(100% - 13rem);
+  height: calc(100% - 13rem);
+  z-index: 15;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 0.3rem;
+  overflow: auto;
+  border: none;
+}
+
+.workermodal .header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  /* background: #000; */
+}
+
+.workermodal .header .user-info {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.workermodal .header svg {
+  cursor: pointer;
+}
+
+.user-info .watch {
+  font-size: smaller;
+}
+
+.graph-card {
+  background: rgb(25, 36, 48);
+  display: flex;
+  flex-direction: row;
+  border: none;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.3rem;
+  position: relative;
+  /* min-height: 15rem; */
+  /* max-height: 20rem; */
+  /* height: 30%; */
+  width: 100%;
+  flex-direction: column;
+  align-items: start;
+  /* overflow: auto; */
+}
+
+.graph-card .header {
+  display: flex;
+  width: calc(100% - 3rem);
+  justify-content: space-between;
+  /* margin: 1.5rem; */
+  margin: 1rem 1.5rem;
+  /* margin-bottom: 0.5rem; */
+  text-align: left;
+}
+
+.graph-card .header .setting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  /* justify-content: flex-start; */
+}
+
+.graph-card .header .setting .date,
+.graph-card .header .setting .type {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  text-wrap: nowrap;
+}
+
+.graph-card .header label {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+.graph-card .date input[type="radio"] {
+  margin-right: 0.2rem;
+}
+.graph-card label span {
+  font-size: small;
+}
+.graph-card input[type="number"] {
+  width: 7rem;
+  margin-left: 1rem;
+  padding-right: 2rem;
+}
+
+.date.disabled {
+  display: none !important;
+}
+.number-wrapper.disabled {
+  display: none !important;
+}
+
+.number-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.unit {
+  position: absolute;
+  right: 10px; /* Adjust as needed */
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: medium !important;
+}
+
+.chart {
+  width: 100%;
+  /* background: #000; */
+  padding: 0.5rem;
+  padding-bottom: 1rem;
+  display: flex;
+}
+
+.workermodal .header .right {
+  display: flex;
+  margin-bottom: auto;
+}
+
+.workermodal .level {
+  /* background: #000; */
+  width: 3rem;
+  text-align: center;
+  border-radius: 2rem;
+  padding: 0.1rem;
+  font-size: 0.8rem;
+  margin-right: 1rem;
+}
+
+@media (max-width: 680px) {
+  .workermodal {
+    width: calc(100% - 7rem);
+    height: calc(100% - 7rem);
+  }
+}
+
+@media (max-width: 850px) {
+  .graph-card .header label {
+    margin-right: 1rem;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 450px) {
+  .workermodal {
+    width: calc(100% - 1rem);
+    height: calc(100% - 1rem);
+  }
+
+  .workermodal .setting {
+    justify-content: center;
+  }
+
+  .workermodal .setting label {
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+    margin-right: 0;
+  }
+  .graph-card .header .type label {
+    margin-left: 0.5rem;
+  }
+}
+
+@media (max-height: 850px) {
+  .chart {
+    min-height: 17rem;
+    /* background: #000; */
+  }
+}

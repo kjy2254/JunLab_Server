@@ -1,0 +1,269 @@
+.logs {
+  /* color: white; */
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  /* background: #000; */
+}
+
+.logs-wrapper {
+  width: 100%;
+  min-height: 750px;
+  flex-direction: column;
+  align-items: start;
+  /* background: rgb(25, 36, 48); */
+  /* color: white; */
+  display: flex;
+  border: none;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+  border-radius: 0.3rem;
+  position: relative;
+  align-items: flex-start;
+  max-width: 121rem;
+}
+
+.logs .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.5rem;
+  text-align: left;
+  width: calc(100% - 3rem);
+}
+
+.header span {
+  font-size: larger;
+}
+
+.type-area {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  text-wrap: nowrap;
+}
+
+.bar {
+  position: absolute;
+  top: 1.5rem;
+  background: rgb(57, 139, 247);
+  width: 2px;
+  height: 30px;
+}
+
+.logs-wrapper form {
+  /* background: #000; */
+  width: calc(100% - 3rem);
+  margin-left: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logs-wrapper form .date {
+  display: flex;
+  flex-wrap: nowrap;
+}
+.logs-wrapper form label {
+  margin-right: 0.5rem;
+  display: flex;
+  align-items: center;
+  text-align: right;
+}
+.logs-wrapper form label input {
+  margin-left: 0.2rem;
+}
+.logs-wrapper form label span {
+  width: 4rem;
+  margin-right: 0.2rem;
+}
+.date label input:not([type="radio"]) {
+  width: 13.5rem;
+  margin-left: 0.3rem;
+}
+
+.type-area {
+  margin-right: 1rem;
+}
+
+.options {
+  display: flex;
+  align-items: center;
+}
+
+.buttons .search {
+  background: rgb(116, 90, 242);
+}
+
+.buttons .search:hover {
+  background: rgb(95, 74, 201);
+}
+
+.buttons .download {
+  margin-left: 1rem;
+  background: rgb(57, 139, 247);
+}
+
+.buttons .download:hover {
+  background: rgb(52, 108, 172);
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.table-pagenation {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.pagination button {
+  background: rgb(57, 139, 247);
+}
+.pagination button:disabled {
+  background: rgb(185, 185, 185);
+}
+.pagination {
+  display: flex;
+  width: 100%;
+  /* background: #000; */
+  justify-content: space-around;
+  align-items: center;
+  /* margin-top: 1.5rem; */
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+}
+
+.pagination .info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.info span,
+.info select {
+  margin: 0 0.5rem;
+}
+
+.info span {
+  display: flex;
+  align-items: center;
+  text-wrap: nowrap;
+}
+
+.logs-table {
+  width: calc(100% - 3rem);
+  margin: 1.5rem;
+  margin-bottom: 0;
+  /* padding: 1rem; */
+  overflow: scroll;
+  display: inline-block;
+  text-align: center;
+}
+
+.logs-table table {
+  /* width: calc(100% - 3rem); */
+  min-width: 59rem;
+  text-align: left;
+  margin: 1.5rem;
+  margin-top: 0;
+  /* background: #000; */
+}
+
+.logs-table thead th {
+  padding: 0 0.5rem 1rem 0.5rem;
+  font-weight: 100;
+  text-wrap: nowrap;
+}
+
+.logs-table td {
+  border-top: 1px solid var(--border-color-dark);
+  height: 3rem;
+  padding: 0.5rem;
+}
+
+.light-mode .logs-table td {
+  border-top: 1px solid var(--border-color-light);
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1600px) {
+  .hide {
+    display: none;
+  }
+}
+
+@media (max-width: 1330px) {
+  .date {
+    flex-direction: column;
+  }
+  .logs-wrapper form .date label {
+    margin-bottom: 0.7rem;
+  }
+}
+
+@media (max-width: 1040px) {
+  .logs-wrapper form {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 0;
+  }
+  .logs-wrapper form .date {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 490px) {
+  .logs-wrapper form .buttons {
+    display: flex;
+    align-items: center;
+  }
+
+  .logs .buttons {
+    margin-top: 1rem;
+  }
+  .download {
+    margin-left: 0.5rem;
+  }
+
+  .options {
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .type-area label {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .type-area {
+    margin-right: 0;
+    width: 240px;
+    justify-content: space-around;
+  }
+
+  .date label {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .logs-wrapper form {
+    align-items: center;
+  }
+}

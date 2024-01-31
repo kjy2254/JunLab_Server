@@ -1,0 +1,308 @@
+.settings {
+  /* color: white; */
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  /* background: #000; */
+}
+
+.settings-wrapper {
+  width: 100%;
+  height: 100%;
+  max-width: 70rem;
+  border-radius: 0.3rem;
+}
+
+.light-mode .react-tabs__tab-list {
+  border-bottom: 1px solid var(--border-color-light) !important;
+}
+
+.react-tabs__tab-list {
+  text-align: left !important;
+  border-bottom: 1px solid var(--border-color-dark) !important;
+}
+
+.react-tabs__tab:after {
+  display: none !important;
+}
+
+.react-tabs__tab {
+  border: 1px solid var(--layer2-color-dark) !important;
+  border-bottom: none;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  background-color: inherit !important;
+  color: #745af2;
+  padding: 0.5rem 1rem !important;
+  top: 0;
+  transition: color 0.3s;
+}
+
+.light-mode .react-tabs__tab {
+  border: 1px solid var(--layer2-color-light) !important;
+}
+
+.react-tabs__tab--selected {
+  border: 1px solid var(--border-color-dark) !important;
+  border-bottom: none !important;
+  color: inherit !important;
+  font-weight: bold !important;
+}
+
+.light-mode .react-tabs__tab--selected {
+  border: 1px solid var(--border-color-light) !important;
+  border-bottom: none !important;
+}
+
+.react-tabs__tab-panel {
+  margin: 2rem;
+  min-height: 40rem;
+  /* border: 1px solid #ccc; */
+}
+
+.airwall-setting {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-height: 40rem;
+  /* background: #000; */
+  /* height: 100%; */
+  border: 1px solid var(--border-color-dark);
+  padding: 1rem;
+}
+
+.light-mode .airwall-setting {
+  border: 1px solid var(--border-color-light);
+}
+
+.airwall-setting .buttons .edit {
+  background: rgb(116, 90, 242);
+}
+
+.airwall-setting .buttons .edit:hover {
+  background: rgb(95, 74, 201);
+}
+
+.airwall-setting .buttons .save {
+  background: rgb(57, 139, 247);
+}
+
+.airwall-setting .buttons .save:hover {
+  background: rgb(52, 108, 172);
+}
+
+.airwall-setting table {
+  width: 100%;
+}
+
+.airwall-setting .left {
+  text-align: left;
+}
+
+.airwall-setting thead th {
+  padding: 0 0.5rem 1rem 0.5rem;
+  font-weight: 100;
+  text-align: center;
+}
+
+.airwall-setting td {
+  border-top: 1px solid var(--border-color-dark);
+  height: 3rem;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.light-mode .airwall-setting td {
+  border-top: 1px solid var(--border-color-light);
+}
+
+.worker-airwatch {
+  border: 1px solid var(--border-color-dark);
+  width: 100%;
+  height: 40rem;
+  display: flex;
+  overflow: hidden;
+}
+
+.light-mode .worker-airwatch {
+  border: 1px solid var(--border-color-light);
+}
+
+.worker-airwatch .left {
+  min-width: 60%;
+}
+
+.worker-airwatch .left .bottom,
+.worker-airwatch .right .bottom {
+  overflow: auto;
+  /* height: 100%; */
+  height: calc(100% - 4.5rem);
+  width: 100%;
+}
+
+.worker-airwatch .right {
+  border-left: 1px solid var(--border-color-dark);
+  flex-grow: 1;
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.light-mode .worker-airwatch .right {
+  border-left: 1px solid var(--border-color-light);
+}
+
+.worker-airwatch .top {
+  display: flex;
+  /* background: inherit; */
+  padding: 1rem;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color-dark);
+  position: relative;
+  width: 100%;
+  /* z-index: 1; */
+}
+
+.light-mode .worker-airwatch .top {
+  border-bottom: 1px solid var(--border-color-light);
+}
+
+.worker-airwatch .top span {
+  text-wrap: nowrap;
+}
+
+.worker-airwatch .right .bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  height: calc(100% - 7rem);
+  align-content: flex-start;
+}
+
+.worker-airwatch .watch {
+  background: #0000009c;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 5px;
+  margin: 1rem;
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+  position: relative;
+  user-select: none;
+  /* overflow: hidden; */
+}
+
+.worker-airwatch .watch img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.worker-airwatch .watch span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bolder;
+}
+
+.worker-airwatch .worker-card {
+  min-height: 5rem;
+  border-bottom: 1px solid var(--border-color-dark);
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.worker-airwatch .worker-card .text {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.worker-airwatch .worker-card .text img {
+  margin: 0 0.5rem;
+}
+
+.worker-airwatch .worker-card .text .text-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.worker-airwatch .worker-card .text .role {
+  font-size: small;
+}
+
+.worker-airwatch .worker-card .watch-area {
+  background: #0000009c;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 5px;
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+  user-select: none;
+  overflow: hidden;
+  background: rgba(128, 128, 128, 0.075);
+  box-shadow: inset 3px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.worker-airwatch .worker-card .watch-area .watch {
+  margin: 0;
+}
+
+.light-mode .worker-airwatch .worker-card {
+  border-bottom: 1px solid var(--border-color-light);
+}
+
+.watch-area.dragging-over {
+  border: 2px dashed #ccc;
+}
+
+.light-mode .watch-area.dragging-over {
+  border: 2px dashed #555;
+}
+
+.worker-airwatch button {
+  margin: 1rem;
+}
+
+.worker-airwatch button {
+  background: rgb(57, 139, 247);
+}
+
+.worker-airwatch button:hover {
+  background: rgb(52, 108, 172);
+}
+
+@media (max-width: 850px) {
+  .worker-airwatch {
+    flex-direction: column;
+    height: 50rem;
+  }
+  .worker-airwatch .left,
+  .worker-airwatch .right {
+    width: 100%;
+    height: 30rem;
+  }
+
+  .worker-airwatch .right {
+    border-left: none !important;
+  }
+
+  .worker-card .text {
+    width: 100%;
+  }
+  .worker-card {
+    justify-content: flex-end !important;
+    overflow: hidden;
+  }
+}

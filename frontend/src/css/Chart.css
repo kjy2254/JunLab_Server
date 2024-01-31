@@ -1,4 +1,4 @@
-@media (max-width: 1500px) {
+@media (max-width: 1710px) {
   .chart-section {
     flex-direction: row; /* 가로 배치로 변경 */
     flex-wrap: wrap; /* 차트 영역이 2열로 줄바꿈하도록 설정 */
@@ -55,7 +55,7 @@
 }
 
 .chart-subname {
-  color: rgb(201, 201, 201);
+  color: white;
 }
 
 .chart-value-area {

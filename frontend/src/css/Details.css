@@ -109,9 +109,18 @@ input[type="number"]:focus {
 
 .button:hover {
   background: rgba(23, 133, 194, 0.73);
+  color: white;
 }
 
 .button-selected {
   background: #1785c2;
   color: white;
+}
+
+.finedust {
+  display: flex;
+}
+
+.finedust button {
+  background-color: #7fbada;
 }

@@ -1,7 +1,7 @@
 import Sidebar from "./Sidebar";
 import "../css/Dashboard.css";
 import "../css/Theme.css";
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Header from "./Header";
@@ -18,7 +18,7 @@ function Dashboard(props) {
   const [initialDataFetched, setInitialDataFetched] = useState(false);
   const [total, setTotal] = useState({});
   const [current, setCurrent] = useState({});
-
+  const [statistic, setStatistic] = useState();
   const { factoryId } = useParams();
 
   const fetchData = async () => {
@@ -27,6 +27,16 @@ function Dashboard(props) {
         .get(`http://junlab.postech.ac.kr:880/api/factory/${factoryId}`)
         .then((response) => {
           setFactoryName(response.data.factoryName);
+        })
+        .catch((error) => {
+          console.error("API 요청 실패:", error);
+        });
+      axios
+        .get(
+          `http://junlab.postech.ac.kr:880/api/factory/statistic/${factoryId}`
+        )
+        .then((response) => {
+          setStatistic(response.data);
         })
         .catch((error) => {
           console.error("API 요청 실패:", error);
@@ -130,7 +140,7 @@ function Dashboard(props) {
                     setPage(e.target.value);
                   }}
                 >
-                  <option value="none">= 선택 =</option>
+                  <option value="none">전체</option>
                   {Object.keys(data).map((index) => (
                     <option key={index} value={index}>
                       {data[index].pageName}
@@ -141,10 +151,11 @@ function Dashboard(props) {
                   data={data[page]}
                   setCurrent={setCurrent}
                   factoryId={factoryId}
+                  statistic={statistic}
                 />
               </div>
               <div className="view-right bg5 ">
-                <Panel total={total} current={current} />
+                <Panel current={current} />
               </div>
             </div>
           </div>

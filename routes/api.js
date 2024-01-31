@@ -30,6 +30,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+api.get("/factory/:factoryId/name", (req, res) => {
+  const factoryId = parseInt(req.params.factoryId);
+  const query = `SELECT factory_name FROM factories WHERE factory_id = ?`;
+
+  connection.query(query, [factoryId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+
+    return res.status(200).json(result[0]);
+  });
+});
+
 api.get("/factory/:factoryId/users", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
 
@@ -328,9 +342,34 @@ api.get("/factory/dashboard/:factoryId", async (req, res) => {
 api.get("/factory/statistic/:factoryId", async (req, res) => {
   const factoryId = req.params.factoryId;
 
-  const returnData = { users: [{ name: "테스트", level: 3 }] };
+  const query = `SELECT u.name, w.last_sync, w.last_heart_rate, w.last_body_temperature, w.last_oxygen_saturation, w.last_tvoc, w.last_co2
+                  FROM users u
+                  JOIN factories f ON u.factory_id = f.factory_id 
+                  JOIN watches w ON u.watch_id = w.watch_id
+                  WHERE u.factory_id = ?;`;
 
-  return res.status(200).json(returnData);
+  connection.query(query, [factoryId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+
+    const formattedData = result.map((e) => {
+      const formatted = {};
+      const currentTime = new Date();
+
+      formatted.name = e.name;
+      formatted.isOnline =
+        Math.abs(currentTime - new Date(e.last_sync)) < 30000;
+      formatted.level = calclevel(
+        calcEnviromentIndex(e.last_tvoc, e.last_co2, 0, 0, 0),
+        calcWorkLoadIndex(e.last_heart_rate, 0, 0)
+      ).level;
+      return formatted;
+    });
+
+    return res.status(200).json(formattedData);
+  });
 });
 
 const executeQuery = (query, params) => {

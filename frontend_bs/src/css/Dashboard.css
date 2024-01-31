@@ -1,0 +1,374 @@
+.dashboard {
+  /* color: white; */
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  /* background: #000; */
+}
+
+.dashboard-wrapper {
+  width: 100%;
+  max-width: 100rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  /* background: #000; */
+}
+
+.dashboard-wrapper h5 {
+  font-weight: bold;
+}
+
+.play-pause {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  /* background: #000; */
+  padding-right: 0.5rem;
+}
+
+.play-pause svg {
+  cursor: pointer;
+}
+
+.first-row,
+.second-row,
+.third-row {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  /* background: #000; */
+}
+
+.env-card,
+.worker-summary,
+.worker-statistic,
+.advice {
+  /* padding: 1rem; */
+  background: rgb(25, 36, 48);
+  /* color: white; */
+  display: flex;
+  flex-direction: row;
+  min-width: calc(25% - 1.2rem);
+  border: none;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+  border-radius: 0.3rem;
+  position: relative;
+  z-index: 1;
+  justify-content: flex-start;
+}
+
+.env-card {
+  max-width: calc(25% - 1rem);
+}
+
+.env-card .text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 0.5rem;
+  margin: 1rem 0;
+  /* background: #000; */
+  overflow: visible;
+}
+
+.env-card .text .title {
+  font-size: small;
+  opacity: 0.8;
+}
+.env-card .text .value {
+  font-size: 22px;
+}
+
+.env-card img {
+  min-width: 3rem;
+  /* padding: 0.1rem; */
+  margin: 1rem;
+  margin-right: 1rem;
+}
+
+.bar {
+  position: absolute;
+  top: 30%;
+  background: rgb(57, 139, 247);
+  width: 2px;
+  height: 30px;
+}
+
+.env-card .module-name {
+  position: absolute;
+  right: 0.5rem;
+  top: 0.3rem;
+  font-size: smaller;
+  font-weight: lighter;
+  opacity: 0.3;
+  z-index: 1;
+  user-select: none;
+}
+
+.env-card .swiper-pagination-bullet {
+  background: #999; /* 점의 기본 색상 */
+  width: 8px; /* 점의 너비 */
+  height: 8px; /* 점의 높이 */
+  opacity: 0.5; /* 점의 불투명도 */
+  border-radius: 50%; /* 원형으로 만들기 */
+}
+
+.env-card .swiper-pagination-bullet-active {
+  background: #e4e4e4; /* 활성화된 점의 색상 */
+  opacity: 1;
+}
+
+.env-card .swiper-pagination {
+  text-align: right;
+  padding-right: 0.5rem;
+  /* background: #000; */
+}
+
+.env-card .disabled {
+  opacity: 0.2;
+}
+
+.third-row {
+  /* height: 4rem; */
+  width: 100%;
+  /* background: #000; */
+}
+
+.worker-summary,
+.worker-statistic {
+  width: calc(70% - 0.5rem);
+  flex-direction: column;
+  align-items: start;
+  min-height: 41rem;
+  max-height: 41rem;
+  overflow: scroll;
+}
+
+.dashboard .header {
+  display: flex;
+  justify-content: space-between;
+  margin: 1.5rem;
+  text-align: left;
+}
+
+.worker-summary .bar,
+.worker-statistic .bar,
+.advice .bar {
+  top: 1.5rem;
+}
+
+.header span {
+  font-size: larger;
+}
+
+.worker-summary table {
+  width: calc(100% - 3rem);
+  text-align: left;
+  margin: 1.5rem;
+  margin-top: 0;
+  min-width: 45rem;
+  /* background: #000; */
+}
+
+.worker-summary .left {
+  text-align: left;
+}
+
+.worker-summary thead th {
+  padding: 0 0.5rem 1rem 0.5rem;
+  font-weight: 100;
+}
+
+.worker-summary td {
+  border-top: 1px solid var(--border-color-dark);
+  height: 3rem;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.light-mode .worker-summary td {
+  border-top: 1px solid var(--border-color-light);
+}
+
+.worker-summary .level {
+  /* background: #000; */
+  width: 3rem;
+  text-align: center;
+  border-radius: 2rem;
+  padding: 0.1rem;
+  font-size: 0.8rem;
+}
+
+.worker-summary .table-worker {
+  display: flex;
+}
+
+.worker-summary .state {
+  display: flex;
+  align-items: center;
+}
+
+.worker-summary .state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.state svg {
+  margin-right: 0.5rem;
+}
+
+.table-worker .info {
+  display: flex;
+  flex-direction: column;
+  padding-left: 0.8rem;
+}
+
+.info .watch {
+  font-size: smaller;
+  opacity: 0.8;
+}
+
+.worker-statistic {
+  width: calc(30% - 0.5rem);
+}
+
+.pie-chart {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.description {
+  width: calc(100% - 4rem);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem 0.7rem 1rem;
+  margin: 0 2rem 1rem 2rem;
+  border-bottom: 1px solid var(--border-color-dark);
+}
+
+.light-mode .description {
+  border-bottom: 1px solid var(--border-color-light);
+}
+
+.advice {
+  width: 100%;
+  flex-direction: column;
+  align-items: start;
+  /* min-height: 10rem; */
+  /* max-height: 10rem; */
+  overflow: scroll;
+}
+
+.advice .box {
+  text-align: left;
+  margin: 0 1rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  width: calc(20%);
+  /* background: #000; */
+}
+
+.advice-content {
+  display: flex;
+  width: 100%;
+  /* background: #000; */
+}
+
+.box .color {
+  height: 0.15rem;
+  border-radius: 1rem;
+}
+.lv1 {
+  background: rgb(34, 180, 237);
+}
+.lv2 {
+  background: rgb(150, 208, 96);
+}
+.lv3 {
+  background: rgb(255, 252, 75);
+}
+.lv4 {
+  background: rgb(253, 188, 58);
+}
+.lv5 {
+  background: rgb(250, 0, 25);
+}
+
+.box .level,
+.box .text {
+  padding: 0.3rem;
+}
+
+@media (max-width: 1350px) {
+  .first-row,
+  .second-row {
+    flex-wrap: wrap;
+  }
+
+  .first-row .env-card {
+    min-width: calc(50% - 1rem);
+    max-width: calc(50% - 1rem);
+  }
+
+  .second-row {
+    flex-direction: column;
+  }
+
+  .worker-summary,
+  .worker-statistic {
+    width: 100%;
+  }
+}
+
+@media (max-width: 800px) {
+  .first-row {
+    flex-direction: column;
+  }
+  .first-row .env-card {
+    max-width: calc(100%);
+  }
+}
+
+@media (max-width: 950px) {
+  .advice-content {
+    flex-direction: column;
+  }
+  .advice .box {
+    width: calc(90%);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.2s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0.15;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.15;
+  }
+}
