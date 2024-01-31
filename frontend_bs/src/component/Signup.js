@@ -1,10 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import "../css/Signup.css";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-function Signup(props) {
+function Signup() {
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState("");
+
+  function postSignUp() {
+    const userData = {
+      userId: id,
+      userPassword: password,
+      userPassword2: password2,
+    };
+    axios
+      .post("http://junlab.postech.ac.kr:880/login/signup", userData)
+      .then((response) => {
+        const data = response.data;
+        if (data.isSuccess === true) {
+          alert("회원가입이 완료되었습니다!");
+          window.location.href = `/factorymanagement/`;
+        } else {
+          alert(data.isSuccess);
+        }
+      });
+  }
+
   return (
-    <div className="signup">
+    <div className="signup layer1">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="376"
@@ -36,7 +60,7 @@ function Signup(props) {
       </svg>
       <div className="login-wrapper">
         <h1 className="logo">Logo</h1>
-        <div className="form">
+        <div className="form layer2">
           <div>
             <h5>Register</h5>
             <h7>
@@ -47,18 +71,30 @@ function Signup(props) {
 
           <div className="id-wrapper">
             <span>ID</span>
-            <input />
+            <input
+              id="id"
+              type="text"
+              onChange={(e) => setId(e.target.value)}
+            />
           </div>
           <div className="pw-wrapper">
             <span>Password</span>
-            <input type="password" />
+            <input
+              id="password"
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
           <div className="pw-wrapper">
             <span>Confirm Password</span>
-            <input type="password" />
+            <input
+              id="password2"
+              type="password"
+              onChange={(e) => setPassword2(e.target.value)}
+            />
           </div>
           <div className="button-wrapper">
-            <button>Register</button>
+            <button onClick={postSignUp}>Register</button>
           </div>
         </div>
       </div>

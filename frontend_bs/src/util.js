@@ -44,7 +44,7 @@ export function createFuzzyMatcher(input) {
 
 export async function authcheck() {
   const response = await fetch(
-    "http://junlab.postech.ac.kr:880/login/authcheck"
+    "http://junlab.postech.ac.kr:880/login/authcheck2"
   );
   const data = await response.json();
   return {

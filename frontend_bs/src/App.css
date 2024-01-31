@@ -122,16 +122,8 @@
   color: white;
 }
 
-/* input:is([type="text"]) {
-  background-color: var(--layer2-color-dark);
-  color: inherit;
-}
-
-.light-mode input:not([type="radio"]) {
-  background-color: var(--layer2-color-light);
-} */
-
 input[type="text"],
+input[type="password"],
 input[type="number"],
 input[type="datetime-local"] {
   display: block;
@@ -149,11 +141,12 @@ input[type="datetime-local"] {
 
 .light-mode input[type="text"],
 .light-mode input[type="number"],
+input[type="password"],
 .light-mode input[type="datetime-local"] {
   border: 1px solid var(--border-color-light);
   background-color: var(--layer2-color-light);
   box-shadow: none;
-  color: black;
+  color: inherit;
 }
 
 select {

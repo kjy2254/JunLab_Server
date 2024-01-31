@@ -185,7 +185,7 @@ socketServer.on("connection", (socket) => {
     if (sensorData.length === 21) {
       save(rawData);
       if (parseInt(sensorData[0]) > 2000 || parseInt(sensorData[0]) < 1000) {
-        save2(rawData); // 2000번대 -> 고정식 데이터 (0번대도 같이 존재 중)
+        saveAirWallData(rawData); // 2000번대 -> 고정식 데이터 (0번대도 같이 존재 중)
       } else if (parseInt(sensorData[0]) > 1000) {
         saveWatchData(rawData); // 1000번대 -> 시계 데이터
       }
@@ -260,7 +260,7 @@ function save(rawData) {
   return true;
 }
 
-function save2(rawData) {
+function saveAirWallData(rawData) {
   let values = rawData.toString().replaceAll(" ", "").split(",");
 
   if (values.length !== 21) {
@@ -279,7 +279,7 @@ function save2(rawData) {
         }
         // console.log("factoryID:", result[0].factory_id);
         if (result.length === 0) {
-          console.log("not registered module");
+          console.log(values[0] + ": not registered airwall\n");
           return false;
         }
         const insert_query = `INSERT INTO sensor_data (factory_id,
@@ -359,9 +359,10 @@ function saveWatchData(rawData) {
           console.log(error);
         }
 
-        // if(result.length != 0){
-
-        // }
+        if (result.length === 0) {
+          console.log(values[0] + ": not registered airwatch\n");
+          return false;
+        }
 
         const user_id = result[0].user_id;
         const lastHeartRate = result[0].last_heart_rate; // 이전 last_heart_rate 값

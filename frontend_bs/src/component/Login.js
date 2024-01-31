@@ -13,7 +13,7 @@ function Login() {
       userPassword: password,
     };
     axios
-      .post("http://junlab.postech.ac.kr:880/login/login", userData)
+      .post("http://junlab.postech.ac.kr:880/login/login2", userData)
       .then((response) => {
         const data = response.data;
         if (data.isLogin === true) {
@@ -25,7 +25,7 @@ function Login() {
   }
 
   return (
-    <div className="login">
+    <div className="login layer1">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="376"
@@ -57,7 +57,7 @@ function Login() {
       </svg>
       <div className="login-wrapper">
         <h1 className="logo">Logo</h1>
-        <div className="form">
+        <div className="form layer2">
           <div>
             <h5>Login</h5>
             <h7>
@@ -77,7 +77,7 @@ function Login() {
           <div className="pw-wrapper">
             <span>Password</span>
             <input
-              id="id"
+              id="password"
               type="password"
               onChange={(e) => setPassword(e.target.value)}
             />

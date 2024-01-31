@@ -6,13 +6,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 
 function ThemeToggleButton() {
-  const [lightMode, setLightMode] = useState(false);
-
-  useEffect(() => {
-    const isLightMode = localStorage.getItem("lightMode") === "true";
-    setLightMode(isLightMode);
-    document.body.classList.toggle("light-mode", isLightMode);
-  }, []);
+  const [lightMode, setLightMode] = useState(
+    localStorage.getItem("lightMode") === "true"
+  );
 
   const toggleTheme = () => {
     const newLightMode = !lightMode;
@@ -62,9 +58,9 @@ function Header(props) {
           <Button
             variant="outline-secondary"
             className="login-btn"
-            href="/factorymanagement/login"
+            href="http://junlab.postech.ac.kr:880/login/logout2"
           >
-            로그인
+            로그아웃
           </Button>
         </Nav>
       </Navbar.Collapse>

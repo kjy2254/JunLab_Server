@@ -10,6 +10,7 @@ var apiRouter = require("./routes/api");
 var apiRouter2 = require("./routes/api2");
 var longInRouter = require("./routes/login");
 var factoryManagementRouter = require("./routes/factoryManagement");
+var factorymanagementRouter = require("./routes/factoryManagement copy");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const fs = require("fs");
@@ -33,6 +34,7 @@ function skipLogging(req) {
 app.use("/", indexRouter);
 
 app.use(express.static(path.join(__dirname, "frontend/build")));
+app.use(express.static(path.join(__dirname, "frontend_bs/build")));
 
 app.use(
   logger("[:remote-addr] :method :url", { skip: skipLogging }),
@@ -58,6 +60,7 @@ app.use("/iitp", iitpRouter);
 app.use("/api", apiRouter);
 app.use("/api2", apiRouter2);
 app.use("/login", longInRouter);
+app.use("/factorymanagement", factorymanagementRouter);
 app.use("/iitp/factoryManagement", factoryManagementRouter);
 
 app.use("/images", express.static(path.join(__dirname, "images")));

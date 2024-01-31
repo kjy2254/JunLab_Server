@@ -10,6 +10,7 @@ import Dashboard from "./component/Dashboard";
 import AirWall from "./component/AirWall";
 import AirWatch from "./component/AirWatch";
 import Settings from "./component/Settings/Settings";
+import UserInit from "./component/UserInit";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -50,6 +51,11 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    const isLightMode = localStorage.getItem("lightMode") === "true";
+    document.body.classList.toggle("light-mode", isLightMode);
+  }, []);
+
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -74,6 +80,7 @@ function App() {
         authority: authData.authority,
         manageOf: authData.manageOf,
       });
+      setIsLoading(false);
     };
     fetchData();
   }, []);
@@ -152,6 +159,7 @@ function App() {
                     />
                   }
                   isAllow={authData.authority >= 4}
+                  manageOf={authData.manageOf}
                 />
               }
             />
@@ -168,6 +176,7 @@ function App() {
                     />
                   }
                   isAllow={authData.authority >= 4}
+                  manageOf={authData.manageOf}
                 />
               }
             />
@@ -239,6 +248,19 @@ function App() {
                 />
               }
             />
+            <Route
+              path="/factorymanagement/user/init"
+              element={
+                <RestrictRoute
+                  element={<UserInit />}
+                  isAllow={authData.authority == 0}
+                />
+              }
+            />
+            <Route
+              path="/factorymanagement/*"
+              element={<HomeRedirector authData={authData} />}
+            />
           </Routes>
         </div>
       </div>
@@ -249,11 +271,12 @@ function App() {
 function RestrictRoute({ element, isAllow, manageOf }) {
   const { factoryId } = useParams();
 
-  return isAllow && (manageOf == factoryId || manageOf < 0) ? (
-    element
-  ) : (
-    <Navigate to="/factorymanagement" replace />
-  );
+  // manageOf가 정의되지 않았거나, manageOf가 factoryId와 일치하거나, manageOf가 -1 이하인 경우
+  const isAllowed =
+    isAllow &&
+    (manageOf === undefined || manageOf == factoryId || manageOf < 0);
+
+  return isAllowed ? element : <Navigate to="/factorymanagement" replace />;
 }
 
 function CustomComponent({
@@ -270,6 +293,33 @@ function CustomComponent({
       <Component setHeaderText={setHeaderText} />
     </div>
   );
+}
+
+function HomeRedirector({ authData }) {
+  const determineRedirectPath = () => {
+    // 로그인이 안된 경우
+    if (!authData.isLogin) {
+      return "/factorymanagement/login";
+    }
+    // 권한이 0인 가입 대기자
+    else if (authData.authority === 0) {
+      return "/factorymanagement/user/init";
+    }
+    // 권한이 4인 관리자
+    else if (authData.authority === 4) {
+      return "/factorymanagement/admin/factory";
+    }
+    // 특정 공장의 관리자
+    else if (authData.manageOf >= 0) {
+      return `/factorymanagement/factory/${authData.manageOf}/dashboard`;
+    }
+    // 기본 리다이렉션 경로
+    else {
+      return "/factorymanagement/defaultPath";
+    }
+  };
+
+  return <Navigate to={determineRedirectPath()} replace />;
 }
 
 export default App;
