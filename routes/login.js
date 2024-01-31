@@ -24,12 +24,32 @@ login.use(
   })
 );
 
+// login.get("/authcheck", (req, res) => {
+//   const sendData = { isLogin: "", role: "", name: "" };
+//   if (req.session.is_logined) {
+//     sendData.isLogin = true;
+//     sendData.role = req.session.role;
+//     sendData.name = req.session.name;
+//   } else {
+//     sendData.isLogin = false;
+//   }
+//   res.send(sendData);
+// });
+
 login.get("/authcheck", (req, res) => {
-  const sendData = { isLogin: "", role: "", name: "" };
+  const sendData = {
+    isLogin: "",
+    name: "",
+    userId: "",
+    authority: "",
+    manageOf: "",
+  };
   if (req.session.is_logined) {
     sendData.isLogin = true;
-    sendData.role = req.session.role;
     sendData.name = req.session.name;
+    sendData.userId = req.session.userId;
+    sendData.authority = req.session.authority;
+    sendData.manageOf = req.session.manageOf;
   } else {
     sendData.isLogin = false;
   }
@@ -43,11 +63,66 @@ login.get("/logout", function (req, res) {
   });
 });
 
+// login.post("/login", (req, res) => {
+//   // 데이터 받아서 결과 전송
+//   const username = req.body.userId;
+//   const password = req.body.userPassword;
+//   const sendData = { isLogin: "", role: "", name: "" };
+
+//   if (username && password) {
+//     // id와 pw가 입력되었는지 확인
+//     connection.query(
+//       "SELECT * FROM users WHERE username = ?",
+//       [username],
+//       function (error, results) {
+//         if (error) throw error;
+//         if (results.length > 0) {
+//           // db에서의 반환값이 있다 = 일치하는 아이디가 있다.
+//           bcrypt.compare(password, results[0].password, (err, result) => {
+//             // 입력된 비밀번호가 해시된 저장값과 같은 값인지 비교
+//             if (result === true) {
+//               // 비밀번호가 일치하면
+//               req.session.is_logined = true; // 세션 정보 갱신
+//               req.session.name = results[0].name;
+//               req.session.role = results[0].role;
+
+//               req.session.save(function () {
+//                 sendData.isLogin = true;
+//                 sendData.role = results[0].role;
+//                 sendData.name = results[0].name;
+//                 res.send(sendData);
+//               });
+//             } else {
+//               // 비밀번호가 다른 경우
+//               sendData.isLogin = "로그인 정보가 일치하지 않습니다.";
+//               res.send(sendData);
+//             }
+//           });
+//         } else {
+//           // db에 해당 아이디가 없는 경우
+//           sendData.isLogin = "아이디 정보가 일치하지 않습니다.";
+//           res.send(sendData);
+//         }
+//       }
+//     );
+//   } else {
+//     // 아이디, 비밀번호 중 입력되지 않은 값이 있는 경우
+//     sendData.isLogin = "아이디와 비밀번호를 입력하세요!";
+//     res.send(sendData);
+//   }
+// });
+
 login.post("/login", (req, res) => {
   // 데이터 받아서 결과 전송
   const username = req.body.userId;
   const password = req.body.userPassword;
-  const sendData = { isLogin: "", role: "", name: "" };
+  const sendData = {
+    isLogin: "",
+    name: "",
+    userId: "",
+    authority: "",
+    manageOf: "",
+  };
 
   if (username && password) {
     // id와 pw가 입력되었는지 확인
@@ -64,12 +139,16 @@ login.post("/login", (req, res) => {
               // 비밀번호가 일치하면
               req.session.is_logined = true; // 세션 정보 갱신
               req.session.name = results[0].name;
-              req.session.role = results[0].role;
+              req.session.userId = results[0].user_id;
+              req.session.authority = results[0].authority;
+              req.session.manageOf = results[0].manager_of;
 
               req.session.save(function () {
                 sendData.isLogin = true;
-                sendData.role = results[0].role;
                 sendData.name = results[0].name;
+                sendData.userId = results[0].user_id;
+                sendData.authority = results[0].authority;
+                sendData.manageOf = results[0].manager_of;
                 res.send(sendData);
               });
             } else {

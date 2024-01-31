@@ -349,12 +349,19 @@ function saveWatchData(rawData) {
     }
 
     connection2.query(
-      `SELECT user_id, last_heart_rate, last_oxygen_saturation from watches where watch_id = ?`,
+      `SELECT u.user_id, w.last_heart_rate, w.last_oxygen_saturation 
+      FROM watches w
+      LEFT JOIN users u ON w.watch_id = u.watch_id
+      WHERE w.watch_id = ?`,
       values[0],
       (error, result) => {
         if (error) {
           console.log(error);
         }
+
+        // if(result.length != 0){
+
+        // }
 
         const user_id = result[0].user_id;
         const lastHeartRate = result[0].last_heart_rate; // 이전 last_heart_rate 값

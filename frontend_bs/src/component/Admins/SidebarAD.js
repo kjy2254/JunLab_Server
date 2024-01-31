@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faIndustry, faFileLines } from "@fortawesome/free-solid-svg-icons";
 
-function Sidebar(props) {
+function SidebarAD(props) {
   return (
     <div
       className={`
@@ -56,4 +56,4 @@ function Sidebar(props) {
   );
 }
 
-export default Sidebar;
+export default SidebarAD;

@@ -1,36 +1,8 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faE, faEdit } from "@fortawesome/free-solid-svg-icons";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
-import "../css/Settings.css";
+import "../../css/Settings.css";
 import axios from "axios";
-import default_watch from "../image/default_watch.png";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
-function Settings(props) {
-  props.setHeaderText("설정");
-
-  return (
-    <div className="settings">
-      <div className="settings-wrapper layer2">
-        <Tabs>
-          <TabList>
-            <Tab>고정식 센서</Tab>
-            <Tab>작업자</Tab>
-          </TabList>
-          <TabPanel>
-            <AirWallSetting />
-          </TabPanel>
-          <TabPanel>
-            <WorkerAndAirWatch />
-          </TabPanel>
-        </Tabs>
-      </div>
-    </div>
-  );
-}
 
 function AirWallSetting() {
   const [data, setData] = useState([]);
@@ -87,9 +59,10 @@ function AirWallSetting() {
         `http://junlab.postech.ac.kr:880/api2/settings/${factoryId}/airwalls`,
         data
       )
+      .then(alert("저장이 완료되었습니다."))
       .then(() => fetchData())
       .catch((error) => {
-        console.error("API 요청 실패:", error);
+        alert("API 요청 실패:", error);
       });
   };
 
@@ -166,57 +139,4 @@ function AirWallSetting() {
   );
 }
 
-function WorkerAndAirWatch() {
-  const [watches, setWatches] = useState([
-    { id: 1001 },
-    { id: 1002 },
-    { id: 1003 },
-    { id: 1003 },
-    { id: 1003 },
-    { id: 1003 },
-    { id: 1003 },
-  ]);
-
-  const [workers, setWorkers] = useState([
-    { id: 2001 },
-    { id: 2002 },
-    { id: 2003 },
-    { id: 2003 },
-    { id: 2003 },
-    { id: 2003 },
-    { id: 2003 },
-  ]);
-
-  return (
-    <div className="worker-airwatch">
-      <div className="left">
-        <div className="top">
-          <input type="text" placeholder="Search Worker Name..." />
-        </div>
-        <div className="bottom">
-          {workers.map((e) => (
-            <div className="worker-card">
-              <span>{e.id}</span>
-              <div className="watch"></div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="right">
-        <div className="top">
-          <input type="text" placeholder="Search Watch ID..." />
-        </div>
-        <div className="bottom">
-          {watches.map((e) => (
-            <div className="watch">
-              <img src={default_watch} />
-              <span>Watch {e.id}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default Settings;
+export default AirWallSetting;

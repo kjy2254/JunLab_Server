@@ -27,15 +27,16 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 function Dashboard(props) {
-  props.setHeaderText("통합상황판");
   const [onlineData, setOnlineData] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedWorker, setSelectedWorker] = useState(0);
   const handlePlayPause = () => {
     setIsPaused((p) => !p);
   };
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedWorker, setSelectedWorker] = useState(0);
+  useEffect(() => {
+    props.setHeaderText("통합상황판");
+  }, []);
 
   return (
     <div className="dashboard">
@@ -258,7 +259,9 @@ function WorkerSummary({
             <img src={defaultProfile} width={42} height={42} />
             <div className="info">
               <span className="name">{row.original.name}</span>
-              <span className="watch">Watch: {row.original.watch_id}</span>
+              <span className="watch">
+                Watch: {row.original.watch_id || "-"}
+              </span>
             </div>
           </div>
         ),
@@ -485,6 +488,9 @@ function WorkerStatistic({ data }) {
       width: 300,
       height: 300,
       plotBorderColor: "transparent",
+    },
+    accessibility: {
+      enabled: false,
     },
     credits: {
       enabled: false, // 워터마크 제거

@@ -175,6 +175,9 @@ function GraphCard({ header, selectedWorker, endpoint, title }) {
       credits: {
         enabled: false, // 워터마크 비활성화
       },
+      accessibility: {
+        enabled: false,
+      },
       tooltip: {
         formatter: function () {
           const date = new Date(this.x);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useTable, usePagination, useSortBy } from "react-table";
-import "../css/Logs.css";
+import "../../css/Logs.css";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -13,7 +13,9 @@ import {
 function Logs(props) {
   const [data, setData] = useState([]);
 
-  props.setHeaderText("로그");
+  useEffect(() => {
+    props.setHeaderText("로그");
+  }, []);
 
   const columns = useMemo(
     () => [
@@ -126,7 +128,7 @@ function Logs(props) {
   return (
     <div className="logs">
       <div className="logs-wrapper layer2">
-        <span class="bar" />
+        <span className="bar" />
         <div className="header">
           <span>로그 검색</span>
         </div>

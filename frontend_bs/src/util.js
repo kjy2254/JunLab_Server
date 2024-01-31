@@ -41,3 +41,17 @@ export function createFuzzyMatcher(input) {
   const pattern = input.toLowerCase().split("").map(ch2pattern).join(".*?");
   return new RegExp(pattern);
 }
+
+export async function authcheck() {
+  const response = await fetch(
+    "http://junlab.postech.ac.kr:880/login/authcheck"
+  );
+  const data = await response.json();
+  return {
+    isLogin: data.isLogin,
+    name: data.name,
+    userId: data.userId,
+    authority: data.authority,
+    manageOf: data.manageOf,
+  };
+}

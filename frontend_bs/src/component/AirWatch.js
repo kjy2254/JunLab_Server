@@ -12,8 +12,9 @@ import {
 
 function AirWatch(props) {
   const [data, setData] = useState([]);
-
-  props.setHeaderText("로그 / 이동식");
+  useEffect(() => {
+    props.setHeaderText("로그 / 이동식");
+  }, []);
 
   const columns = useMemo(
     () => [
@@ -62,7 +63,7 @@ function AirWatch(props) {
   return (
     <div className="airwatch">
       <div className="airwatch-wrapper layer2">
-        <span class="bar" />
+        <span className="bar" />
         <div className="header">
           <span>이동식 로그 검색</span>
         </div>
@@ -142,7 +143,7 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
         )
         .then((response) => {
           setIsLoading(false);
-          console.log(response.data);
+          // console.log(response.data);
           setData(response.data);
         })
         .catch((error) => {
@@ -206,14 +207,14 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
           >
             <option value="전체">전체</option>
             {selected.type === "name" &&
-              list.map((e) => (
-                <option key={e.id} value={e.name}>
+              list.map((e, idx) => (
+                <option key={idx} value={e.name}>
                   {e.name}
                 </option>
               ))}
             {selected.type === "watch" &&
-              list.map((e) => (
-                <option key={e.id} value={e.watch_id}>
+              list.map((e, idx) => (
+                <option key={idx} value={e.watch_id}>
                   {e.watch_id}
                 </option>
               ))}

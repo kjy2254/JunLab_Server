@@ -2,15 +2,16 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "./component/Header";
 import Sidebar from "./component/Sidebar";
-import SidebarAD from "./component/SidebarAD";
+import SidebarAD from "./component/Admins/SidebarAD";
 import Login from "./component/Login";
-import Factory from "./component/Factory";
-import Logs from "./component/Logs";
+import Factory from "./component/Admins/Factory";
+import Logs from "./component/Admins/Logs";
 import Dashboard from "./component/Dashboard";
 import AirWall from "./component/AirWall";
 import AirWatch from "./component/AirWatch";
-import Settings from "./component/Settings";
+import Settings from "./component/Settings/Settings";
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {
   BrowserRouter as Router,
   Route,
@@ -18,6 +19,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import Signup from "./component/Signup";
+import { authcheck } from "./util";
 
 function App() {
   const [toggleSide, setToggleSide] = useState(true);
@@ -48,10 +50,44 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const [authData, setAuthData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  // useEffect(() => {
+  //   setAuthData({
+  //     isLogin: false,
+  //     name: "JunLab",
+  //     userId: 10,
+  //     authority: 4,
+  //     manageOf: -1,
+  //   });
+  //   setIsLoading(false);
+  // }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const authData = await authcheck();
+      setAuthData({
+        isLogin: authData.isLogin,
+        name: authData.name,
+        userId: authData.userId,
+        authority: authData.authority,
+        manageOf: authData.manageOf,
+      });
+    };
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    return <></>;
+  }
+
   return (
     <Router>
       <div className="App layer1">
         <Routes>
+          <Route path="/factoryManagement/login" />
+          <Route path="/factoryManagement/signup" />
           <Route
             path="/factoryManagement/*"
             element={
@@ -85,71 +121,121 @@ function App() {
           </Routes>
 
           <Routes>
-            <Route path="/factorymanagement/login" element={<Login />} />
-            <Route path="/factorymanagement/signup" element={<Signup />} />
+            <Route
+              path="/factorymanagement/login"
+              element={
+                <RestrictRoute
+                  element={<Login />}
+                  isAllow={!authData.isLogin}
+                />
+              }
+            />
+            <Route
+              path="/factorymanagement/signup"
+              element={
+                <RestrictRoute
+                  element={<Signup />}
+                  isAllow={!authData.isLogin}
+                />
+              }
+            />
             <Route
               path="/factorymanagement/admin/factory"
               element={
-                <CustomRoute
-                  Component={Factory}
-                  toggleSide={toggleSide}
-                  setHeaderText={setHeaderText}
-                  closeSmallSidebar={closeSmallSidebar}
+                <RestrictRoute
+                  element={
+                    <CustomComponent
+                      Component={Factory}
+                      toggleSide={toggleSide}
+                      setHeaderText={setHeaderText}
+                      closeSmallSidebar={closeSmallSidebar}
+                    />
+                  }
+                  isAllow={authData.authority >= 4}
                 />
               }
             />
             <Route
               path="/factorymanagement/admin/logs"
               element={
-                <CustomRoute
-                  Component={Logs}
-                  toggleSide={toggleSide}
-                  setHeaderText={setHeaderText}
-                  closeSmallSidebar={closeSmallSidebar}
+                <RestrictRoute
+                  element={
+                    <CustomComponent
+                      Component={Logs}
+                      toggleSide={toggleSide}
+                      setHeaderText={setHeaderText}
+                      closeSmallSidebar={closeSmallSidebar}
+                    />
+                  }
+                  isAllow={authData.authority >= 4}
                 />
               }
             />
             <Route
               path="/factorymanagement/factory/:factoryId/dashboard"
               element={
-                <CustomRoute
-                  Component={Dashboard}
-                  toggleSide={toggleSide}
-                  setHeaderText={setHeaderText}
-                  closeSmallSidebar={closeSmallSidebar}
+                <RestrictRoute
+                  element={
+                    <CustomComponent
+                      Component={Dashboard}
+                      toggleSide={toggleSide}
+                      setHeaderText={setHeaderText}
+                      closeSmallSidebar={closeSmallSidebar}
+                    />
+                  }
+                  isAllow={authData.authority >= 3}
+                  manageOf={authData.manageOf}
                 />
               }
             />
             <Route
               path="/factorymanagement/factory/:factoryId/airwall"
               element={
-                <CustomRoute
-                  Component={AirWall}
-                  toggleSide={toggleSide}
-                  setHeaderText={setHeaderText}
-                  closeSmallSidebar={closeSmallSidebar}
+                <RestrictRoute
+                  element={
+                    <CustomComponent
+                      Component={AirWall}
+                      toggleSide={toggleSide}
+                      setHeaderText={setHeaderText}
+                      closeSmallSidebar={closeSmallSidebar}
+                    />
+                  }
+                  isAllow={authData.authority >= 3}
+                  manageOf={authData.manageOf}
                 />
               }
             />
             <Route
               path="/factorymanagement/factory/:factoryId/airwatch"
               element={
-                <CustomRoute
-                  Component={AirWatch}
-                  toggleSide={toggleSide}
-                  setHeaderText={setHeaderText}
-                  closeSmallSidebar={closeSmallSidebar}
+                <RestrictRoute
+                  element={
+                    <CustomComponent
+                      Component={AirWatch}
+                      toggleSide={toggleSide}
+                      setHeaderText={setHeaderText}
+                      closeSmallSidebar={closeSmallSidebar}
+                    />
+                  }
+                  isAllow={authData.authority >= 3}
+                  manageOf={authData.manageOf}
                 />
               }
             />
             <Route
               path="/factorymanagement/factory/:factoryId/settings"
               element={
-                <CustomRoute
-                  Component={Settings}
-                  toggleSide={toggleSide}
-                  setHeaderText={setHeaderText}
-                  closeSmallSidebar={closeSmallSidebar}
+                <RestrictRoute
+                  element={
+                    <CustomComponent
+                      Component={Settings}
+                      toggleSide={toggleSide}
+                      setHeaderText={setHeaderText}
+                      closeSmallSidebar={closeSmallSidebar}
+                    />
+                  }
+                  isAllow={authData.authority >= 3}
+                  manageOf={authData.manageOf}
                 />
               }
             />
@@ -160,7 +246,17 @@ function App() {
   );
 }
 
-function CustomRoute({
+function RestrictRoute({ element, isAllow, manageOf }) {
+  const { factoryId } = useParams();
+
+  return isAllow && (manageOf == factoryId || manageOf < 0) ? (
+    element
+  ) : (
+    <Navigate to="/factorymanagement" replace />
+  );
+}
+
+function CustomComponent({
   Component,
   toggleSide,
   setHeaderText,

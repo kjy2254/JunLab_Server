@@ -103,7 +103,7 @@ api.get("/factory/:factoryId/workers", (req, res) => {
 
   const query = `
     SELECT
-      w.watch_id,
+      u.watch_id,
       w.last_sync,
       CASE
         WHEN w.last_battery_level BETWEEN 2.7 AND 4.2 THEN
@@ -120,9 +120,9 @@ api.get("/factory/:factoryId/workers", (req, res) => {
       u.name, u.user_id,
       w.last_sync
     FROM
-      watches w
-    JOIN
-      users u ON w.user_id = u.user_id
+       users u
+    LEFT JOIN
+      watches w ON w.watch_id = u.watch_id
     WHERE
       u.factory_id = ?;
   `;
@@ -319,9 +319,9 @@ api.get("/user/:userId/info", (req, res) => {
     SELECT
       u.user_id, u.name, w.watch_id, w.last_sync, w.level
     FROM
-      watches w
-    JOIN
-      users u ON w.user_id = u.user_id
+    users u
+    LEFT JOIN
+    watches w ON w.watch_id = u.watch_id
     WHERE
       u.user_id = ?;
   `;
@@ -488,6 +488,7 @@ api.get("/settings/:factoryId/airwalls", (req, res) => {
     return res.status(200).json(result);
   });
 });
+
 api.put("/settings/:factoryId/airwalls", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
   const updatedData = req.body; // 클라이언트가 보낸 업데이트할 데이터
@@ -515,6 +516,58 @@ api.put("/settings/:factoryId/airwalls", (req, res) => {
         // 결과 처리
       }
     );
+  });
+
+  // 모든 업데이트가 성공적으로 완료된 후 응답
+  return res.status(200).send("Update successful!");
+});
+
+api.get("/settings/:factoryId/watchlist", (req, res) => {
+  const factoryId = parseInt(req.params.factoryId);
+
+  query = `SELECT watch_id
+            FROM watches
+            WHERE factory_id = ?`;
+
+  connection.query(query, [factoryId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json(result);
+  });
+});
+
+api.get("/settings/:factoryId/workers", (req, res) => {
+  const factoryId = parseInt(req.params.factoryId);
+
+  query = `SELECT user_id, name, role, gender, watch_id
+            FROM users
+            WHERE factory_id = ?`;
+
+  connection.query(query, [factoryId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json(result);
+  });
+});
+
+api.put("/settings/:factoryId/workers", (req, res) => {
+  const factoryId = parseInt(req.params.factoryId);
+  const updatedData = req.body; // 클라이언트가 보낸 업데이트할 데이터
+
+  const query = "UPDATE users SET watch_id = ? WHERE user_id = ?";
+
+  // 모든 업데이트 작업을 순차적으로 처리
+  updatedData.forEach((item) => {
+    connection.query(query, [item.watch_id, item.user_id], (error, result) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error!");
+      }
+    });
   });
 
   // 모든 업데이트가 성공적으로 완료된 후 응답

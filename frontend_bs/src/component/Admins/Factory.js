@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
-import Modal from "react-modal";
-import "../css/Factory.css";
+import "../../css/Factory.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as fS1 } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -10,9 +8,7 @@ import {
   faFilter,
   faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
-import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
-import { createFuzzyMatcher } from "../util";
+import { createFuzzyMatcher } from "../../util";
 
 function Factory({ setHeaderText }) {
   const [factories, setFactories] = useState([]);
@@ -27,7 +23,9 @@ function Factory({ setHeaderText }) {
   });
   const [filter, setFilter] = useState("");
 
-  setHeaderText("공장관리");
+  useEffect(() => {
+    setHeaderText("공장관리");
+  }, []);
 
   useEffect(() => {
     axios
@@ -143,6 +141,7 @@ function Factory({ setHeaderText }) {
                 factoryId={f.factory_id}
                 detail={detail}
                 onClick={() => handleCardClick(f)}
+                key={f.factory_id}
               />
             ))}
         </div>

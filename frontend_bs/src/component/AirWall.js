@@ -12,8 +12,9 @@ import {
 
 function AirWall(props) {
   const [data, setData] = useState([]);
-
-  props.setHeaderText("로그 / 고정식");
+  useEffect(() => {
+    props.setHeaderText("로그 / 고정식");
+  }, []);
 
   const columns = useMemo(
     () => [
@@ -58,7 +59,7 @@ function AirWall(props) {
   return (
     <div className="airwall">
       <div className="airwall-wrapper layer2">
-        <span class="bar" />
+        <span className="bar" />
         <div className="header">
           <span>고정식 로그 검색</span>
         </div>
@@ -136,7 +137,7 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
         )
         .then((response) => {
           setIsLoading(false);
-          console.log(response.data);
+          // console.log(response.data);
           setData(response.data);
         })
         .catch((error) => {
@@ -174,8 +175,8 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
             }
           >
             <option value="전체">전체</option>
-            {list.map((e) => (
-              <option key={e.id} value={e.module_name}>
+            {list.map((e, idx) => (
+              <option key={idx} value={e.module_name}>
                 {e.module_name}
               </option>
             ))}

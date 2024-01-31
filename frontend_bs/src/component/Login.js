@@ -1,8 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import "../css/Login.css";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-function Login(props) {
+function Login() {
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+
+  function postLogin() {
+    const userData = {
+      userId: id,
+      userPassword: password,
+    };
+    axios
+      .post("http://junlab.postech.ac.kr:880/login/login", userData)
+      .then((response) => {
+        const data = response.data;
+        if (data.isLogin === true) {
+          window.location.href = `/factoryManagement/`;
+        } else {
+          alert(data.isLogin);
+        }
+      });
+  }
+
   return (
     <div className="login">
       <svg
@@ -47,20 +68,22 @@ function Login(props) {
 
           <div className="id-wrapper">
             <span>ID</span>
-            <input />
+            <input
+              id="id"
+              type="text"
+              onChange={(e) => setId(e.target.value)}
+            />
           </div>
           <div className="pw-wrapper">
             <span>Password</span>
-            <input type="password" />
+            <input
+              id="id"
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
           <div className="button-wrapper">
-            <button
-              onClick={() =>
-                (window.location.href = `/factorymanagement/factory`)
-              }
-            >
-              Login
-            </button>
+            <button onClick={postLogin}>Login</button>
           </div>
         </div>
       </div>

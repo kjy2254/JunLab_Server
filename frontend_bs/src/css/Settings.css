@@ -124,6 +124,7 @@
   width: 100%;
   height: 40rem;
   display: flex;
+  overflow: hidden;
 }
 
 .light-mode .worker-airwatch {
@@ -132,13 +133,24 @@
 
 .worker-airwatch .left {
   min-width: 60%;
-  height: 100%;
+}
+
+.worker-airwatch .left .bottom,
+.worker-airwatch .right .bottom {
+  overflow: auto;
+  /* height: 100%; */
+  height: calc(100% - 4.5rem);
+  width: 100%;
 }
 
 .worker-airwatch .right {
   border-left: 1px solid var(--border-color-dark);
   flex-grow: 1;
   height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .light-mode .worker-airwatch .right {
@@ -147,10 +159,13 @@
 
 .worker-airwatch .top {
   display: flex;
-  /* background: #000; */
+  /* background: inherit; */
   padding: 1rem;
   align-items: center;
   border-bottom: 1px solid var(--border-color-dark);
+  position: relative;
+  width: 100%;
+  /* z-index: 1; */
 }
 
 .light-mode .worker-airwatch .top {
@@ -162,21 +177,23 @@
 }
 
 .worker-airwatch .right .bottom {
-  /* padding: 1rem; */
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  height: calc(100% - 7rem);
+  align-content: flex-start;
 }
 
 .worker-airwatch .watch {
   background: #0000009c;
-  width: 4rem;
-  height: 4rem;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: 5px;
   margin: 1rem;
   box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
   position: relative;
-  /* user-select: none; */
+  user-select: none;
+  /* overflow: hidden; */
 }
 
 .worker-airwatch .watch img {
@@ -185,7 +202,6 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 0;
 }
 
 .worker-airwatch .watch span {
@@ -193,26 +209,100 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 1;
   color: white;
   font-weight: bolder;
 }
 
 .worker-airwatch .worker-card {
-  height: 5rem;
+  min-height: 5rem;
   border-bottom: 1px solid var(--border-color-dark);
   display: flex;
   align-items: center;
   padding: 0.5rem;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
-.worker-airwatch .worker-card .watch {
-  margin: 0;
+.worker-airwatch .worker-card .text {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.worker-airwatch .worker-card .text img {
+  margin: 0 0.5rem;
+}
+
+.worker-airwatch .worker-card .text .text-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.worker-airwatch .worker-card .text .role {
+  font-size: small;
+}
+
+.worker-airwatch .worker-card .watch-area {
+  background: #0000009c;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 5px;
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+  user-select: none;
+  overflow: hidden;
   background: rgba(128, 128, 128, 0.075);
   box-shadow: inset 3px 3px 5px rgba(0, 0, 0, 0.2);
 }
 
+.worker-airwatch .worker-card .watch-area .watch {
+  margin: 0;
+}
+
 .light-mode .worker-airwatch .worker-card {
   border-bottom: 1px solid var(--border-color-light);
+}
+
+.watch-area.dragging-over {
+  border: 2px dashed #ccc;
+}
+
+.light-mode .watch-area.dragging-over {
+  border: 2px dashed #555;
+}
+
+.worker-airwatch button {
+  margin: 1rem;
+}
+
+.worker-airwatch button {
+  background: rgb(57, 139, 247);
+}
+
+.worker-airwatch button:hover {
+  background: rgb(52, 108, 172);
+}
+
+@media (max-width: 850px) {
+  .worker-airwatch {
+    flex-direction: column;
+    height: 50rem;
+  }
+  .worker-airwatch .left,
+  .worker-airwatch .right {
+    width: 100%;
+    height: 30rem;
+  }
+
+  .worker-airwatch .right {
+    border-left: none !important;
+  }
+
+  .worker-card .text {
+    width: 100%;
+  }
+  .worker-card {
+    justify-content: flex-end !important;
+    overflow: hidden;
+  }
 }
