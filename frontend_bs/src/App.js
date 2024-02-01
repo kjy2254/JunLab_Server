@@ -59,31 +59,31 @@ function App() {
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  // useEffect(() => {
-  //   setAuthData({
-  //     isLogin: false,
-  //     name: "JunLab",
-  //     userId: 10,
-  //     authority: 4,
-  //     manageOf: -1,
-  //   });
-  //   setIsLoading(false);
-  // }, []);
-
   useEffect(() => {
-    const fetchData = async () => {
-      const authData = await authcheck();
-      setAuthData({
-        isLogin: authData.isLogin,
-        name: authData.name,
-        userId: authData.userId,
-        authority: authData.authority,
-        manageOf: authData.manageOf,
-      });
-      setIsLoading(false);
-    };
-    fetchData();
+    setAuthData({
+      isLogin: true,
+      name: "JunLab",
+      userId: 10,
+      authority: 4,
+      manageOf: -1,
+    });
+    setIsLoading(false);
   }, []);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const authData = await authcheck();
+  //     setAuthData({
+  //       isLogin: authData.isLogin,
+  //       name: authData.name,
+  //       userId: authData.userId,
+  //       authority: authData.authority,
+  //       manageOf: authData.manageOf,
+  //     });
+  //     setIsLoading(false);
+  //   };
+  //   fetchData();
+  // }, []);
 
   if (isLoading) {
     return <></>;
@@ -93,10 +93,10 @@ function App() {
     <Router>
       <div className="App layer1">
         <Routes>
-          <Route path="/factoryManagement/login" />
-          <Route path="/factoryManagement/signup" />
+          <Route path="/factorymanagement/login" />
+          <Route path="/factorymanagement/signup" />
           <Route
-            path="/factoryManagement/*"
+            path="/factorymanagement/*"
             element={
               <Header
                 toggleSidebar={toggleSidebar}

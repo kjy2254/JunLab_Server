@@ -43,7 +43,7 @@ function Sidebar(props) {
           <ul className="item">
             <Link
               className="link-unstyled"
-              to={`/factoryManagement/factory/${factoryId}/dashboard`}
+              to={`/factorymanagement/factory/${factoryId}/dashboard`}
             >
               <li>
                 <div className="wrapper">
@@ -102,7 +102,7 @@ function Sidebar(props) {
         <ul className="bottom-item">
           <Link
             className="link-unstyled"
-            to={`/factoryManagement/factory/${factoryId}/settings`}
+            to={`/factorymanagement/factory/${factoryId}/settings`}
           >
             <li>
               <div className="wrapper">

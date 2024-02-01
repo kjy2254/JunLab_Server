@@ -59,7 +59,7 @@ function Login() {
         <h1 className="logo">Logo</h1>
         <div className="form layer2">
           <div>
-            <h5>Login</h5>
+            <h5>로그인</h5>
             <h7>
               계정이 없으신가요? &nbsp;
               <Link to={`/factorymanagement/signup`}>회원가입</Link>
@@ -67,7 +67,7 @@ function Login() {
           </div>
 
           <div className="id-wrapper">
-            <span>ID</span>
+            <span>아이디</span>
             <input
               id="id"
               type="text"
@@ -75,7 +75,7 @@ function Login() {
             />
           </div>
           <div className="pw-wrapper">
-            <span>Password</span>
+            <span>패스워드</span>
             <input
               id="password"
               type="password"
@@ -83,7 +83,7 @@ function Login() {
             />
           </div>
           <div className="button-wrapper">
-            <button onClick={postLogin}>Login</button>
+            <button onClick={postLogin}>로그인</button>
           </div>
         </div>
       </div>

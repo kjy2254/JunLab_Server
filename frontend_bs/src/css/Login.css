@@ -1,22 +1,27 @@
 .login {
-  color: white;
+  /* color: white; */
   background: rgb(48, 58, 69);
   display: flex;
-  height: calc(100vh - 100px);
+  height: calc(100dvh - 100px);
   justify-content: center;
   align-items: center;
+  user-select: none;
 }
 
 .login .bottom {
   position: absolute;
   left: 0;
   bottom: 0;
+  z-index: 0;
+  width: 100vw;
 }
 
 .login .top {
   position: absolute;
   right: 0;
   top: 0;
+  z-index: 0;
+  height: 100dvh;
 }
 
 .login .form {
@@ -28,6 +33,8 @@
   min-width: 25rem;
   min-height: 25rem;
   justify-content: space-around;
+  position: relative;
+  z-index: 1;
 }
 
 .login-wrapper h5 {
@@ -48,7 +55,7 @@
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.button-wrapper {
+.login .button-wrapper {
   height: 6rem;
   width: 100%;
   display: flex;
@@ -80,4 +87,10 @@
 .login-wrapper .logo {
   margin-bottom: 1.5rem;
   font-weight: bold;
+}
+
+@media (max-width: 500px) {
+  .login-wrapper {
+    transform: scale(0.7);
+  }
 }

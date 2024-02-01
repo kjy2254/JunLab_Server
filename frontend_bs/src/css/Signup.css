@@ -2,21 +2,26 @@
   color: white;
   background: rgb(48, 58, 69);
   display: flex;
-  height: calc(100vh - 100px);
+  height: calc(100dvh - 100px);
   justify-content: center;
   align-items: center;
+  user-select: none;
 }
 
 .signup .bottom {
   position: absolute;
   left: 0;
   bottom: 0;
+  z-index: 0;
+  width: 100vw;
 }
 
 .signup .top {
   position: absolute;
   right: 0;
   top: 0;
+  z-index: 0;
+  height: 100dvh;
 }
 
 .signup .form {
@@ -28,6 +33,42 @@
   min-width: 25rem;
   min-height: 30rem;
   justify-content: space-around;
+  position: relative;
+  z-index: 1;
+}
+
+.signup .form-wrapper {
+  max-width: 20rem;
+  height: 16rem;
+  /* background: #000; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 3rem;
+  align-items: center;
+}
+
+.signup .swiper-pagination-bullet {
+  background: #999; /* 점의 기본 색상 */
+  width: 8px; /* 점의 너비 */
+  height: 8px; /* 점의 높이 */
+  opacity: 0.5; /* 점의 불투명도 */
+  border-radius: 50%; /* 원형으로 만들기 */
+}
+
+.signup .swiper-pagination-bullet-active {
+  background: #e4e4e4; /* 활성화된 점의 색상 */
+  opacity: 1;
+}
+
+.signup .swiper-pagination {
+  text-align: right;
+  padding-right: 0.5rem;
+  bottom: 0px;
+}
+
+.signup .swiper-wrapper {
+  max-width: 20rem;
 }
 
 .login-wrapper h5 {
@@ -42,15 +83,14 @@
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.5;
-  color: white;
-  appearance: none;
+  background: inherit;
+  color: inherit;
   border: var(--bs-border-width) solid var(--bs-border-color);
   border-radius: var(--bs-border-radius);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.button-wrapper {
-  height: 6rem;
+.signup .button-wrapper {
   /* background: #000; */
   width: 100%;
   display: flex;
@@ -61,7 +101,7 @@
 .button-wrapper button {
   padding: 0.3rem 0.8rem 0.3rem 0.8rem;
   background: rgb(57, 139, 247);
-  color: white;
+  /* color: white; */
   border-radius: 0.3rem;
   border-style: none;
 }
@@ -71,15 +111,63 @@
   transition: all 0.2s;
 }
 
-.id-wrapper,
+/* .id-wrapper,
 .pw-wrapper {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  align-items: flex-start;
+  width: 99%;
+  user-select: none;
+} */
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 99%;
+  text-align: left;
+}
+
+.input-wrapper .essential {
+  color: red;
 }
 
 .login-wrapper .logo {
   margin-bottom: 1.5rem;
   font-weight: bold;
+}
+
+.signup button:disabled {
+  background: gray;
+}
+
+.signup .gender-birth {
+  display: flex;
+}
+
+.signup .gender-birth select {
+  width: 90%;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  position: absolute;
+  background: none !important;
+  top: unset !important;
+  bottom: 0px;
+  /* border: none; */
+  /* cursor: pointer; */
+  height: 2rem !important;
+  width: 4rem !important;
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  display: none;
+}
+
+.swiper-button-prev {
+  left: 10px;
+}
+
+.swiper-button-next {
+  right: 10px;
 }

@@ -19,7 +19,7 @@ function SidebarAD(props) {
         <ul className="item">
           <Link
             className="link-unstyled"
-            to={`/factoryManagement/admin/factory`}
+            to={`/factorymanagement/admin/factory`}
           >
             <li>
               <div className="wrapper">
@@ -35,7 +35,7 @@ function SidebarAD(props) {
               </div>
             </li>
           </Link>
-          <Link className="link-unstyled" to={`/factoryManagement/admin/logs`}>
+          <Link className="link-unstyled" to={`/factorymanagement/admin/logs`}>
             <li>
               <div className="wrapper">
                 <div className="menu-icon">
