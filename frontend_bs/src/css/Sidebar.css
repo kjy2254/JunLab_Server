@@ -9,6 +9,7 @@
   z-index: 3; /* 다른 요소들 위에 표시 */
   overflow: auto;
   box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.2);
+  user-select: none;
 }
 
 .custom-sidebar.expanded {

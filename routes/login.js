@@ -256,7 +256,7 @@ login.post("/signup2", (req, res) => {
           // DB에 같은 이름의 회원아이디가 없고, 비밀번호가 올바르게 입력된 경우
           const hasedPassword = bcrypt.hashSync(password, 10); // 입력된 비밀번호를 해시한 값
           connection.query(
-            "INSERT INTO users (id, password, name, gender, date_of_birth, email, phone_number, address, role, code) VALUES(?,?,?,?,?,?,?,?,?,?)",
+            "INSERT INTO users (id, password, name, gender, date_of_birth, email, phone_number, address, role, code, join_date) VALUES(?,?,?,?,?,?,?,?,?,?, NOW())",
             [
               id,
               hasedPassword,

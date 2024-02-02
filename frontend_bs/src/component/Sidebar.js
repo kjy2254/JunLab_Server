@@ -11,6 +11,7 @@ import {
   faHouse,
   faFileLines,
   faGear,
+  faCheckDouble,
 } from "@fortawesome/free-solid-svg-icons";
 function Sidebar(props) {
   const [toggleLog, setToggleLog] = useState(true);
@@ -97,6 +98,24 @@ function Sidebar(props) {
                 </li>
               </Link>
             </ul>
+            <Link
+              className="link-unstyled"
+              to={`/factorymanagement/factory/${factoryId}/confirm`}
+            >
+              <li>
+                <div className="wrapper">
+                  <div className="menu-icon">
+                    <FontAwesomeIcon
+                      icon={faCheckDouble}
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                  </div>
+                  <div className={`menu-text ${props.show ? "" : "d-none"}`}>
+                    가입 승인
+                  </div>
+                </div>
+              </li>
+            </Link>
           </ul>
         </div>
         <ul className="bottom-item">

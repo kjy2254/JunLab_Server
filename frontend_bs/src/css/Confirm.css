@@ -1,0 +1,84 @@
+.confirm {
+  /* color: white; */
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  /* background: #000; */
+}
+.confirm-wrapper {
+  width: 100%;
+  min-height: 750px;
+  flex-direction: column;
+  align-items: start;
+  /* background: rgb(25, 36, 48); */
+  /* color: white; */
+  display: flex;
+  border: none;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+  border-radius: 0.3rem;
+  position: relative;
+  align-items: flex-start;
+  max-width: 67rem;
+  overflow: auto;
+}
+
+.confirm .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.5rem;
+  text-align: left;
+  width: calc(100% - 3rem);
+  text-wrap: nowrap;
+}
+
+.header span {
+  font-size: larger;
+}
+
+.confirm table {
+  width: calc(100% - 6rem);
+  text-wrap: nowrap;
+  margin: 3rem;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.confirm table tbody td {
+  /* max-width: 5rem; */
+  height: 2rem;
+  border-top: 1px solid var(--border-color-dark);
+}
+
+.light-mode .confirm table tbody td {
+  border-top: 1px solid var(--border-color-light);
+}
+
+.confirm thead {
+  font-weight: bold;
+}
+
+.confirm td {
+  padding: 1rem;
+}
+
+.confirm .allow,
+.confirm .reject {
+  background: none;
+  padding: 0;
+  margin-right: 1rem;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.confirm .reject {
+  color: red;
+}
+
+.confirm .allow {
+  color: green;
+}
