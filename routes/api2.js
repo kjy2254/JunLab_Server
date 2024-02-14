@@ -648,4 +648,80 @@ api.put("/confirms/reject/:userId", (req, res) => {
   return res.status(200).send("User has been successfully updated.");
 });
 
+api.get("/airwalldata/:env", (req, res) => {
+  const env =
+    req.params.env == "finedust" ? "pm1_0 AS finedust" : req.params.env;
+  let factoryId = req.query.factoryId;
+  let date = req.query.date;
+  let timeSlot = req.query.timeSlot;
+
+  if (!factoryId) return res.status(400).send("factory id is necessary");
+
+  let queryParams = [factoryId];
+
+  // 파티션 존재 여부를 확인하는 쿼리
+  const checkPartitionQuery = `
+          SELECT
+            COUNT(*) as count
+          FROM
+            information_schema.partitions
+          WHERE
+            table_schema = 'factorymanagement' AND
+            table_name = 'sensor_data' AND
+            partition_name = ?;
+          `;
+
+  // 파티션 이름 생성
+  const partitionName = "p" + date?.replaceAll("/", "").replaceAll("-", "");
+
+  // 파티션 존재 여부 확인
+  connection.query(checkPartitionQuery, [partitionName], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+
+    // 파티션이 존재하지 않는 경우
+    if (!timeSlot && result[0].count === 0) {
+      return res.status(200).json([]);
+    }
+    // 파티션이 존재하는 경우, 원래 쿼리 실행
+    let query = ``;
+    if (date) {
+      queryParams.push(date);
+      query += `
+    SELECT
+    s.${env}, s.timestamp, m.module_name
+    FROM
+      sensor_data PARTITION(${partitionName}) s 
+    JOIN
+      sensor_modules m ON s.sensor_module_id = m.module_id
+    WHERE
+      s.factory_id = ?;
+    `;
+    } else {
+      if (!timeSlot) timeSlot = 90;
+      queryParams.push(timeSlot);
+      query += `
+    SELECT
+    s.${env}, s.timestamp, m.module_name
+    FROM
+      sensor_data s 
+    JOIN
+      sensor_modules m ON s.sensor_module_id = m.module_id
+    WHERE
+      s.factory_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE);
+    `;
+    }
+
+    connection.query(query, queryParams, (error, result) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error!");
+      }
+      return res.status(200).json(result);
+    });
+  });
+});
+
 module.exports = api;

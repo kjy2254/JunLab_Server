@@ -27,7 +27,7 @@
   display: none;
 }
 
-.workermodal {
+.envmodal {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -44,21 +44,25 @@
   border: none;
 }
 
-.workermodal .header {
+.envmodal .header {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
+  /* align-items: center; */
   align-items: center;
-  /* background: #000; */
 }
 
-.workermodal .header .user-info {
+.envmodal .header img {
+  margin-right: 0.5rem;
+  width: 40px;
+}
+
+.envmodal .header .user-info {
   display: flex;
   align-items: flex-start;
   flex-direction: column;
 }
 
-.workermodal .header svg {
+.envmodal .header svg {
   cursor: pointer;
 }
 
@@ -66,7 +70,7 @@
   font-size: smaller;
 }
 
-.workermodal .graph-card {
+.envmodal .graph-card {
   display: flex;
   flex-direction: row;
   border: none;
@@ -76,10 +80,11 @@
   position: relative;
   /* min-height: 15rem; */
   /* max-height: 20rem; */
-  /* height: 30%; */
+  height: 100%;
   width: 100%;
   flex-direction: column;
   align-items: start;
+  justify-content: space-between;
   /* overflow: auto; */
 }
 
@@ -154,12 +159,14 @@
   display: flex;
 }
 
-.workermodal .header .right {
+.envmodal .header .right {
   display: flex;
-  margin-bottom: auto;
+  width: 100%;
+  justify-content: end;
+  /* margin-bottom: auto; */
 }
 
-.workermodal .level {
+.envmodal .level {
   /* background: #000; */
   width: 3rem;
   text-align: center;

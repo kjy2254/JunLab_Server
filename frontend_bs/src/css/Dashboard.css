@@ -43,6 +43,10 @@
   /* background: #000; */
 }
 
+.env-card img {
+  cursor: pointer;
+}
+
 .env-card,
 .worker-summary,
 .worker-statistic,
