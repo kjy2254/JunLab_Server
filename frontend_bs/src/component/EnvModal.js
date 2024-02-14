@@ -219,7 +219,7 @@ function GraphCard({ header, img, endpoint, title }) {
     <div className="graph-card layer2">
       <span className="bar" />
       <div className="header">
-        <div>
+        <div className="title">
           <img src={img} alt={""} />
           <span>{header}</span>
         </div>

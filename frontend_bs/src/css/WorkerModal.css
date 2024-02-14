@@ -177,7 +177,7 @@
 }
 
 @media (max-width: 850px) {
-  .graph-card .header label {
+  .workermodal .graph-card .header label {
     margin-right: 1rem;
     margin-left: 0;
   }
@@ -198,13 +198,13 @@
     margin-bottom: 0.3rem;
     margin-right: 0;
   }
-  .graph-card .header .type label {
+  .workermodal .graph-card .header .type label {
     margin-left: 0.5rem;
   }
 }
 
 @media (max-height: 850px) {
-  .chart {
+  .workermodal .chart {
     min-height: 17rem;
     /* background: #000; */
   }

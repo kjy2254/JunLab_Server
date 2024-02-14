@@ -32,8 +32,8 @@ function Dashboard(props) {
   const [onlineData, setOnlineData] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
   const [workerModalOpen, setWorkerModalOpen] = useState(false);
-  const [selectedWorker, setSelectedWorker] = useState(0);
   const [envModalOpen, setEnvModalOpen] = useState(false);
+  const [selectedWorker, setSelectedWorker] = useState(0);
   const [selectedEnvCard, setSelectedEnvCard] = useState(0);
   const [img, setImg] = useState();
   const handlePlayPause = () => {
@@ -42,6 +42,19 @@ function Dashboard(props) {
   useEffect(() => {
     props.setHeaderText("통합상황판");
   }, []);
+
+  useEffect(() => {
+    if (envModalOpen || workerModalOpen) {
+      // 모달이 열릴 때 스크롤 비활성화
+      document.body.style.overflow = "hidden";
+    } else {
+      // 모달이 닫힐 때 스크롤 활성화
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [envModalOpen, workerModalOpen]); // 모달 상태가 변경될 때마다 실행
 
   return (
     <div className="dashboard">

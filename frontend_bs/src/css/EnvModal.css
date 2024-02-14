@@ -1,37 +1,7 @@
-.ReactModal__Overlay {
-  z-index: 3;
-}
-
-.ReactModal__Content:focus {
-  outline: none; /* 포커스 시 아웃라인 제거 */
-}
-
-.ReactModal__Content::-webkit-scrollbar {
-  width: 4px; /* 스크롤바의 너비 */
-  height: 4px; /* 스크롤바의 높이 */
-}
-
-.ReactModal__Content::-webkit-scrollbar {
-  display: block;
-}
-.ReactModal__Content::-webkit-scrollbar-track,
-.ReactModal__Content::-webkit-scrollbar-button {
-  display: none;
-}
-.ReactModal__Content::-webkit-scrollbar-thumb {
-  background-color: gray;
-  border-radius: 4px;
-}
-/* 스크롤바 코너를 숨깁니다 */
-.ReactModal__Content::-webkit-scrollbar-corner {
-  display: none;
-}
-
 .envmodal {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-
   width: calc(100% - 13rem);
   height: calc(100% - 13rem);
   z-index: 15;
@@ -49,6 +19,14 @@
   justify-content: space-between;
   /* align-items: center; */
   align-items: center;
+}
+
+.envmodal .header .title {
+  overflow: hidden;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  max-width: 20rem;
 }
 
 .envmodal .header img {
@@ -100,7 +78,7 @@
 
 .graph-card .header .setting {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   /* justify-content: flex-start; */
 }
@@ -176,8 +154,12 @@
   margin-right: 1rem;
 }
 
+input[type="date"] {
+  width: 9rem !important;
+}
+
 @media (max-width: 680px) {
-  .workermodal {
+  .envmodal {
     width: calc(100% - 7rem);
     height: calc(100% - 7rem);
   }
@@ -188,24 +170,33 @@
     margin-right: 1rem;
     margin-left: 0;
   }
+
+  .envmodal .graph-card .header {
+    flex-flow: column;
+    align-items: flex-start;
+  }
+
+  .envmodal .header .title {
+    margin-bottom: 1rem;
+  }
 }
 
 @media (max-width: 450px) {
-  .workermodal {
+  .envmodal {
     width: calc(100% - 1rem);
     height: calc(100% - 1rem);
   }
 
-  .workermodal .setting {
+  .envmodal .setting {
     justify-content: center;
   }
 
-  .workermodal .setting label {
+  .envmodal .setting label {
     margin-top: 0.3rem;
     margin-bottom: 0.3rem;
     margin-right: 0;
   }
-  .graph-card .header .type label {
+  .envmodal .graph-card .header .type label {
     margin-left: 0.5rem;
   }
 }
@@ -213,6 +204,5 @@
 @media (max-height: 850px) {
   .chart {
     min-height: 17rem;
-    /* background: #000; */
   }
 }
