@@ -60,7 +60,7 @@ function Header(props) {
             className="login-btn"
             href="http://junlab.postech.ac.kr:880/login/logout2"
           >
-            로그아웃
+            {props.isLogin ? "로그아웃" : "로그인"}
           </Button>
         </Nav>
       </Navbar.Collapse>

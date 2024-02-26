@@ -112,6 +112,7 @@ function App() {
                 smallView={smallView}
                 toggleSmallSidebar={toggleSmallSidebar}
                 headerText={headerText}
+                isLogin={authData.isLogin}
               />
             }
           />
@@ -188,8 +189,10 @@ function App() {
                       closeSmallSidebar={closeSmallSidebar}
                     />
                   }
-                  isAllow={authData.isLogin && authData.authority >= 4}
-                  manageOf={authData.manageOf}
+                  isAllow={true}
+                  // isAllow={authData.isLogin && authData.authority >= 4}
+                  manageOf={-1}
+                  // manageOf={authData.manageOf}
                 />
               }
             />

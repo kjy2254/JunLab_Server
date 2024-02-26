@@ -1,12 +1,40 @@
 const express = require("express");
 const api = express.Router();
-const connection = require("../database/apiConnection");
-const connection2 = require("../database/mysql");
+const connection = require("../database/apiConnection.js");
+const connection2 = require("../database/mysql.js");
+const path = require("path");
+const fs = require("fs");
 const {
   calcWorkLoadIndex,
   calcEnviromentIndex,
   calclevel,
 } = require("../util/logic.js");
+
+api.get("/image/:imageName", (req, res) => {
+  const { imageName } = req.params;
+  // 이미지 파일의 경로 설정 (images 폴더 내에 이미지 파일이 있어야 함)
+  const imagePath = path.join(__dirname, "../images", imageName);
+  const defaultPath = path.join(__dirname, "../images/factory_default.png");
+
+  // 이미지 파일이 존재하는지 확인
+  if (fs.existsSync(imagePath)) {
+    // 이미지 파일을 읽어 응답으로 전송
+    res.sendFile(imagePath, (err) => {
+      if (err) {
+        console.error("이미지 파일을 읽어오지 못했습니다.", err);
+        return res.status(404).send("이미지를 찾을 수 없습니다.");
+      }
+    });
+  } else {
+    // 이미지 파일을 찾을 수 없을 때 기본 이미지를 응답으로 보냅니다.
+    res.sendFile(defaultPath, (err) => {
+      if (err) {
+        console.error("기본 이미지 파일을 읽어오지 못했습니다.", err);
+        return res.status(404).send("이미지를 찾을 수 없습니다.");
+      }
+    });
+  }
+});
 
 api.get("/factories", (req, res) => {
   const query = "SELECT * FROM factories";

@@ -213,7 +213,7 @@ function FactoryDetail({ detail }) {
   return (
     <div className="detail">
       <img
-        src={`http://junlab.postech.ac.kr:880/api/image/factory_${detail.factory_id}.png`}
+        src={`http://junlab.postech.ac.kr:880/api2/image/factory_${detail.factory_id}.png`}
       />
       <div className="text">
         <div className="wrapper">
