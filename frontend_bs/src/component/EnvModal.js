@@ -152,6 +152,8 @@ function GraphCard({ header, img, endpoint, title }) {
             color: lightMode ? "inherit" : "rgb(230, 233, 236)",
           },
         },
+        lineColor: lightMode ? "black" : "rgb(230, 233, 236)",
+        tickColor: lightMode ? "black" : "rgb(230, 233, 236)",
       },
       yAxis: {
         title: {
@@ -162,6 +164,9 @@ function GraphCard({ header, img, endpoint, title }) {
             color: lightMode ? "inherit" : "rgb(230, 233, 236)",
           },
         },
+        gridLineColor: lightMode
+          ? "var(--border-color-light)"
+          : "var(--border-color-dark)",
       },
       legend: {
         enabled: true,

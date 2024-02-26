@@ -4,6 +4,7 @@ const path = require("path");
 const login = express.Router();
 
 const connection = require("../database/apiConnection");
+const labelConnection = require("../database/labelConnection");
 const sessionOption = require("../database/sessionOptions");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
@@ -175,6 +176,27 @@ login.post("/login2", (req, res) => {
     // 아이디, 비밀번호 중 입력되지 않은 값이 있는 경우
     sendData.isLogin = "아이디와 비밀번호를 입력하세요!";
     res.send(sendData);
+  }
+});
+
+login.post("/label-login", (req, res) => {
+  // 데이터 받아서 결과 전송
+  const id = req.body.labelerId;
+
+  if (id) {
+    labelConnection.query(
+      "SELECT * FROM labeler WHERE id = ?",
+      [id],
+      (error, results) => {
+        if (results.length != 0) {
+          res.send({ isLogin: true, id: results[0].id, type: results[0].type });
+        } else {
+          res.send({ isLogin: false });
+        }
+      }
+    );
+  } else {
+    res.send({ isLogin: false });
   }
 });
 

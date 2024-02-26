@@ -8,6 +8,7 @@ var indexRouter = require("./routes/index");
 var iitpRouter = require("./routes/iitp");
 var apiRouter = require("./routes/api");
 var apiRouter2 = require("./routes/api2");
+var apiRouter3 = require("./routes/api3");
 var longInRouter = require("./routes/login");
 var factoryManagementRouter = require("./routes/factoryManagement");
 var factorymanagementRouter = require("./routes/factoryManagement copy");
@@ -59,8 +60,10 @@ app.use("/static", express.static("static"));
 app.use("/iitp", iitpRouter);
 app.use("/api", apiRouter);
 app.use("/api2", apiRouter2);
+app.use("/api3", apiRouter3);
 app.use("/login", longInRouter);
 app.use("/factorymanagement", factorymanagementRouter);
+app.use("/labeling", factorymanagementRouter);
 app.use("/iitp/factoryManagement", factoryManagementRouter);
 
 app.use("/images", express.static(path.join(__dirname, "images")));

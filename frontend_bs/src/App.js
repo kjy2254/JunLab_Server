@@ -23,6 +23,7 @@ import {
 } from "react-router-dom";
 import Signup from "./component/Signup";
 import { authcheck } from "./util";
+import Labeling from "./component/labeling/Labeling";
 
 function App() {
   const [toggleSide, setToggleSide] = useState(true);
@@ -61,7 +62,7 @@ function App() {
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const debug = true;
+  const debug = false;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -102,6 +103,7 @@ function App() {
         <Routes>
           <Route path="/factorymanagement/login" />
           <Route path="/factorymanagement/signup" />
+          <Route path="/labeling" />
           <Route
             path="/factorymanagement/*"
             element={
@@ -152,6 +154,10 @@ function App() {
                   isAllow={!authData.isLogin}
                 />
               }
+            />
+            <Route
+              path="/labeling"
+              element={<RestrictRoute element={<Labeling />} isAllow={true} />}
             />
             <Route
               path="/factorymanagement/admin/factory"

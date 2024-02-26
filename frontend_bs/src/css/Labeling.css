@@ -1,0 +1,238 @@
+.labeling {
+  width: 100%;
+  /* height: calc(100dvh - 56px); */
+  padding: 2rem;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
+  overflow: auto;
+  user-select: none;
+}
+
+.labeling-wrapper {
+  width: calc(100% - 1rem);
+  max-width: 100rem;
+  /* min-height: 60rem; */
+  /* max-height: 65rem; */
+  align-items: flex-start;
+  display: flex;
+  border: none;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+  border-radius: 0.3rem;
+  position: relative;
+  align-items: flex-start;
+  padding: 2rem;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.labeling-wrapper label {
+  text-align: left;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.labeling .personal-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.labeling .male {
+  color: skyblue;
+  margin-right: 0.3rem;
+}
+
+.labeling .female {
+  color: orange;
+  margin-right: 0.3rem;
+}
+
+.labeling .header {
+  /* font-weight: bold; */
+  margin-bottom: 0.5rem;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  text-wrap: nowrap;
+}
+
+.labeling .meta-area {
+  display: flex;
+}
+
+.labeling .meta-info {
+  display: flex;
+  flex-direction: column;
+  margin-right: 1rem;
+  width: 13rem;
+  align-items: flex-start;
+}
+
+.labeling .data-type {
+  margin-left: auto;
+  display: flex;
+}
+
+.labeling .data-type input {
+  margin-left: 1rem;
+}
+
+.labeling .graph-area {
+  width: calc(100% - 2rem);
+  /* min-height: 60rem; */
+  margin: 2rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  /* background: #000; */
+}
+
+.labeling .graph {
+  width: 48%;
+  margin-bottom: 1rem;
+  height: calc((100% - 2rem) / 2);
+  /* min-height: 20rem; */
+  /* max-height: 20rem; */
+  border: 1px solid var(--border-color-dark);
+}
+
+.light-mode .labeling .graph {
+  border: 1px solid var(--border-color-light);
+}
+
+.labeling input[type="number"] {
+  width: 10rem;
+  margin: 0 1rem;
+}
+
+.labeling button {
+  background: rgb(116, 90, 242);
+}
+
+.labeling .bottom {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.labeling .bottom .right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.labeling .bottom .right .score {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.labeling .bottom .right .buttons button {
+  margin-left: 0.5rem;
+}
+
+.labeling .progress-data {
+  width: calc(100% - 1rem);
+  max-width: 100rem;
+  height: 8rem;
+  align-items: center;
+  display: flex;
+  border: none;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.3rem;
+  position: relative;
+  align-items: center;
+  overflow-x: scroll;
+}
+
+.labeling .progress-card {
+  margin: 0 1rem;
+  border: 1px solid var(--border-color-dark);
+  height: calc(100% - 1.5rem);
+  border-radius: 0.3rem;
+  min-width: 10rem;
+  max-width: 10rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 3px 1px 5px rgba(0, 0, 0, 0.05);
+}
+
+.light-mode .labeling .progress-card {
+  border: 1px solid var(--border-color-light);
+}
+
+@media (max-width: 850px) {
+  .labeling .graph {
+    width: 100%;
+    height: calc(25% - 1rem);
+  }
+  .labeling-wrapper {
+    max-height: unset;
+  }
+}
+
+@media (max-width: 600px) {
+  .labeling .meta-area {
+    flex-direction: column;
+  }
+
+  .labeling {
+    padding: 0.5rem;
+  }
+  .labeling .labeling-wrapper {
+    margin: unset;
+  }
+
+  .labeling .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .labeling .data-type {
+    margin: unset;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .labeling .data-type input {
+    margin: unset;
+  }
+  .labeling .data-type span {
+    margin-right: 1rem;
+  }
+
+  .labeling .bottom {
+    text-wrap: nowrap;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .labeling .bottom .right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .labeling .bottom .right .score input {
+    margin-left: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .labeling .bottom .right .buttons {
+    margin-left: auto;
+  }
+}

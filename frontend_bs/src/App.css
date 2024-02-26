@@ -82,7 +82,7 @@ button {
 
 .light-mode .layer1 {
   background-color: var(--layer1-color-light);
-  color: black !important;
+  color: black;
 }
 
 .light-mode .layer2 {
@@ -99,6 +99,11 @@ button {
   color: black !important;
 }
 
+.layerHD {
+  background-color: var(--layerHD-color-dark);
+  color: white !important;
+}
+
 .light-mode .layerModal {
   background-color: var(--layerModal-color-light);
   color: black;
@@ -106,7 +111,7 @@ button {
 
 .layer1 {
   background-color: var(--layer1-color-dark);
-  color: white !important;
+  color: white;
 }
 
 .layer2 {
@@ -115,11 +120,6 @@ button {
 
 .layerSB {
   background-color: var(--layerSB-color-dark);
-}
-
-.layerHD {
-  background-color: var(--layerHD-color-dark);
-  color: white !important;
 }
 
 .layerModal {
