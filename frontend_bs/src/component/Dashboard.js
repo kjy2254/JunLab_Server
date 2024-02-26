@@ -14,6 +14,7 @@ import { Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import WorkerModal from "./WorkerModal";
+import EnvModal from "./EnvModal";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,13 +25,17 @@ import {
   faBatteryThreeQuarters,
   faPause,
   faPlay,
+  faChartLine,
 } from "@fortawesome/free-solid-svg-icons";
 
 function Dashboard(props) {
   const [onlineData, setOnlineData] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [workerModalOpen, setWorkerModalOpen] = useState(false);
+  const [envModalOpen, setEnvModalOpen] = useState(false);
   const [selectedWorker, setSelectedWorker] = useState(0);
+  const [selectedEnvCard, setSelectedEnvCard] = useState(0);
+  const [img, setImg] = useState();
   const handlePlayPause = () => {
     setIsPaused((p) => !p);
   };
@@ -38,15 +43,30 @@ function Dashboard(props) {
     props.setHeaderText("통합상황판");
   }, []);
 
+  useEffect(() => {
+    if (envModalOpen || workerModalOpen) {
+      // 모달이 열릴 때 스크롤 비활성화
+      document.body.style.overflow = "hidden";
+    } else {
+      // 모달이 닫힐 때 스크롤 활성화
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [envModalOpen, workerModalOpen]); // 모달 상태가 변경될 때마다 실행
+
   return (
     <div className="dashboard">
       <div className="dashboard-wrapper">
         <div className="play-pause">
-          {isPaused ? (
-            <FontAwesomeIcon icon={faPlay} onClick={handlePlayPause} />
-          ) : (
-            <FontAwesomeIcon icon={faPause} onClick={handlePlayPause} />
-          )}
+          <div title="자동 슬라이드">
+            {isPaused ? (
+              <FontAwesomeIcon icon={faPlay} onClick={handlePlayPause} />
+            ) : (
+              <FontAwesomeIcon icon={faPause} onClick={handlePlayPause} />
+            )}
+          </div>
         </div>
 
         <div className="first-row">
@@ -56,6 +76,9 @@ function Dashboard(props) {
             endpoint={"tvoc"}
             img={tvoc}
             isPaused={isPaused}
+            setSelectedEnvCard={setSelectedEnvCard}
+            setEnvModalOpen={setEnvModalOpen}
+            setImg={setImg}
           />
           <EnvCard
             title={"CO2"}
@@ -63,6 +86,9 @@ function Dashboard(props) {
             endpoint={"co2"}
             img={co2}
             isPaused={isPaused}
+            setSelectedEnvCard={setSelectedEnvCard}
+            setEnvModalOpen={setEnvModalOpen}
+            setImg={setImg}
           />
           <EnvCard
             title={"Temperature"}
@@ -70,6 +96,9 @@ function Dashboard(props) {
             endpoint={"temperature"}
             img={temperature}
             isPaused={isPaused}
+            setSelectedEnvCard={setSelectedEnvCard}
+            setEnvModalOpen={setEnvModalOpen}
+            setImg={setImg}
           />
           <EnvCard
             title={"Fine Dust"}
@@ -77,13 +106,16 @@ function Dashboard(props) {
             endpoint={"finedust"}
             img={finedust}
             isPaused={isPaused}
+            setSelectedEnvCard={setSelectedEnvCard}
+            setEnvModalOpen={setEnvModalOpen}
+            setImg={setImg}
           />
         </div>
         <div className="second-row">
           <WorkerSummary
             onlineData={onlineData}
             setOnlineData={setOnlineData}
-            setModalOpen={setModalOpen}
+            setModalOpen={setWorkerModalOpen}
             setSelectedWorker={setSelectedWorker}
           />
           <WorkerStatistic data={onlineData} />
@@ -92,16 +124,31 @@ function Dashboard(props) {
           <Advice />
         </div>
         <WorkerModal
-          modalOpen={modalOpen}
-          setModalOpen={setModalOpen}
+          modalOpen={workerModalOpen}
+          setModalOpen={setWorkerModalOpen}
           selectedWorker={selectedWorker}
+        />
+        <EnvModal
+          modalOpen={envModalOpen}
+          setModalOpen={setEnvModalOpen}
+          selectedEnvCard={selectedEnvCard}
+          img={img}
         />
       </div>
     </div>
   );
 }
 
-function EnvCard({ title, unit, endpoint, img, isPaused }) {
+function EnvCard({
+  title,
+  unit,
+  endpoint,
+  img,
+  isPaused,
+  setSelectedEnvCard,
+  setEnvModalOpen,
+  setImg,
+}) {
   const { factoryId } = useParams();
   const [data, setData] = useState([]);
   const [index, setIndex] = useState(0);
@@ -171,7 +218,16 @@ function EnvCard({ title, unit, endpoint, img, isPaused }) {
   return (
     <div className="env-card layer2">
       <span className="bar" />
-      <img src={img} alt={title} />
+      <img
+        title="그래프 보기"
+        src={img}
+        alt={title}
+        onClick={() => {
+          setEnvModalOpen(true);
+          setSelectedEnvCard(endpoint);
+          setImg(img);
+        }}
+      />
       {data.length > 0 && (
         <Swiper
           {...settings}

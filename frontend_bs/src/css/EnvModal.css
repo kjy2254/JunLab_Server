@@ -1,41 +1,11 @@
-.ReactModal__Overlay {
-  z-index: 3;
-}
-
-.ReactModal__Content:focus {
-  outline: none; /* 포커스 시 아웃라인 제거 */
-}
-
-.ReactModal__Content::-webkit-scrollbar {
-  width: 4px; /* 스크롤바의 너비 */
-  height: 4px; /* 스크롤바의 높이 */
-}
-
-.ReactModal__Content::-webkit-scrollbar {
-  display: block;
-}
-.ReactModal__Content::-webkit-scrollbar-track,
-.ReactModal__Content::-webkit-scrollbar-button {
-  display: none;
-}
-.ReactModal__Content::-webkit-scrollbar-thumb {
-  background-color: gray;
-  border-radius: 4px;
-}
-/* 스크롤바 코너를 숨깁니다 */
-.ReactModal__Content::-webkit-scrollbar-corner {
-  display: none;
-}
-
-.workermodal {
+.envmodal {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-
   width: calc(100% - 13rem);
   max-width: 80rem;
   height: calc(100% - 13rem);
-  max-height: 75rem;
+  max-height: 45rem;
   z-index: 15;
   position: absolute;
   top: 50%;
@@ -46,25 +16,37 @@
   border: none;
 }
 
-.workermodal .header {
+.envmodal .header {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
+  /* align-items: center; */
   align-items: center;
-  /* background: #000; */
 }
 
-.workermodal .header .user-info {
+.envmodal .header .title {
+  overflow: hidden;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  max-width: 20rem;
+}
+
+.envmodal .header img {
+  margin-right: 0.5rem;
+  width: 40px;
+}
+
+.envmodal .header .user-info {
   display: flex;
   align-items: flex-start;
   flex-direction: column;
 }
 
-.workermodal .header svg {
+.envmodal .header svg {
   cursor: pointer;
 }
 
-.workermodal .header svg:hover {
+.envmodal .header svg:hover {
   opacity: 0.85;
 }
 
@@ -72,7 +54,7 @@
   font-size: smaller;
 }
 
-.workermodal .graph-card {
+.envmodal .graph-card {
   display: flex;
   flex-direction: row;
   border: none;
@@ -82,10 +64,11 @@
   position: relative;
   /* min-height: 15rem; */
   /* max-height: 20rem; */
-  /* height: 30%; */
+  height: 100%;
   width: 100%;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: space-between;
   /* overflow: auto; */
 }
 
@@ -101,7 +84,7 @@
 
 .graph-card .header .setting {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   /* justify-content: flex-start; */
 }
@@ -160,12 +143,14 @@
   display: flex;
 }
 
-.workermodal .header .right {
+.envmodal .header .right {
   display: flex;
-  margin-bottom: auto;
+  width: 100%;
+  justify-content: flex-end;
+  /* margin-bottom: auto; */
 }
 
-.workermodal .level {
+.envmodal .level {
   /* background: #000; */
   width: 3rem;
   text-align: center;
@@ -175,43 +160,55 @@
   margin-right: 1rem;
 }
 
+input[type="date"] {
+  width: 9rem !important;
+}
+
 @media (max-width: 680px) {
-  .workermodal {
+  .envmodal {
     width: calc(100% - 7rem);
     height: calc(100% - 7rem);
   }
 }
 
 @media (max-width: 850px) {
-  .workermodal .graph-card .header label {
+  .graph-card .header label {
     margin-right: 1rem;
     margin-left: 0;
+  }
+
+  .envmodal .graph-card .header {
+    flex-flow: column;
+    align-items: flex-start;
+  }
+
+  .envmodal .header .title {
+    margin-bottom: 1rem;
   }
 }
 
 @media (max-width: 450px) {
-  .workermodal {
+  .envmodal {
     width: calc(100% - 1rem);
     height: calc(100% - 1rem);
   }
 
-  .workermodal .setting {
+  .envmodal .setting {
     justify-content: center;
   }
 
-  .workermodal .setting label {
+  .envmodal .setting label {
     margin-top: 0.3rem;
     margin-bottom: 0.3rem;
     margin-right: 0;
   }
-  .workermodal .graph-card .header .type label {
+  .envmodal .graph-card .header .type label {
     margin-left: 0.5rem;
   }
 }
 
 @media (max-height: 850px) {
-  .workermodal .chart {
+  .chart {
     min-height: 17rem;
-    /* background: #000; */
   }
 }

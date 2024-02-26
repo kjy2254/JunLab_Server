@@ -5,10 +5,11 @@
   transition: width 0.2s ease;
   flex-shrink: 0;
   position: fixed; /* 화면에 고정 */
-  height: 100%; /* 전체 높이 */
+  height: calc(100% - 56px); /* 전체 높이 */
   z-index: 3; /* 다른 요소들 위에 표시 */
   overflow: auto;
   box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.2);
+  user-select: none;
 }
 
 .custom-sidebar.expanded {
@@ -50,8 +51,10 @@
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
-  min-height: calc(100% - 8rem);
+  min-height: calc(100% - 4rem);
+  /* min-height: 100%; */
   justify-content: space-between;
+  overflow: visible;
 }
 
 .bottom-item li,

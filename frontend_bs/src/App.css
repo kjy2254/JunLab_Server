@@ -1,7 +1,7 @@
 .App {
   text-align: center;
-  min-height: 100vh;
-  overflow-y: auto;
+  min-height: 100dvh;
+  overflow-y: hidden;
   display: flex;
   flex-direction: column;
   background: rgb(48, 58, 69);
@@ -12,6 +12,11 @@
   height: 100%;
   max-height: 100%;
   padding-top: 56px;
+}
+
+.logo,
+button {
+  user-select: none;
 }
 
 .main {
@@ -77,7 +82,7 @@
 
 .light-mode .layer1 {
   background-color: var(--layer1-color-light);
-  color: black !important;
+  color: black;
 }
 
 .light-mode .layer2 {
@@ -94,6 +99,11 @@
   color: black !important;
 }
 
+.layerHD {
+  background-color: var(--layerHD-color-dark);
+  color: white !important;
+}
+
 .light-mode .layerModal {
   background-color: var(--layerModal-color-light);
   color: black;
@@ -101,7 +111,7 @@
 
 .layer1 {
   background-color: var(--layer1-color-dark);
-  color: white !important;
+  color: white;
 }
 
 .layer2 {
@@ -112,11 +122,6 @@
   background-color: var(--layerSB-color-dark);
 }
 
-.layerHD {
-  background-color: var(--layerHD-color-dark);
-  color: white !important;
-}
-
 .layerModal {
   background-color: var(--layerModal-color-dark);
   color: white;
@@ -125,7 +130,8 @@
 input[type="text"],
 input[type="password"],
 input[type="number"],
-input[type="datetime-local"] {
+input[type="datetime-local"],
+input[type="date"] {
   display: block;
   width: 100%;
   padding: 0.375rem 0.75rem;
@@ -141,8 +147,9 @@ input[type="datetime-local"] {
 
 .light-mode input[type="text"],
 .light-mode input[type="number"],
-input[type="password"],
-.light-mode input[type="datetime-local"] {
+.light-mode input[type="password"],
+.light-mode input[type="datetime-local"],
+.light-mode input[type="date"] {
   border: 1px solid var(--border-color-light);
   background-color: var(--layer2-color-light);
   box-shadow: none;

@@ -75,15 +75,35 @@ function AirWall(props) {
   );
 }
 
+function formatTimestamp(timestamp) {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const seconds = date.getSeconds().toString().padStart(2, "0");
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 function downloadCSV(data, filename) {
   let csvContent = "\uFEFF"; // UTF-8 BOM 추가
 
   // 헤더 추가
-  csvContent += Object.keys(data[0]).join(",") + "\r\n";
+  const headers = Object.keys(data[0]);
+  csvContent += headers.join(",") + "\r\n";
 
-  // 데이터 행 추가
+  // 데이터 행 추가, 특히 timestamp 형식화 적용
   data.forEach(function (row) {
-    let rowString = Object.values(row).join(",");
+    let rowData = headers.map((header) => {
+      // timestamp 열에 대해 형식화 적용
+      if (header === "timestamp") {
+        return formatTimestamp(row[header]);
+      } else {
+        return row[header];
+      }
+    });
+    let rowString = rowData.join(",");
     csvContent += rowString + "\r\n";
   });
 
@@ -249,11 +269,6 @@ function MyTable({ columns, data, isLoading }) {
   useEffect(() => {
     setInputPageIndex(pageIndex + 1);
   }, [pageIndex]);
-
-  function formatTimestamp(timestamp) {
-    const date = new Date(timestamp);
-    return date.toLocaleString(); // 기본 로컬 시간 형식 사용
-  }
 
   return (
     <div className="table-pagenation">

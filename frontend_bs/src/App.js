@@ -11,8 +11,10 @@ import AirWall from "./component/AirWall";
 import AirWatch from "./component/AirWatch";
 import Settings from "./component/Settings/Settings";
 import UserInit from "./component/UserInit";
+import Confirm from "./component/Confirm";
+import Vital from "./component/Vital";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   BrowserRouter as Router,
   Route,
@@ -21,6 +23,7 @@ import {
 } from "react-router-dom";
 import Signup from "./component/Signup";
 import { authcheck } from "./util";
+import Labeling from "./component/labeling/Labeling";
 
 function App() {
   const [toggleSide, setToggleSide] = useState(true);
@@ -59,16 +62,7 @@ function App() {
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  // useEffect(() => {
-  //   setAuthData({
-  //     isLogin: false,
-  //     name: "JunLab",
-  //     userId: 10,
-  //     authority: 4,
-  //     manageOf: -1,
-  //   });
-  //   setIsLoading(false);
-  // }, []);
+  const debug = false;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,7 +76,21 @@ function App() {
       });
       setIsLoading(false);
     };
-    fetchData();
+    const fetchDebug = () => {
+      setAuthData({
+        isLogin: true,
+        name: "JunLab",
+        userId: 10,
+        authority: 4,
+        manageOf: -1,
+      });
+      setIsLoading(false);
+    };
+    if (debug) {
+      fetchDebug();
+    } else {
+      fetchData();
+    }
   }, []);
 
   if (isLoading) {
@@ -93,10 +101,11 @@ function App() {
     <Router>
       <div className="App layer1">
         <Routes>
-          <Route path="/factoryManagement/login" />
-          <Route path="/factoryManagement/signup" />
+          <Route path="/factorymanagement/login" />
+          <Route path="/factorymanagement/signup" />
+          <Route path="/labeling" />
           <Route
-            path="/factoryManagement/*"
+            path="/factorymanagement/*"
             element={
               <Header
                 toggleSidebar={toggleSidebar}
@@ -147,6 +156,10 @@ function App() {
               }
             />
             <Route
+              path="/labeling"
+              element={<RestrictRoute element={<Labeling />} isAllow={true} />}
+            />
+            <Route
               path="/factorymanagement/admin/factory"
               element={
                 <RestrictRoute
@@ -158,7 +171,7 @@ function App() {
                       closeSmallSidebar={closeSmallSidebar}
                     />
                   }
-                  isAllow={authData.authority >= 4}
+                  isAllow={authData.isLogin && authData.authority >= 4}
                   manageOf={authData.manageOf}
                 />
               }
@@ -175,7 +188,7 @@ function App() {
                       closeSmallSidebar={closeSmallSidebar}
                     />
                   }
-                  isAllow={authData.authority >= 4}
+                  isAllow={authData.isLogin && authData.authority >= 4}
                   manageOf={authData.manageOf}
                 />
               }
@@ -192,7 +205,7 @@ function App() {
                       closeSmallSidebar={closeSmallSidebar}
                     />
                   }
-                  isAllow={authData.authority >= 3}
+                  isAllow={authData.isLogin && authData.authority >= 3}
                   manageOf={authData.manageOf}
                 />
               }
@@ -209,7 +222,7 @@ function App() {
                       closeSmallSidebar={closeSmallSidebar}
                     />
                   }
-                  isAllow={authData.authority >= 3}
+                  isAllow={authData.isLogin && authData.authority >= 3}
                   manageOf={authData.manageOf}
                 />
               }
@@ -226,7 +239,24 @@ function App() {
                       closeSmallSidebar={closeSmallSidebar}
                     />
                   }
-                  isAllow={authData.authority >= 3}
+                  isAllow={authData.isLogin && authData.authority >= 3}
+                  manageOf={authData.manageOf}
+                />
+              }
+            />
+            <Route
+              path="/factorymanagement/factory/:factoryId/confirm"
+              element={
+                <RestrictRoute
+                  element={
+                    <CustomComponent
+                      Component={Confirm}
+                      toggleSide={toggleSide}
+                      setHeaderText={setHeaderText}
+                      closeSmallSidebar={closeSmallSidebar}
+                    />
+                  }
+                  isAllow={authData.isLogin && authData.authority >= 3}
                   manageOf={authData.manageOf}
                 />
               }
@@ -243,7 +273,7 @@ function App() {
                       closeSmallSidebar={closeSmallSidebar}
                     />
                   }
-                  isAllow={authData.authority >= 3}
+                  isAllow={authData.isLogin && authData.authority >= 3}
                   manageOf={authData.manageOf}
                 />
               }
@@ -253,7 +283,16 @@ function App() {
               element={
                 <RestrictRoute
                   element={<UserInit />}
-                  isAllow={authData.authority == 0}
+                  isAllow={authData.isLogin && authData.authority <= 1}
+                />
+              }
+            />
+            <Route
+              path="/factorymanagement/user/vital"
+              element={
+                <RestrictRoute
+                  element={<Vital />}
+                  isAllow={authData.isLogin && authData.authority >= 2}
                 />
               }
             />
@@ -270,13 +309,25 @@ function App() {
 
 function RestrictRoute({ element, isAllow, manageOf }) {
   const { factoryId } = useParams();
+  const navigate = useNavigate();
+  const [redirect, setRedirect] = useState(false);
 
-  // manageOf가 정의되지 않았거나, manageOf가 factoryId와 일치하거나, manageOf가 -1 이하인 경우
   const isAllowed =
     isAllow &&
     (manageOf === undefined || manageOf == factoryId || manageOf < 0);
 
-  return isAllowed ? element : <Navigate to="/factorymanagement" replace />;
+  useEffect(() => {
+    if (!isAllowed && redirect) {
+      alert("잘못된 접근입니다.");
+      navigate("/factorymanagement", { replace: true });
+    }
+  }, [redirect, isAllowed, navigate]);
+
+  if (!isAllowed && !redirect) {
+    setRedirect(true);
+  }
+
+  return isAllowed ? element : null;
 }
 
 function CustomComponent({
@@ -301,9 +352,13 @@ function HomeRedirector({ authData }) {
     if (!authData.isLogin) {
       return "/factorymanagement/login";
     }
-    // 권한이 0인 가입 대기자
-    else if (authData.authority === 0) {
+    // 권한이 1이하인 가입 대기자
+    else if (authData.authority <= 1) {
       return "/factorymanagement/user/init";
+    }
+    // 권한이 2인 일반 사용자
+    else if (authData.authority === 2) {
+      return "/factorymanagement/user/vital";
     }
     // 권한이 4인 관리자
     else if (authData.authority === 4) {

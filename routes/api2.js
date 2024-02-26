@@ -574,4 +574,154 @@ api.put("/settings/:factoryId/workers", (req, res) => {
   return res.status(200).send("Update successful!");
 });
 
+api.get("/factory/:factoryId/confirms", (req, res) => {
+  const factoryId = parseInt(req.params.factoryId);
+
+  query = `SELECT u.id, u.name, u.gender, u.date_of_birth, u.phone_number, u.join_date
+            FROM users u
+            JOIN factories f ON f.code = u.code
+            WHERE f.factory_id = ? AND u.authority = 0`;
+
+  connection.query(query, [factoryId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json(result);
+  });
+});
+
+api.put("/confirms/allow/:userId", (req, res) => {
+  const userId = req.params.userId;
+
+  // 첫 번째 쿼리: 사용자에 대한 factory_id 가져오기
+  const query = `SELECT f.factory_id
+                 FROM users u
+                 JOIN factories f ON f.code = u.code
+                 WHERE u.id = ?`;
+
+  connection.query(query, [userId], (error, result) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+
+    // 결과 확인
+    if (result.length > 0) {
+      const factoryId = result[0].factory_id;
+
+      // 두 번째 쿼리: 사용자의 factory_id 설정 및 code와 authority 업데이트
+      const query2 = `UPDATE users
+                      SET factory_id = ?, code = NULL, authority = 2
+                      WHERE id = ?`;
+
+      connection.query(query2, [factoryId, userId], (error, updateResult) => {
+        if (error) {
+          console.error(error);
+          return res.status(500).send("Internal Server Error!");
+        }
+
+        // 성공적으로 업데이트 완료
+        return res.status(200).send("User has been successfully updated.");
+      });
+    } else {
+      // 사용자에 대한 factory_id를 찾을 수 없음
+      return res.status(404).send("Factory ID not found for the user.");
+    }
+  });
+});
+
+api.put("/confirms/reject/:userId", (req, res) => {
+  const userId = req.params.userId;
+
+  // 첫 번째 쿼리: 사용자에 대한 factory_id 가져오기
+  const query = `UPDATE users
+                SET authority = 1
+                WHERE id = ?`;
+
+  connection.query(query, [userId], (error, result) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+  });
+  return res.status(200).send("User has been successfully updated.");
+});
+
+api.get("/airwalldata/:env", (req, res) => {
+  const env =
+    req.params.env == "finedust" ? "pm1_0 AS finedust" : req.params.env;
+  let factoryId = req.query.factoryId;
+  let date = req.query.date;
+  let timeSlot = req.query.timeSlot;
+
+  if (!factoryId) return res.status(400).send("factory id is necessary");
+
+  let queryParams = [factoryId];
+
+  // 파티션 존재 여부를 확인하는 쿼리
+  const checkPartitionQuery = `
+          SELECT
+            COUNT(*) as count
+          FROM
+            information_schema.partitions
+          WHERE
+            table_schema = 'factorymanagement' AND
+            table_name = 'sensor_data' AND
+            partition_name = ?;
+          `;
+
+  // 파티션 이름 생성
+  const partitionName = "p" + date?.replaceAll("/", "").replaceAll("-", "");
+
+  // 파티션 존재 여부 확인
+  connection.query(checkPartitionQuery, [partitionName], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+
+    // 파티션이 존재하지 않는 경우
+    if (!timeSlot && result[0].count === 0) {
+      return res.status(200).json([]);
+    }
+    // 파티션이 존재하는 경우, 원래 쿼리 실행
+    let query = ``;
+    if (date) {
+      queryParams.push(date);
+      query += `
+    SELECT
+    s.${env}, s.timestamp, m.module_name
+    FROM
+      sensor_data PARTITION(${partitionName}) s 
+    JOIN
+      sensor_modules m ON s.sensor_module_id = m.module_id
+    WHERE
+      s.factory_id = ?;
+    `;
+    } else {
+      if (!timeSlot) timeSlot = 90;
+      queryParams.push(timeSlot);
+      query += `
+    SELECT
+    s.${env}, s.timestamp, m.module_name
+    FROM
+      sensor_data s 
+    JOIN
+      sensor_modules m ON s.sensor_module_id = m.module_id
+    WHERE
+      s.factory_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE);
+    `;
+    }
+
+    connection.query(query, queryParams, (error, result) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error!");
+      }
+      return res.status(200).json(result);
+    });
+  });
+});
+
 module.exports = api;

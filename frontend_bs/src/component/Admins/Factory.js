@@ -243,35 +243,6 @@ function FactoryDetail({ detail }) {
           </span>
         </div>
       </div>
-      {/* <table>
-        <thead />
-        <tbody>
-          <tr>
-            <td className="td1">Name</td>
-            <td>: {detail.factory_name}</td>
-          </tr>
-          <tr>
-            <td className="td1">Industry</td>
-            <td>: {detail.industry}</td>
-          </tr>
-          <tr>
-            <td className="td1">Manager</td>
-            <td>: {detail.manager}</td>
-          </tr>
-          <tr>
-            <td className="td1">Contact</td>
-            <td>: {detail.contact_number}</td>
-          </tr>
-          <tr>
-            <td className="td1">Location</td>
-            <td>: {detail.location}</td>
-          </tr>
-          <tr>
-            <td className="td1">Join Date</td>
-            <td>: {new Date(detail.join_date).toLocaleDateString("ko-KR")}</td>
-          </tr>
-        </tbody>
-      </table> */}
     </div>
   );
 }
