@@ -105,7 +105,7 @@ function Labeling() {
   const fetchData = (fetchId) => {
     axios
       .get(
-        `http://junlab.postech.ac.kr:880/api3/label/data/${fetchId}?type=${authData.type}`
+        `http://junlab.postech.ac.kr:880/api/labeling/data/${fetchId}?type=${authData.type}`
       )
       .then((response) => {
         const {
@@ -225,7 +225,7 @@ function Labeling() {
   const fetchProgress = () => {
     axios
       .get(
-        `http://junlab.postech.ac.kr:880/api3/label/progress?id=${authData.id}&type=${authData.type}`
+        `http://junlab.postech.ac.kr:880/api/labeling/progress?id=${authData.id}&type=${authData.type}`
       )
       .then((response) => {
         setProgressData(response.data);
@@ -307,7 +307,7 @@ function Labeling() {
       return;
     }
     axios
-      .put(`http://junlab.postech.ac.kr:880/api3/label/${authData.type}`, {
+      .put(`http://junlab.postech.ac.kr:880/api/labeling/${authData.type}`, {
         id: id,
         score: score,
         labeler: authData.id,
