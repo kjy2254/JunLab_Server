@@ -9,6 +9,7 @@ import {
   faSortDown,
   faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
 function Logs(props) {
   const [data, setData] = useState([]);
@@ -175,6 +176,18 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
   const [list, setList] = useState([]);
   const [selected, setSelected] = useState({ type: "id", value: "전체" });
 
+  const notify = () => {
+    toast("이전 요청이 실행중입니다!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
   useEffect(() => {
     axios
       .get(`http://junlab.postech.ac.kr:880/api2/factory/logs`)
@@ -201,24 +214,36 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isLoading) {
-      alert("이전 요청이 실행 중 입니다.");
-    } else {
-      setIsLoading(true);
-      setData([]);
-      axios
-        .get(
-          `http://junlab.postech.ac.kr:880/api2/factory/logs?start=${startDate}&end=${endDate}&id=${selected.value}`
-        )
-        .then((response) => {
-          setIsLoading(false);
-          console.log(response.data);
-          setData(response.data);
-        })
-        .catch((error) => {
-          setIsLoading(false);
-          console.error("API 요청 실패:", error);
-        });
+      notify();
+      return;
     }
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diff = end - start;
+    const oneWeek = 7 * 24 * 60 * 60 * 1000;
+    // 차이가 1주일을 초과하는지 확인
+    if (diff > oneWeek) {
+      alert("검색 기간은 최대 1주일까지만 가능합니다.");
+      return;
+    }
+
+    // 로딩 상태 설정 및 기존 데이터 초기화
+    setIsLoading(true);
+    setData([]);
+
+    axios
+      .get(
+        `http://junlab.postech.ac.kr:880/api2/factory/logs?start=${startDate}&end=${endDate}&id=${selected.value}`
+      )
+      .then((response) => {
+        setIsLoading(false);
+        console.log(response.data);
+        setData(response.data);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        console.error("API 요청 실패:", error);
+      });
   };
 
   return (

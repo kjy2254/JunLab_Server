@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useTable, usePagination, useSortBy } from "react-table";
-import "../css/AirWall.css";
+import "../../css/AirWall.css";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {

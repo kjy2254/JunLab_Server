@@ -1,12 +1,13 @@
 import React from "react";
-import "../css/WorkerModal.css";
-import { useState, useEffect, useRef } from "react";
+import "../../css/EnvModal.css";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-modal";
 import axios from "axios";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { useParams } from "react-router-dom";
 
 const customModalStyles = {
   overlay: {
@@ -20,62 +21,40 @@ const customModalStyles = {
   },
 };
 
-function WorkerModal({ modalOpen, setModalOpen, selectedWorker }) {
-  const [data, setData] = useState({});
-
-  useEffect(() => {
-    axios
-      .get(`http://junlab.postech.ac.kr:880/api2/user/${selectedWorker}/info`)
-      .then((response) => {
-        const data = response.data;
-        // console.log(data);
-        setData(data);
-      })
-      .catch((error) => {
-        console.error("API 요청 실패:", error);
-      });
-  }, [selectedWorker]);
+function EnvModal({ modalOpen, setModalOpen, selectedEnvCard, img }) {
+  const header = {
+    tvoc: "총휘발성유기화합물(ppb)",
+    co2: "이산화탄소(ppb)",
+    temperature: "온도(°C)",
+    finedust: "미세먼지(㎍/㎥)",
+  };
 
   return (
     <Modal
       isOpen={modalOpen}
       style={customModalStyles}
-      className="workermodal layerModal"
+      className="envmodal layerModal"
       shouldCloseOnOverlayClick={false}
       appElement={document.getElementById("root")}
     >
       <div className="header">
-        <div className="user-info">
-          <span className="name">{data?.name}</span>
-          <span className="watch">Watch: {data?.watch_id}</span>
-        </div>
         <div className="right">
-          위험도: &nbsp;
-          <div className={"level lv1"}>1단계</div>
           <FontAwesomeIcon icon={faClose} onClick={() => setModalOpen(false)} />
         </div>
       </div>
       <GraphCard
-        header={"심박수(bpm)"}
-        selectedWorker={selectedWorker}
-        endpoint={"heartrate"}
-      />
-      <GraphCard
-        header={"체온(°C)"}
-        selectedWorker={selectedWorker}
-        endpoint={"temperature"}
-      />
-      <GraphCard
-        header={"산소포화도(%)"}
-        selectedWorker={selectedWorker}
-        endpoint={"oxygen"}
+        header={header[selectedEnvCard]}
+        img={img}
+        endpoint={selectedEnvCard}
       />
     </Modal>
   );
 }
 
-function GraphCard({ header, selectedWorker, endpoint, title }) {
+function GraphCard({ header, img, endpoint, title }) {
   const [lightMode, setLightMode] = useState(false);
+
+  const { factoryId } = useParams();
 
   useEffect(() => {
     const isLightMode = localStorage.getItem("lightMode") === "true";
@@ -91,11 +70,42 @@ function GraphCard({ header, selectedWorker, endpoint, title }) {
     return `${year}-${month}-${day}`;
   };
   const today = getFormattedDate(new Date());
-  const [startDate, setStartDate] = useState(today + " 00:00:00");
-  const [endDate, setEndDate] = useState(today + " 23:59:59");
-  const [minute, setMinute] = useState(30);
+  const [date, setDate] = useState(today);
+  const [minute, setMinute] = useState(15);
   const [selectedRadio, setSelectedRadio] = useState(0);
   const [options, setOptions] = useState({});
+
+  const groupDataByModuleName = (data) => {
+    return data.reduce((acc, item) => {
+      const { timestamp, module_name } = item;
+      const value = parseInt(item[endpoint], 10);
+      if (!acc[module_name]) {
+        acc[module_name] = [];
+      }
+      acc[module_name].push([new Date(timestamp).getTime(), value]);
+      return acc;
+    }, {});
+  };
+
+  const createSeriesFromGroupedData = (groupedData) => {
+    return Object.keys(groupedData)
+      .sort()
+      .map((moduleName) => ({
+        name: moduleName, // 각 그룹의 이름을 시리즈 이름으로 사용
+        data: groupedData[moduleName],
+        marker: {
+          enabled: false,
+        },
+        lineWidth: 2,
+        linecap: "round",
+        states: {
+          hover: {
+            lineWidth: 3,
+          },
+        },
+        type: "spline",
+      }));
+  };
 
   useEffect(() => {
     const newOptions = {
@@ -154,28 +164,18 @@ function GraphCard({ header, selectedWorker, endpoint, title }) {
             color: lightMode ? "inherit" : "rgb(230, 233, 236)",
           },
         },
-        ...(endpoint === "oxygen" && {
-          min: 80,
-          max: 102,
-          startOnTick: false, // y축이 min 값에서 시작하도록 강제
-          endOnTick: false, // y축이 max 값에서 끝나도록 강제
-        }),
-        ...(endpoint === "temperature" && {
-          min: 20,
-          max: 42,
-          startOnTick: false, // y축이 min 값에서 시작하도록 강제
-          endOnTick: false, // y축이 max 값에서 끝나도록 강제
-        }),
-        ...(endpoint === "heartrate" && {
-          min: 60,
-          max: 140,
-        }),
         gridLineColor: lightMode
           ? "var(--border-color-light)"
           : "var(--border-color-dark)",
       },
       legend: {
-        enabled: false,
+        enabled: true,
+        itemStyle: {
+          color: lightMode ? "inherit" : "rgb(230, 233, 236)",
+        },
+        itemHoverStyle: {
+          color: lightMode ? "inherit" : "rgb(230, 233, 236)",
+        },
       },
       credits: {
         enabled: false, // 워터마크 비활성화
@@ -190,30 +190,10 @@ function GraphCard({ header, selectedWorker, endpoint, title }) {
           return `${dateStr}<br>${endpoint}:${this.point.y}`;
         },
       },
-
-      series: [
-        {
-          // name: "Heart Rate",
-          data: data.map((item) => [
-            new Date(item.timestamp).getTime(),
-            parseInt(item[endpoint]),
-          ]),
-          marker: {
-            enabled: false, // 점 비활성화
-          },
-          lineWidth: 2, // 선의 두께 설정
-          linecap: "round", // 선의 끝 모양을 둥글게
-          // 스무딩 효과를 위한 추가 옵션
-          states: {
-            hover: {
-              lineWidth: 3, // 마우스 오버 시 선의 두께
-            },
-          },
-          // 스플라인 곡선으로 스무딩 효과 적용
-          // type을 'spline'으로 변경
-          type: "spline",
-        },
-      ],
+      lang: {
+        noData: "No data available",
+      },
+      series: createSeriesFromGroupedData(groupDataByModuleName(data)),
     };
 
     setOptions(newOptions);
@@ -223,10 +203,8 @@ function GraphCard({ header, selectedWorker, endpoint, title }) {
     const fetchData = async () => {
       axios
         .get(
-          `http://junlab.postech.ac.kr:880/api2/user/${selectedWorker}/${endpoint}?` +
-            (selectedRadio == 0
-              ? `timeSlot=${minute}`
-              : `start=${startDate}&end=${endDate}`)
+          `http://junlab.postech.ac.kr:880/api2/airwalldata/${endpoint}?factoryId=${factoryId}&` +
+            (selectedRadio == 0 ? `timeSlot=${minute}` : `date=${date}`)
         )
         .then((response) => {
           const data = response.data;
@@ -240,20 +218,23 @@ function GraphCard({ header, selectedWorker, endpoint, title }) {
     fetchData();
     const interval = setInterval(fetchData, 7000);
     return () => clearInterval(interval);
-  }, [selectedWorker, minute, startDate, endDate, selectedRadio]);
+  }, [endpoint, minute, date, selectedRadio]);
 
   return (
     <div className="graph-card layer2">
       <span className="bar" />
       <div className="header">
-        <span>{header}</span>
+        <div className="title">
+          <img src={img} alt={""} />
+          <span>{header}</span>
+        </div>
         <div className="setting">
           <div className="type">
             <label>
               <input
                 type="radio"
                 value={0}
-                name={"search-type" + endpoint}
+                name="search-type"
                 checked={selectedRadio == 0 ? "checked" : ""}
                 onChange={(e) => setSelectedRadio(e.target.value)}
               />
@@ -263,7 +244,7 @@ function GraphCard({ header, selectedWorker, endpoint, title }) {
               <input
                 type="radio"
                 value={1}
-                name={"search-type" + endpoint}
+                name="search-type"
                 onChange={(e) => setSelectedRadio(e.target.value)}
               />
               <span>날짜 데이터</span>
@@ -271,19 +252,12 @@ function GraphCard({ header, selectedWorker, endpoint, title }) {
           </div>
           <div className={"date" + (selectedRadio == 0 ? " disabled" : "")}>
             <label>
-              <span>시작 날짜:</span>
+              <span>날짜:</span>
               <input
-                type="datetime-local"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </label>
-            <label>
-              <span>끝 날짜:</span>
-              <input
-                type="datetime-local"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                max={today}
               />
             </label>
           </div>
@@ -310,13 +284,14 @@ function GraphCard({ header, selectedWorker, endpoint, title }) {
             style: {
               width: "100%",
               // maxHeight: "15rem",
-              height: "240px",
+              height: "100%",
             },
           }}
         />
       </div>
+      <div></div>
     </div>
   );
 }
 
-export default WorkerModal;
+export default EnvModal;

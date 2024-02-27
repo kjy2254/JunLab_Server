@@ -1,0 +1,11 @@
+.vital {
+  padding: 2rem;
+}
+
+.vital .graph-card .header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  /* background: #000; */
+}

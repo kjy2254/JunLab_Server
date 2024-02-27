@@ -3,16 +3,17 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "./component/Header";
 import Sidebar from "./component/Sidebar";
 import SidebarAD from "./component/Admins/SidebarAD";
-import Login from "./component/Login";
+import SidebarUser from "./component/Users/SidebarUser";
+import Login from "./component/Authentication/Login";
 import Factory from "./component/Admins/Factory";
 import Logs from "./component/Admins/Logs";
-import Dashboard from "./component/Dashboard";
-import AirWall from "./component/AirWall";
-import AirWatch from "./component/AirWatch";
+import Dashboard from "./component/Factorys/Dashboard";
+import AirWall from "./component/Factorys/AirWall";
+import AirWatch from "./component/Factorys/AirWatch";
 import Settings from "./component/Settings/Settings";
-import UserInit from "./component/UserInit";
-import Confirm from "./component/Confirm";
-import Vital from "./component/Vital";
+import UserInit from "./component/Users/MyPage";
+import Confirm from "./component/Factorys/Confirm";
+import Vital from "./component/Users/Vital";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -21,15 +22,20 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import Signup from "./component/Signup";
+import Signup from "./component/Authentication/Signup";
 import { authcheck } from "./util";
-import Labeling from "./component/labeling/Labeling";
+import Labeling from "./component/Labeling/Labeling";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [toggleSide, setToggleSide] = useState(true);
   const [toggleSmallSide, setToggleSmallSide] = useState(false);
   const [smallView, setSmallView] = useState(window.innerWidth < 800);
   const [headerText, setHeaderText] = useState("");
+  const [lightMode, setLightMode] = useState(
+    localStorage.getItem("lightMode") === "true"
+  );
 
   const toggleSidebar = () => {
     setToggleSide(!toggleSide);
@@ -48,21 +54,19 @@ function App() {
       setSmallView(window.innerWidth < 800);
       setToggleSmallSide(false);
     };
-
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    const isLightMode = localStorage.getItem("lightMode") === "true";
-    document.body.classList.toggle("light-mode", isLightMode);
-  }, []);
+  // useEffect(() => {
+  //   const isLightMode = localStorage.getItem("lightMode") === "true";
+  //   document.body.classList.toggle("light-mode", isLightMode);
+  // }, []);
 
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const debug = false;
+  const debug = true;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -113,6 +117,8 @@ function App() {
                 toggleSmallSidebar={toggleSmallSidebar}
                 headerText={headerText}
                 isLogin={authData.isLogin}
+                lightMode={lightMode}
+                setLightMode={setLightMode}
               />
             }
           />
@@ -120,18 +126,28 @@ function App() {
         <div className="content">
           <Routes>
             <Route
-              path="/factoryManagement/factory/:factoryId/*"
+              path="/factorymanagement/factory/:factoryId/*"
               element={
                 <Sidebar show={toggleSide} showInSmall={toggleSmallSide} />
               }
             />
             <Route
-              path="/factoryManagement/admin/*"
+              path="/factorymanagement/admin/*"
               element={
                 <SidebarAD
                   show={toggleSide}
                   showInSmall={toggleSmallSide}
-                  factoryName={"관리자"}
+                  headerText={"관리자"}
+                />
+              }
+            />
+            <Route
+              path="/factorymanagement/user/:userId/*"
+              element={
+                <SidebarUser
+                  show={toggleSide}
+                  showInSmall={toggleSmallSide}
+                  headerText={"사용자"}
                 />
               }
             />
@@ -282,20 +298,36 @@ function App() {
               }
             />
             <Route
-              path="/factorymanagement/user/init"
+              path="/factorymanagement/user/:userId/mypage"
               element={
                 <RestrictRoute
-                  element={<UserInit />}
-                  isAllow={authData.isLogin && authData.authority <= 1}
+                  element={
+                    <CustomComponent
+                      Component={UserInit}
+                      toggleSide={toggleSide}
+                      setHeaderText={setHeaderText}
+                      closeSmallSidebar={closeSmallSidebar}
+                    />
+                  }
+                  isAllow={authData.isLogin && authData.authority >= 1}
+                  loginUserId={authData.userId}
                 />
               }
             />
             <Route
-              path="/factorymanagement/user/vital"
+              path="/factorymanagement/user/:userId/vital"
               element={
                 <RestrictRoute
-                  element={<Vital />}
+                  element={
+                    <CustomComponent
+                      Component={Vital}
+                      toggleSide={toggleSide}
+                      setHeaderText={setHeaderText}
+                      closeSmallSidebar={closeSmallSidebar}
+                    />
+                  }
                   isAllow={authData.isLogin && authData.authority >= 2}
+                  loginUserId={authData.userId}
                 />
               }
             />
@@ -305,23 +337,34 @@ function App() {
             />
           </Routes>
         </div>
+        <ToastContainer />
       </div>
     </Router>
   );
 }
 
-function RestrictRoute({ element, isAllow, manageOf }) {
-  const { factoryId } = useParams();
+function RestrictRoute({ element, isAllow, manageOf, loginUserId }) {
+  const { factoryId, userId } = useParams();
   const navigate = useNavigate();
   const [redirect, setRedirect] = useState(false);
 
-  const isAllowed =
-    isAllow &&
-    (manageOf === undefined || manageOf == factoryId || manageOf < 0);
+  let isAllowed;
+
+  if (manageOf) {
+    isAllowed = isAllow && (manageOf == factoryId || manageOf < 0);
+  } else if (loginUserId) {
+    isAllowed = isAllow && userId == loginUserId;
+  } else {
+    isAllowed = isAllow;
+  }
+
+  // const isAllowed =
+  //   isAllow &&
+  //   (manageOf === undefined || manageOf == factoryId || manageOf < 0);
 
   useEffect(() => {
     if (!isAllowed && redirect) {
-      alert("잘못된 접근입니다.");
+      alert("권한이 없습니다.");
       navigate("/factorymanagement", { replace: true });
     }
   }, [redirect, isAllowed, navigate]);
@@ -361,7 +404,7 @@ function HomeRedirector({ authData }) {
     }
     // 권한이 2인 일반 사용자
     else if (authData.authority === 2) {
-      return "/factorymanagement/user/vital";
+      return `/factorymanagement/user/${authData.userId}/vital`;
     }
     // 권한이 4인 관리자
     else if (authData.authority === 4) {

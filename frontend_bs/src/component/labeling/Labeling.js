@@ -243,7 +243,10 @@ function Labeling() {
         if (!data.isLogin) {
           alert("코드가 잘못되었습니다.");
         } else {
-          alert("확인되었습니다.");
+          const text = `[${data.name}]님 확인되었습니다.\n라벨링: ${
+            data.type == "env" ? "환경" : "건강"
+          }점수`;
+          alert(text);
           setAuthData(data);
           setEnvbox(data.type == "env");
           setHealthbox(data.type == "health");

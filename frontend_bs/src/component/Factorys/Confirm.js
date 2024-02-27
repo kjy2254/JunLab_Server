@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import "../css/Confirm.css";
+import "../../css/Confirm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";

@@ -69,6 +69,12 @@ button {
   --layerHD-color-dark: rgb(25, 36, 48); /* 레이어 2 색상 */
   --layerModal-color-dark: rgb(48, 58, 69);
   --border-color-dark: rgba(255, 255, 255, 0.2);
+
+  --layer1-color: blue;
+}
+
+.color-test {
+  color: var(--layer1-color);
 }
 
 .light-mode {

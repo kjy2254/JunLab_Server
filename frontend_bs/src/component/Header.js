@@ -5,16 +5,21 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 
-function ThemeToggleButton() {
-  const [lightMode, setLightMode] = useState(
-    localStorage.getItem("lightMode") === "true"
-  );
+function ThemeToggleButton({ setLightMode, lightMode }) {
+  // const [lightMode, setLightMode] = useState(
+  //   localStorage.getItem("lightMode") === "true"
+  // );
 
   const toggleTheme = () => {
-    const newLightMode = !lightMode;
-    setLightMode(newLightMode);
-    localStorage.setItem("lightMode", newLightMode ? "true" : "false");
-    document.body.classList.toggle("light-mode", newLightMode);
+    // const newLightMode = !lightMode;
+    // setLightMode(newLightMode);
+    setLightMode((prev) => {
+      localStorage.setItem("lightMode", !prev ? "true" : "false");
+      document.body.classList.toggle("light-mode", !prev);
+      return !prev;
+    });
+    // localStorage.setItem("lightMode", newLightMode ? "true" : "false");
+    // document.body.classList.toggle("light-mode", newLightMode);
   };
 
   return (
@@ -29,12 +34,14 @@ function ThemeToggleButton() {
 }
 
 function Header(props) {
+  const test = () => {
+    // 새로운 색상 값으로 CSS 변수를 설정
+    document.documentElement.style.setProperty("--layer1-color", "red");
+  };
+
   return (
     <Navbar className="custom-navbar layerHD" expand={true}>
-      <Navbar.Brand
-        href="/factorymanagement/admin/factory"
-        className="logo layerHD"
-      >
+      <Navbar.Brand href="/factorymanagement/" className="logo layerHD">
         Logo
       </Navbar.Brand>
       <Navbar.Collapse
@@ -52,9 +59,15 @@ function Header(props) {
             ☰
           </Button>
           <span className="header-text">{props.headerText}</span>
+          <span className="color-test" onClick={test}>
+            색상테스트
+          </span>
         </div>
         <Nav className="buttons">
-          <ThemeToggleButton />
+          <ThemeToggleButton
+            setLightMode={props.setLightMode}
+            lightMode={props.lightMode}
+          />
           <Button
             variant="outline-secondary"
             className="login-btn"

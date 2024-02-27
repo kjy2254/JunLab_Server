@@ -87,19 +87,19 @@ function Factory({ setHeaderText }) {
             )}
           </div>
           <div className="filter">
-            <span>Filter</span>
-            <li>All</li>
-            <li>Starred</li>
+            <span>필터링</span>
+            <li>전체</li>
+            <li>별</li>
           </div>
           <div className="filter">
-            <span>Filter By Categories</span>
+            <span>카테고리</span>
             <li>주조</li>
             <li>소성</li>
             <li>용접</li>
             <li>금형</li>
           </div>
           <div className="filter">
-            <span>Filter By Location</span>
+            <span>지역</span>
             <li>경북</li>
             <li>전남</li>
             <li>충남</li>

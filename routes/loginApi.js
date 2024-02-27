@@ -121,7 +121,12 @@ login.post("/label-login", (req, res) => {
       [id],
       (error, results) => {
         if (results.length != 0) {
-          res.send({ isLogin: true, id: results[0].id, type: results[0].type });
+          res.send({
+            isLogin: true,
+            id: results[0].id,
+            name: results[0].name,
+            type: results[0].type,
+          });
         } else {
           res.send({ isLogin: false });
         }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../css/Signup.css";
+import "../../css/Signup.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react";

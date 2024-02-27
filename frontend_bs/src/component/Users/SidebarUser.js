@@ -1,11 +1,13 @@
 import React from "react";
 import { Nav } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faIndustry, faFileLines } from "@fortawesome/free-solid-svg-icons";
+import { faFileLines, faUser } from "@fortawesome/free-solid-svg-icons";
 
-function SidebarAD(props) {
+function SidebarUser(props) {
+  const { userId } = useParams();
+
   return (
     <div
       className={`
@@ -19,23 +21,8 @@ function SidebarAD(props) {
         <ul className="item">
           <Link
             className="link-unstyled"
-            to={`/factorymanagement/admin/factory`}
+            to={`/factorymanagement/user/${userId}/vital`}
           >
-            <li>
-              <div className="wrapper">
-                <div className="menu-icon">
-                  <FontAwesomeIcon
-                    icon={faIndustry}
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                </div>
-                <div className={`menu-text ${props.show ? "" : "d-none"}`}>
-                  공장관리
-                </div>
-              </div>
-            </li>
-          </Link>
-          <Link className="link-unstyled" to={`/factorymanagement/admin/logs`}>
             <li>
               <div className="wrapper">
                 <div className="menu-icon">
@@ -45,7 +32,25 @@ function SidebarAD(props) {
                   />
                 </div>
                 <div className={`menu-text ${props.show ? "" : "d-none"}`}>
-                  로그
+                  측정 기록
+                </div>
+              </div>
+            </li>
+          </Link>
+          <Link
+            className="link-unstyled"
+            to={`/factorymanagement/user/${userId}/mypage`}
+          >
+            <li>
+              <div className="wrapper">
+                <div className="menu-icon">
+                  <FontAwesomeIcon
+                    icon={faUser}
+                    style={{ width: "80%", height: "100%" }}
+                  />
+                </div>
+                <div className={`menu-text ${props.show ? "" : "d-none"}`}>
+                  내 정보
                 </div>
               </div>
             </li>
@@ -56,4 +61,4 @@ function SidebarAD(props) {
   );
 }
 
-export default SidebarAD;
+export default SidebarUser;
