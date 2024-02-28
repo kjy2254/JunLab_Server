@@ -63,74 +63,49 @@ button {
 }
 
 :root {
-  --layer1-color-dark: rgb(48, 58, 69); /* 레이어 1 색상 */
-  --layer2-color-dark: rgb(25, 36, 48); /* 레이어 2 색상 */
-  --layerSB-color-dark: rgb(25, 36, 48); /* 레이어 2 색상 */
-  --layerHD-color-dark: rgb(25, 36, 48); /* 레이어 2 색상 */
-  --layerModal-color-dark: rgb(48, 58, 69);
-  --border-color-dark: rgba(255, 255, 255, 0.2);
+  /* 기본 라이트 모드에서의 배경색상 */
+  --layer1-bg-color: rgb(244, 246, 249);
+  --layer2-bg-color: rgb(255, 255, 255);
+  --layerSB-bg-color: rgb(36, 42, 51);
+  --layerHD-bg-color: rgb(255, 255, 255);
+  --layerModal-bg-color: rgb(244, 246, 249);
+  --border-color: rgb(228, 231, 234);
+  --select-color: #ececec;
 
-  --layer1-color: blue;
-}
+  /* 기본 라이트 모드에서의 글씨색상 */
+  --text-color: black;
 
-.color-test {
-  color: var(--layer1-color);
-}
+  /* 기본 라이트 모드에서의 스피너색상 */
+  --spinner-color: rgb(228, 231, 234);
+  --spinner-top-color: gray;
 
-.light-mode {
-  --layer1-color-light: rgb(244, 246, 249); /* 레이어 1 색상 */
-  --layer2-color-light: rgb(255, 255, 255); /* 레이어 2 색상 */
-  --layerSB-color-light: rgb(36, 42, 51); /* 레이어 2 색상 */
-  --layerHD-color-light: rgb(255, 255, 255); /* 레이어 2 색상 */
-  --layerModal-color-light: rgb(244, 246, 249);
-  --border-color-light: rgb(228, 231, 234); /* 레이어 2 색상 */
-}
+  /* 기본 라이트 모드에서의 그래프색상 */
+  --graph-lable-color: black;
 
-.light-mode .layer1 {
-  background-color: var(--layer1-color-light);
-  color: black;
-}
-
-.light-mode .layer2 {
-  background-color: var(--layer2-color-light);
-  box-shadow: 7px 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.light-mode .layerSB {
-  background-color: var(--layerSB-color-light);
-}
-
-.light-mode .layerHD {
-  background-color: var(--layerHD-color-light);
-  color: black !important;
-}
-
-.layerHD {
-  background-color: var(--layerHD-color-dark);
-  color: white !important;
-}
-
-.light-mode .layerModal {
-  background-color: var(--layerModal-color-light);
-  color: black;
+  /* 기본 라이트 모드에서의 드래그오버색상 */
+  --drag-over-color: #555;
 }
 
 .layer1 {
-  background-color: var(--layer1-color-dark);
-  color: white;
+  background-color: var(--layer1-bg-color);
+  color: var(--text-color);
 }
 
 .layer2 {
-  background-color: var(--layer2-color-dark);
+  background-color: var(--layer2-bg-color);
+  color: var(--text-color);
 }
 
 .layerSB {
-  background-color: var(--layerSB-color-dark);
+  background-color: var(--layerSB-bg-color);
+}
+
+.layerHD {
+  background-color: var(--layerHD-bg-color);
 }
 
 .layerModal {
-  background-color: var(--layerModal-color-dark);
-  color: white;
+  background-color: var(--layerModal-bg-color);
 }
 
 input[type="text"],
@@ -145,28 +120,24 @@ input[type="date"] {
   font-weight: 400;
   line-height: 1.5;
   appearance: none;
-  border: 1px solid var(--border-color-dark);
-  background-color: var(--layer2-color-dark);
+  border: 1px solid var(--border-color);
+  background-color: var(--layer2-bg-color);
   color: inherit;
   border-radius: 0.3rem;
 }
 
-.light-mode input[type="text"],
-.light-mode input[type="number"],
-.light-mode input[type="password"],
-.light-mode input[type="datetime-local"],
-.light-mode input[type="date"] {
-  border: 1px solid var(--border-color-light);
-  background-color: var(--layer2-color-light);
-  box-shadow: none;
-  color: inherit;
-}
-
 select {
-  background-color: #303a45;
+  background-color: var(--select-color);
   color: inherit;
 }
 
-.light-mode select {
-  background-color: #ececec;
+#spinner {
+  margin: auto;
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--spinner-color);
+  box-sizing: border-box;
+  border-top-color: var(--spinner-top-color);
+  border-radius: 100%;
+  animation: spin 1s ease-in-out infinite;
 }

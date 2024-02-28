@@ -29,10 +29,12 @@
   text-overflow: ellipsis;
   width: 100%;
   max-width: 20rem;
+  display: flex;
+  align-items: center;
 }
 
 .envmodal .header img {
-  margin-right: 0.5rem;
+  margin-right: 0.7rem;
   width: 40px;
 }
 

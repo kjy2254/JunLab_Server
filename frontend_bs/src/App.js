@@ -27,14 +27,15 @@ import { authcheck } from "./util";
 import Labeling from "./component/Labeling/Labeling";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { toggleTheme } from "./component/Header";
 
 function App() {
   const [toggleSide, setToggleSide] = useState(true);
   const [toggleSmallSide, setToggleSmallSide] = useState(false);
   const [smallView, setSmallView] = useState(window.innerWidth < 800);
   const [headerText, setHeaderText] = useState("");
-  const [lightMode, setLightMode] = useState(
-    localStorage.getItem("lightMode") === "true"
+  const [darkMode, setDarkMode] = useState(
+    localStorage.getItem("darkMode") === "true"
   );
 
   const toggleSidebar = () => {
@@ -58,10 +59,50 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // useEffect(() => {
-  //   const isLightMode = localStorage.getItem("lightMode") === "true";
-  //   document.body.classList.toggle("light-mode", isLightMode);
-  // }, []);
+  useEffect(() => {
+    if (darkMode) {
+      // 다크모드에서의 색상
+      document.documentElement.style.setProperty(
+        "--layer1-bg-color",
+        "rgb(48, 58, 69)"
+      );
+      document.documentElement.style.setProperty(
+        "--layer2-bg-color",
+        "rgb(25, 36, 48)"
+      );
+      document.documentElement.style.setProperty(
+        "--layerSB-bg-color",
+        "rgb(25, 36, 48)"
+      );
+      document.documentElement.style.setProperty(
+        "--layerHD-bg-color",
+        "rgb(25, 36, 48)"
+      );
+      document.documentElement.style.setProperty(
+        "--layerModal-bg-color",
+        "rgb(48, 58, 69)"
+      );
+      document.documentElement.style.setProperty(
+        "--border-color",
+        "rgba(255, 255, 255, 0.2)"
+      );
+      document.documentElement.style.setProperty("--select-color", "#303a45");
+      document.documentElement.style.setProperty("--text-color", "white");
+      document.documentElement.style.setProperty(
+        "--spinner-color",
+        "rgba(255, 255, 255, 0.3)"
+      );
+      document.documentElement.style.setProperty(
+        "--spinner-top-color",
+        "white"
+      );
+      document.documentElement.style.setProperty(
+        "--graph-lable-color",
+        "rgb(230, 233, 236)"
+      );
+      document.documentElement.style.setProperty("--drag-over-color", "#ccc");
+    }
+  }, []);
 
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -98,7 +139,7 @@ function App() {
   }, []);
 
   if (isLoading) {
-    return <></>;
+    return <div id="spinner" />;
   }
 
   return (
@@ -117,8 +158,8 @@ function App() {
                 toggleSmallSidebar={toggleSmallSidebar}
                 headerText={headerText}
                 isLogin={authData.isLogin}
-                lightMode={lightMode}
-                setLightMode={setLightMode}
+                darkMode={darkMode}
+                setDarkMode={setDarkMode}
               />
             }
           />
@@ -174,7 +215,14 @@ function App() {
             />
             <Route
               path="/labeling"
-              element={<RestrictRoute element={<Labeling />} isAllow={true} />}
+              element={
+                <RestrictRoute
+                  element={
+                    <Labeling darkMode={darkMode} setDarkMode={setDarkMode} />
+                  }
+                  isAllow={true}
+                />
+              }
             />
             <Route
               path="/factorymanagement/admin/factory"

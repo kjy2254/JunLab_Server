@@ -15,13 +15,9 @@
   border-radius: 0.3rem;
 }
 
-.light-mode .react-tabs__tab-list {
-  border-bottom: 1px solid var(--border-color-light) !important;
-}
-
 .react-tabs__tab-list {
   text-align: left !important;
-  border-bottom: 1px solid var(--border-color-dark) !important;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .react-tabs__tab:after {
@@ -29,7 +25,7 @@
 }
 
 .react-tabs__tab {
-  border: 1px solid var(--layer2-color-dark) !important;
+  border: 1px solid var(--border-color) !important;
   border-bottom: none;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
@@ -40,20 +36,11 @@
   transition: color 0.3s;
 }
 
-.light-mode .react-tabs__tab {
-  border: 1px solid var(--layer2-color-light) !important;
-}
-
 .react-tabs__tab--selected {
-  border: 1px solid var(--border-color-dark) !important;
+  border: 1px solid var(--border-color);
   border-bottom: none !important;
   color: inherit !important;
   font-weight: bold !important;
-}
-
-.light-mode .react-tabs__tab--selected {
-  border: 1px solid var(--border-color-light) !important;
-  border-bottom: none !important;
 }
 
 .react-tabs__tab-panel {
@@ -70,12 +57,8 @@
   min-height: 40rem;
   /* background: #000; */
   /* height: 100%; */
-  border: 1px solid var(--border-color-dark);
+  border: 1px solid var(--border-color);
   padding: 1rem;
-}
-
-.light-mode .airwall-setting {
-  border: 1px solid var(--border-color-light);
 }
 
 .airwall-setting .buttons .edit {
@@ -109,26 +92,18 @@
 }
 
 .airwall-setting td {
-  border-top: 1px solid var(--border-color-dark);
+  border-top: 1px solid var(--border-color);
   height: 3rem;
   padding: 0.5rem;
   text-align: center;
 }
 
-.light-mode .airwall-setting td {
-  border-top: 1px solid var(--border-color-light);
-}
-
 .worker-airwatch {
-  border: 1px solid var(--border-color-dark);
+  border: 1px solid var(--border-color);
   width: 100%;
   height: 40rem;
   display: flex;
   overflow: hidden;
-}
-
-.light-mode .worker-airwatch {
-  border: 1px solid var(--border-color-light);
 }
 
 .worker-airwatch .left {
@@ -144,7 +119,7 @@
 }
 
 .worker-airwatch .right {
-  border-left: 1px solid var(--border-color-dark);
+  border-left: 1px solid var(--border-color);
   flex-grow: 1;
   height: 100%;
   overflow: auto;
@@ -153,23 +128,13 @@
   align-items: flex-end;
 }
 
-.light-mode .worker-airwatch .right {
-  border-left: 1px solid var(--border-color-light);
-}
-
 .worker-airwatch .top {
   display: flex;
-  /* background: inherit; */
   padding: 1rem;
   align-items: center;
-  border-bottom: 1px solid var(--border-color-dark);
+  border-bottom: 1px solid var(--border-color);
   position: relative;
   width: 100%;
-  /* z-index: 1; */
-}
-
-.light-mode .worker-airwatch .top {
-  border-bottom: 1px solid var(--border-color-light);
 }
 
 .worker-airwatch .top span {
@@ -215,7 +180,7 @@
 
 .worker-airwatch .worker-card {
   min-height: 5rem;
-  border-bottom: 1px solid var(--border-color-dark);
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   padding: 0.5rem;
@@ -259,16 +224,9 @@
   margin: 0;
 }
 
-.light-mode .worker-airwatch .worker-card {
-  border-bottom: 1px solid var(--border-color-light);
-}
-
 .watch-area.dragging-over {
-  border: 2px dashed #ccc;
-}
-
-.light-mode .watch-area.dragging-over {
-  border: 2px dashed #555;
+  /* border: 2px dashed #ccc; */
+  border: 2px dashed var(--drag-over-color);
 }
 
 .worker-airwatch button {

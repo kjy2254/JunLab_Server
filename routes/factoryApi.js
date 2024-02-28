@@ -569,7 +569,7 @@ api.get("/settings/:factoryId/watchlist", (req, res) => {
 api.get("/settings/:factoryId/workers", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
 
-  query = `SELECT user_id, name, role, gender, watch_id
+  query = `SELECT user_id, name, gender, watch_id
             FROM users
             WHERE factory_id = ?`;
 

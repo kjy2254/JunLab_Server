@@ -86,26 +86,18 @@
 
 .labeling .graph-area {
   width: calc(100% - 2rem);
-  /* min-height: 60rem; */
   margin: 2rem 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
   align-items: center;
-  /* background: #000; */
 }
 
 .labeling .graph {
   width: 48%;
   margin-bottom: 1rem;
   height: calc((100% - 2rem) / 2);
-  /* min-height: 20rem; */
-  /* max-height: 20rem; */
-  border: 1px solid var(--border-color-dark);
-}
-
-.light-mode .labeling .graph {
-  border: 1px solid var(--border-color-light);
+  border: 1px solid var(--border-color);
 }
 
 .labeling input[type="number"] {
@@ -157,7 +149,7 @@
 
 .labeling .progress-card {
   margin: 0 1rem;
-  border: 1px solid var(--border-color-dark);
+  border: 1px solid var(--border-color);
   height: calc(100% - 1.5rem);
   border-radius: 0.3rem;
   min-width: 10rem;
@@ -167,10 +159,6 @@
   justify-content: center;
   cursor: pointer;
   box-shadow: 3px 1px 5px rgba(0, 0, 0, 0.05);
-}
-
-.light-mode .labeling .progress-card {
-  border: 1px solid var(--border-color-light);
 }
 
 @media (max-width: 850px) {

@@ -12,16 +12,89 @@ import {
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-function Labeling() {
-  const [lightMode, setLightMode] = useState(
-    localStorage.getItem("lightMode") === "true"
-  );
-
+function Labeling({ darkMode, setDarkMode }) {
   const toggleTheme = () => {
-    const newLightMode = !lightMode;
-    setLightMode(newLightMode);
-    localStorage.setItem("lightMode", newLightMode ? "true" : "false");
-    document.body.classList.toggle("light-mode", newLightMode);
+    if (darkMode) {
+      // 토글 전에 다크 모드일 경우 라이트 모드로 변경
+      // 라이트 모드 색상
+      document.documentElement.style.setProperty(
+        "--layer1-bg-color",
+        "rgb(244, 246, 249)"
+      );
+      document.documentElement.style.setProperty(
+        "--layer2-bg-color",
+        "rgb(255, 255, 255)"
+      );
+      document.documentElement.style.setProperty(
+        "--layerSB-bg-color",
+        "rgb(36, 42, 51)"
+      );
+      document.documentElement.style.setProperty(
+        "--layerHD-bg-color",
+        "rgb(255, 255, 255)"
+      );
+      document.documentElement.style.setProperty(
+        "--layerModal-bg-color",
+        "rgb(244, 246, 249)"
+      );
+      document.documentElement.style.setProperty(
+        "--border-color",
+        "rgb(228, 231, 234)"
+      );
+      document.documentElement.style.setProperty("--select-color", "#ececec");
+      document.documentElement.style.setProperty("--text-color", "black");
+      document.documentElement.style.setProperty(
+        "--spinner-color",
+        "rgb(228, 231, 234)"
+      );
+      document.documentElement.style.setProperty("--spinner-top-color", "gray");
+      document.documentElement.style.setProperty(
+        "--graph-lable-color",
+        "black"
+      );
+    } else {
+      // 다크 모드 색상
+      document.documentElement.style.setProperty(
+        "--layer1-bg-color",
+        "rgb(48, 58, 69)"
+      );
+      document.documentElement.style.setProperty(
+        "--layer2-bg-color",
+        "rgb(25, 36, 48)"
+      );
+      document.documentElement.style.setProperty(
+        "--layerSB-bg-color",
+        "rgb(25, 36, 48)"
+      );
+      document.documentElement.style.setProperty(
+        "--layerHD-bg-color",
+        "rgb(25, 36, 48)"
+      );
+      document.documentElement.style.setProperty(
+        "--layerModal-bg-color",
+        "rgb(48, 58, 69)"
+      );
+      document.documentElement.style.setProperty(
+        "--border-color",
+        "rgba(255, 255, 255, 0.2)"
+      );
+      document.documentElement.style.setProperty("--select-color", "#303a45");
+      document.documentElement.style.setProperty("--text-color", "white");
+      document.documentElement.style.setProperty(
+        "--spinner-color",
+        "rgba(255, 255, 255, 0.3)"
+      );
+      document.documentElement.style.setProperty(
+        "--spinner-top-color",
+        "white"
+      );
+      document.documentElement.style.setProperty(
+        "--graph-lable-color",
+        "rgb(230, 233, 236)"
+      );
+    }
+    localStorage.setItem("darkMode", darkMode ? "false" : "true");
+    setDarkMode((prev) => !prev);
   };
 
   const [data, setData] = useState({});
@@ -50,7 +123,7 @@ function Labeling() {
       margin: 30,
       align: "left",
       style: {
-        color: lightMode ? "inherit" : "rgb(230, 233, 236)",
+        color: "var(--graph-lable-color)",
       },
     },
     yAxis: {
@@ -59,12 +132,10 @@ function Labeling() {
       },
       labels: {
         style: {
-          color: lightMode ? "inherit" : "rgb(230, 233, 236)",
+          color: "var(--graph-lable-color)",
         },
       },
-      gridLineColor: lightMode
-        ? "var(--border-color-light)"
-        : "var(--border-color-dark)",
+      gridLineColor: "var(--border-color)",
     },
     legend: {
       enabled: false,
@@ -73,7 +144,7 @@ function Labeling() {
       type: "datetime",
       labels: {
         style: {
-          color: lightMode ? "inherit" : "rgb(230, 233, 236)",
+          color: "var(--graph-lable-color)",
         },
         // formatter: function () {
         //   return Highcharts.dateFormat("%Y-%m-%d %H:%M:%S", this.value); // 원하는 날짜 포맷으로 설정
@@ -86,8 +157,8 @@ function Labeling() {
           value: 2020, // 마지막 데이터 포인트의 X 위치 값
         },
       ],
-      lineColor: lightMode ? "black" : "rgb(230, 233, 236)",
-      tickColor: lightMode ? "black" : "rgb(230, 233, 236)",
+      lineColor: "var(--graph-lable-color)",
+      tickColor: "var(--graph-lable-color)",
     },
     credits: {
       enabled: false, // 워터마크 제거
@@ -266,44 +337,6 @@ function Labeling() {
     }
   }, [authData]);
 
-  useEffect(() => {
-    const updateGraphOptions = (currentOptions, newTitleText) => {
-      return {
-        ...currentOptions,
-        chart: { ...defaultOptions.chart },
-        title: {
-          ...currentOptions.title,
-          text: newTitleText || currentOptions.title.text,
-          style: { color: lightMode ? "inherit" : "rgb(230, 233, 236)" },
-        },
-        yAxis: {
-          ...defaultOptions.yAxis,
-          labels: {
-            style: { color: lightMode ? "inherit" : "rgb(230, 233, 236)" },
-          },
-        },
-        xAxis: {
-          ...defaultOptions.xAxis,
-          labels: {
-            style: { color: lightMode ? "inherit" : "rgb(230, 233, 236)" },
-          },
-        },
-        legend: { ...defaultOptions.legend },
-        credits: { ...defaultOptions.credits },
-        plotOptions: { ...defaultOptions.plotOptions },
-      };
-    };
-
-    setTVOC((prevOptions) => updateGraphOptions(prevOptions, "TVOC 농도"));
-    setCO2((prevOptions) => updateGraphOptions(prevOptions, "이산화탄소(ppm)"));
-    setHeartrate((prevOptions) =>
-      updateGraphOptions(prevOptions, "심박수(bpm)")
-    );
-    setOxygen((prevOptions) =>
-      updateGraphOptions(prevOptions, "산소포화도(%)")
-    );
-  }, [lightMode]);
-
   const putData = () => {
     if (score == 0) {
       alert("점수는 1~100점 범위입니다.");
@@ -340,7 +373,7 @@ function Labeling() {
           </div>
           <Nav className="buttons">
             <div className="theme-toggle-button" onClick={toggleTheme}>
-              <div className={`toggle-switch ${lightMode ? "" : "active"}`}>
+              <div className={`toggle-switch ${darkMode ? "active" : ""}`}>
                 <FontAwesomeIcon icon={faMoon} className="icon moon-icon" />
                 <FontAwesomeIcon icon={faSun} className="icon sun-icon" />
                 <div className="toggle-handle"></div>
