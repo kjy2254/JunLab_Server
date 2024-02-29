@@ -3,12 +3,27 @@ const api = express.Router();
 const connection = require("../database/apiConnection.js");
 const connection2 = require("../database/mysql.js");
 const path = require("path");
+const multer = require("multer");
 const fs = require("fs");
+const { v4: uuidv4 } = require("uuid");
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./images/factory");
+  },
+  filename: function (req, file, cb) {
+    // 확장자를 포함한 고유한 파일명 생성
+    const fileExtension = path.extname(file.originalname);
+    const fileName = uuidv4() + fileExtension; // 예: 'xxxx-xxxx-xxxx-xxxx.png'
+    cb(null, fileName);
+  },
+});
+const upload = multer({ storage: storage });
 const {
   calcWorkLoadIndex,
   calcEnviromentIndex,
   calclevel,
-} = require("../util/logic.js");
+  generateRandomCode,
+} = require("../util/util.js");
 
 api.get("/image/profile/:imagePath", (req, res) => {
   const imagePath = req.params.imagePath;
@@ -42,6 +57,40 @@ api.get("/image/factory/:imagePath", (req, res) => {
   } else {
     return res.sendFile(defaultFactoryPath);
   }
+});
+
+api.post("/factory", upload.single("image"), (req, res) => {
+  const filePath = req.file
+    ? `factory/${req.file.filename}`
+    : "factory/default";
+  const code = generateRandomCode(7);
+  const { name, location, industry, contact, manager } = req.body;
+
+  const query = `INSERT INTO factories(factory_name, location, join_date,
+                           industry, contact_number, factory_image_url, manager, code)
+                 VALUES (?, ?, NOW(), ?, ?, ?, ?, ?);`;
+
+  const queryParams = [
+    name,
+    location,
+    industry,
+    contact,
+    filePath,
+    manager,
+    code,
+  ];
+
+  connection.query(query, queryParams, (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json({
+      message: "Factory added successfully",
+      factoryCode: code,
+      result,
+    });
+  });
 });
 
 api.get("/factories", (req, res) => {

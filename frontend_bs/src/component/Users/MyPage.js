@@ -59,9 +59,7 @@ function UserInit(props) {
       formData.append(key, data[key]);
     }
 
-    // 수정된 부분: 파일 객체를 FormData에 추가합니다.
     if (profileImgFile) {
-      // profileImg 대신 profileImgFile 사용
       formData.append("image", profileImgFile);
     }
 

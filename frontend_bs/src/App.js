@@ -107,7 +107,7 @@ function App() {
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const debug = false;
+  const debug = 0;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -141,7 +141,7 @@ function App() {
       setIsLoading(false);
     };
     if (debug) {
-      fetchDebug2();
+      fetchDebug();
     } else {
       fetchData();
     }

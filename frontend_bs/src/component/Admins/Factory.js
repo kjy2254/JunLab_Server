@@ -10,6 +10,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "../../css/Factory.css";
 import { createFuzzyMatcher } from "../../util";
+import FactoryAddModal from "./FactoryAddModal";
 
 function Factory({ setHeaderText }) {
   const [factories, setFactories] = useState([]);
@@ -23,12 +24,13 @@ function Factory({ setHeaderText }) {
     overlay: false,
   });
   const [filter, setFilter] = useState("");
+  const [addModalOpen, setAddModalOpen] = useState(false);
 
   useEffect(() => {
     setHeaderText("공장관리");
   }, []);
 
-  useEffect(() => {
+  const fetchData = () => {
     axios
       .get("http://junlab.postech.ac.kr:880/api2/factories")
       .then((response) => {
@@ -39,6 +41,10 @@ function Factory({ setHeaderText }) {
       .catch((error) => {
         console.error("API 요청 실패:", error);
       });
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -73,7 +79,12 @@ function Factory({ setHeaderText }) {
           }
         >
           <div className="buttons">
-            <button className="add-factory">공장 추가</button>
+            <button
+              className="add-factory"
+              onClick={() => setAddModalOpen(true)}
+            >
+              공장 추가
+            </button>
             {filterZone.smallview ? (
               <button
                 className="close"
@@ -155,7 +166,9 @@ function Factory({ setHeaderText }) {
           <div className="header">
             <div className="text">
               <span className="name">{detail.factory_name}</span>
-              <span className="industry">ID: {detail.factory_id}</span>
+              <span className="industry">
+                ID: {detail.factory_id} / Code: {detail.code}{" "}
+              </span>
             </div>
             {detailZone.smallview ? (
               <FontAwesomeIcon
@@ -180,6 +193,11 @@ function Factory({ setHeaderText }) {
           </div>
         </div>
       </div>
+      <FactoryAddModal
+        modalOpen={addModalOpen}
+        setModalOpen={setAddModalOpen}
+        fetchData={fetchData}
+      />
     </div>
   );
 }

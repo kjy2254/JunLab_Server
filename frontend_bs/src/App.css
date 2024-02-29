@@ -41,25 +41,35 @@ button {
 }
 
 /* 전체 스크롤바의 스타일을 설정합니다 */
-.App ::-webkit-scrollbar {
+.App ::-webkit-scrollbar,
+.ReactModalPortal ::-webkit-scrollbar {
   width: 4px; /* 스크롤바의 너비 */
   height: 4px; /* 스크롤바의 높이 */
 }
 
-.App ::-webkit-scrollbar {
+.App ::-webkit-scrollbar,
+.ReactModalPortal ::-webkit-scrollbar {
   display: block;
 }
 .App ::-webkit-scrollbar-track,
-.App ::-webkit-scrollbar-button {
+.ReactModalPortal ::-webkit-scrollbar-track,
+.App ::-webkit-scrollbar-button,
+.ReactModalPortal ::-webkit-scrollbar-button {
   display: none;
 }
-.App ::-webkit-scrollbar-thumb {
+.App ::-webkit-scrollbar-thumb,
+.ReactModalPortal ::-webkit-scrollbar-thumb {
   background-color: gray;
   border-radius: 4px;
 }
 /* 스크롤바 코너를 숨깁니다 */
-.App ::-webkit-scrollbar-corner {
+.App ::-webkit-scrollbar-corner,
+.ReactModalPortal ::-webkit-scrollbar-corner {
   display: none;
+}
+
+.ReactModal__Content:focus {
+  outline: none; /* 포커스 시 아웃라인 제거 */
 }
 
 :root {
