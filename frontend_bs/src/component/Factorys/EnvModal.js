@@ -1,13 +1,12 @@
-import React from "react";
-import "../../css/EnvModal.css";
-import { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
-import Modal from "react-modal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import React, { useEffect, useState } from "react";
+import Modal from "react-modal";
 import { useParams } from "react-router-dom";
+import "../../css/EnvModal.css";
 
 const customModalStyles = {
   overlay: {
@@ -42,7 +41,7 @@ function EnvModal({ modalOpen, setModalOpen, selectedEnvCard, img }) {
           <FontAwesomeIcon icon={faClose} onClick={() => setModalOpen(false)} />
         </div>
       </div>
-      <GraphCard
+      <EnvGraphCard
         header={header[selectedEnvCard]}
         img={img}
         endpoint={selectedEnvCard}
@@ -51,7 +50,7 @@ function EnvModal({ modalOpen, setModalOpen, selectedEnvCard, img }) {
   );
 }
 
-function GraphCard({ header, img, endpoint, title }) {
+function EnvGraphCard({ header, img, endpoint, title }) {
   const { factoryId } = useParams();
 
   const [data, setData] = useState([]);

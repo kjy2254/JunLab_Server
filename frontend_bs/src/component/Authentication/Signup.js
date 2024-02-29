@@ -1,18 +1,14 @@
-import React, { useState } from "react";
-import "../../css/Signup.css";
-import { Link } from "react-router-dom";
 import axios from "axios";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Navigation } from "swiper/modules";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "swiper/css";
-import "swiper/css/pagination";
 import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "../../css/Signup.css";
 
 function Signup() {
-  // const [id, setId] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [password2, setPassword2] = useState("");
-
   const [formData, setFormData] = useState({
     id: "",
     password: "",

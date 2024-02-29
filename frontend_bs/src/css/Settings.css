@@ -25,7 +25,6 @@
 }
 
 .react-tabs__tab {
-  border: 1px solid var(--border-color) !important;
   border-bottom: none;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
@@ -225,7 +224,6 @@
 }
 
 .watch-area.dragging-over {
-  /* border: 2px dashed #ccc; */
   border: 2px dashed var(--drag-over-color);
 }
 

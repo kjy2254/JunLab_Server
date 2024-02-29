@@ -1,9 +1,8 @@
+import { faFileLines, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Nav } from "react-bootstrap";
-import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileLines, faUser } from "@fortawesome/free-solid-svg-icons";
 
 function SidebarUser(props) {
   const { userId } = useParams();

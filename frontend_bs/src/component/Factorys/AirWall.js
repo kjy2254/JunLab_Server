@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
-import { useTable, usePagination, useSortBy } from "react-table";
-import "../../css/AirWall.css";
-import axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSort,
   faSortDown,
   faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
+import React, { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
+import { usePagination, useSortBy, useTable } from "react-table";
+import "../../css/AirWall.css";
+import { notify } from "../../util";
 
 function AirWall(props) {
   const [data, setData] = useState([]);
@@ -147,7 +148,9 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isLoading) {
-      alert("이전 요청이 실행 중 입니다.");
+      // alert("이전 요청이 실행 중 입니다.");
+      notify();
+      return;
     } else {
       setIsLoading(true);
       setData([]);

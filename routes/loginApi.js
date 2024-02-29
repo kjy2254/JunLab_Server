@@ -79,14 +79,14 @@ login.post("/login2", (req, res) => {
               // 비밀번호가 일치하면
               req.session.is_logined = true; // 세션 정보 갱신
               req.session.name = results[0].name;
-              req.session.userId = results[0].id;
+              req.session.userId = results[0].user_id;
               req.session.authority = results[0].authority;
               req.session.manageOf = results[0].manager_of;
 
               req.session.save(function () {
                 sendData.isLogin = true;
                 sendData.name = results[0].name;
-                sendData.userId = results[0].id;
+                sendData.userId = results[0].user_id;
                 sendData.authority = results[0].authority;
                 sendData.manageOf = results[0].manager_of;
                 res.send(sendData);
@@ -165,7 +165,7 @@ login.post("/signup2", (req, res) => {
           // DB에 같은 이름의 회원아이디가 없고, 비밀번호가 올바르게 입력된 경우
           const hasedPassword = bcrypt.hashSync(password, 10); // 입력된 비밀번호를 해시한 값
           connection.query(
-            "INSERT INTO users (id, password, name, gender, date_of_birth, email, phone_number, address, role, code, join_date) VALUES(?,?,?,?,?,?,?,?,?,?, NOW())",
+            "INSERT INTO users (id, password, name, gender, date_of_birth, email, phone_number, address, code, join_date) VALUES(?,?,?,?,?,?,?,?,?, NOW())",
             [
               id,
               hasedPassword,
@@ -175,7 +175,6 @@ login.post("/signup2", (req, res) => {
               email,
               phone,
               address,
-              "Default",
               code,
             ],
             (error) => {

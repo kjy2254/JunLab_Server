@@ -1,33 +1,33 @@
-import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Header from "./component/Header";
-import Sidebar from "./component/Sidebar";
-import SidebarAD from "./component/Admins/SidebarAD";
-import SidebarUser from "./component/Users/SidebarUser";
-import Login from "./component/Authentication/Login";
-import Factory from "./component/Admins/Factory";
-import Logs from "./component/Admins/Logs";
-import Dashboard from "./component/Factorys/Dashboard";
-import AirWall from "./component/Factorys/AirWall";
-import AirWatch from "./component/Factorys/AirWatch";
-import Settings from "./component/Settings/Settings";
-import UserInit from "./component/Users/MyPage";
-import Confirm from "./component/Factorys/Confirm";
-import Vital from "./component/Users/Vital";
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
   Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+  useNavigate,
+  useParams,
 } from "react-router-dom";
-import Signup from "./component/Authentication/Signup";
-import { authcheck } from "./util";
-import Labeling from "./component/Labeling/Labeling";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { toggleTheme } from "./component/Header";
+import "./App.css";
+import Factory from "./component/Admins/Factory";
+import Logs from "./component/Admins/Logs";
+import SidebarAD from "./component/Admins/SidebarAD";
+import Login from "./component/Authentication/Login";
+import Signup from "./component/Authentication/Signup";
+import AirWall from "./component/Factorys/AirWall";
+import AirWatch from "./component/Factorys/AirWatch";
+import Confirm from "./component/Factorys/Confirm";
+import Dashboard from "./component/Factorys/Dashboard";
+import Header from "./component/Header";
+import Labeling from "./component/Labeling/Labeling";
+import Settings from "./component/Settings/Settings";
+import Sidebar from "./component/Sidebar";
+import UserInit from "./component/Users/MyPage";
+import SidebarUser from "./component/Users/SidebarUser";
+import Vital from "./component/Users/Vital";
+import { authcheck } from "./util";
 
 function App() {
   const [toggleSide, setToggleSide] = useState(true);
@@ -107,7 +107,7 @@ function App() {
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const debug = true;
+  const debug = false;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -131,8 +131,17 @@ function App() {
       });
       setIsLoading(false);
     };
+    const fetchDebug2 = () => {
+      setAuthData({
+        isLogin: true,
+        name: "JunLab",
+        userId: 41,
+        authority: 1,
+      });
+      setIsLoading(false);
+    };
     if (debug) {
-      fetchDebug();
+      fetchDebug2();
     } else {
       fetchData();
     }
@@ -357,7 +366,7 @@ function App() {
                       closeSmallSidebar={closeSmallSidebar}
                     />
                   }
-                  isAllow={authData.isLogin && authData.authority >= 1}
+                  isAllow={authData.isLogin}
                   loginUserId={authData.userId}
                 />
               }
@@ -406,10 +415,6 @@ function RestrictRoute({ element, isAllow, manageOf, loginUserId }) {
     isAllowed = isAllow;
   }
 
-  // const isAllowed =
-  //   isAllow &&
-  //   (manageOf === undefined || manageOf == factoryId || manageOf < 0);
-
   useEffect(() => {
     if (!isAllowed && redirect) {
       alert("권한이 없습니다.");
@@ -448,7 +453,7 @@ function HomeRedirector({ authData }) {
     }
     // 권한이 1이하인 가입 대기자
     else if (authData.authority <= 1) {
-      return "/factorymanagement/user/init";
+      return `/factorymanagement/user/${authData.userId}/mypage`;
     }
     // 권한이 2인 일반 사용자
     else if (authData.authority === 2) {

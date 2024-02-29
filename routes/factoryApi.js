@@ -10,29 +10,37 @@ const {
   calclevel,
 } = require("../util/logic.js");
 
-api.get("/image/:imageName", (req, res) => {
-  const { imageName } = req.params;
-  // 이미지 파일의 경로 설정 (images 폴더 내에 이미지 파일이 있어야 함)
-  const imagePath = path.join(__dirname, "../images", imageName);
-  const defaultPath = path.join(__dirname, "../images/factory_default.png");
+api.get("/image/profile/:imagePath", (req, res) => {
+  const imagePath = req.params.imagePath;
+  const fullPath = path.join(__dirname, "../images/profile", imagePath);
+  const defaultProfilePath = path.join(
+    __dirname,
+    "../images/profile",
+    "profile_default.png"
+  );
 
   // 이미지 파일이 존재하는지 확인
-  if (fs.existsSync(imagePath)) {
-    // 이미지 파일을 읽어 응답으로 전송
-    res.sendFile(imagePath, (err) => {
-      if (err) {
-        console.error("이미지 파일을 읽어오지 못했습니다.", err);
-        return res.status(404).send("이미지를 찾을 수 없습니다.");
-      }
-    });
+  if (fs.existsSync(fullPath)) {
+    return res.sendFile(fullPath);
   } else {
-    // 이미지 파일을 찾을 수 없을 때 기본 이미지를 응답으로 보냅니다.
-    res.sendFile(defaultPath, (err) => {
-      if (err) {
-        console.error("기본 이미지 파일을 읽어오지 못했습니다.", err);
-        return res.status(404).send("이미지를 찾을 수 없습니다.");
-      }
-    });
+    return res.sendFile(defaultProfilePath);
+  }
+});
+
+api.get("/image/factory/:imagePath", (req, res) => {
+  const imagePath = req.params.imagePath;
+  const fullPath = path.join(__dirname, "../images/factory", imagePath);
+  const defaultFactoryPath = path.join(
+    __dirname,
+    "../images/factory",
+    "factory_default.png"
+  );
+
+  // 이미지 파일이 존재하는지 확인
+  if (fs.existsSync(fullPath)) {
+    return res.sendFile(fullPath);
+  } else {
+    return res.sendFile(defaultFactoryPath);
   }
 });
 
@@ -338,167 +346,6 @@ api.get("/factory/logs", (req, res) => {
       return res.status(200).json(result);
     });
   }
-});
-
-api.get("/user/:userId/info", (req, res) => {
-  const userId = parseInt(req.params.userId);
-
-  const query = `
-    SELECT
-      u.user_id, u.name, w.watch_id, w.last_sync, w.level
-    FROM
-    users u
-    LEFT JOIN
-    watches w ON w.watch_id = u.watch_id
-    WHERE
-      u.user_id = ?;
-  `;
-
-  connection.query(query, [userId], (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-    return res.status(200).json(result[0]);
-  });
-});
-
-api.get("/user/:userId/heartrate", (req, res) => {
-  const userId = parseInt(req.params.userId);
-  let start = req.query.start;
-  let end = req.query.end;
-  let timeSlot = req.query.timeSlot;
-
-  let queryParams = [userId];
-
-  let query = ``;
-
-  if (start && end) {
-    queryParams.push(start, end);
-    query += `
-      SELECT
-        heart_rate as heartrate, timestamp
-      FROM
-        watch_data w
-      JOIN
-        users u ON w.user_id = u.user_id
-      WHERE
-        u.user_id = ? AND timestamp >= ? AND timestamp <= ? AND w.heart_rate != ".ING.";
-      `;
-  } else {
-    if (!timeSlot) timeSlot = 90;
-    queryParams.push(timeSlot);
-    query += `
-      SELECT
-        heart_rate as heartrate, timestamp
-      FROM
-        watch_data w
-      JOIN
-        users u ON w.user_id = u.user_id
-      WHERE
-        u.user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND w.heart_rate != ".ING.";
-      `;
-  }
-
-  connection.query(query, queryParams, (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-    return res.status(200).json(result);
-  });
-});
-
-api.get("/user/:userId/temperature", (req, res) => {
-  const userId = parseInt(req.params.userId);
-  let start = req.query.start;
-  let end = req.query.end;
-  let timeSlot = req.query.timeSlot;
-
-  let queryParams = [userId];
-
-  let query = ``;
-
-  if (start && end) {
-    queryParams.push(start, end);
-    query += `
-      SELECT
-        body_temperature as temperature, timestamp
-      FROM
-        watch_data w
-      JOIN
-        users u ON w.user_id = u.user_id
-      WHERE
-        u.user_id = ? AND timestamp >= ? AND timestamp <= ?;
-      `;
-  } else {
-    if (!timeSlot) timeSlot = 90;
-    queryParams.push(timeSlot);
-    query += `
-      SELECT
-        body_temperature as temperature, timestamp
-      FROM
-        watch_data w
-      JOIN
-        users u ON w.user_id = u.user_id
-      WHERE
-        u.user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE);
-      `;
-  }
-
-  connection.query(query, queryParams, (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-    return res.status(200).json(result);
-  });
-});
-
-api.get("/user/:userId/oxygen", (req, res) => {
-  const userId = parseInt(req.params.userId);
-  let start = req.query.start;
-  let end = req.query.end;
-  let timeSlot = req.query.timeSlot;
-
-  let queryParams = [userId];
-
-  let query = ``;
-
-  if (start && end) {
-    queryParams.push(start, end);
-    query += `
-      SELECT
-      oxygen_saturation as oxygen, timestamp
-      FROM
-        watch_data w
-      JOIN
-        users u ON w.user_id = u.user_id
-      WHERE
-        u.user_id = ? AND timestamp >= ? AND timestamp <= ? AND w.oxygen_saturation != ".ING.";
-      `;
-  } else {
-    if (!timeSlot) timeSlot = 90;
-    queryParams.push(timeSlot);
-    query += `
-      SELECT
-      oxygen_saturation as oxygen, timestamp
-      FROM
-        watch_data w
-      JOIN
-        users u ON w.user_id = u.user_id
-      WHERE
-        u.user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND w.oxygen_saturation != ".ING.";
-      `;
-  }
-
-  connection.query(query, queryParams, (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-    return res.status(200).json(result);
-  });
 });
 
 api.get("/settings/:factoryId/airwalls", (req, res) => {

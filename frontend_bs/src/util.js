@@ -1,4 +1,17 @@
 import { escapeRegExp } from "lodash/string";
+import { toast } from "react-toastify";
+
+export function notify() {
+  toast("이전 요청이 실행중입니다!", {
+    position: "top-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  });
+}
 
 export function ch2pattern(ch) {
   const offset = 44032; /* '가'의 코드 */

@@ -1,6 +1,4 @@
 .login {
-  /* color: white; */
-  background: rgb(48, 58, 69);
   display: flex;
   height: calc(100dvh - 100px);
   justify-content: center;

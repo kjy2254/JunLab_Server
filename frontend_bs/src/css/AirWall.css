@@ -180,7 +180,7 @@
 }
 
 .airwall-table td {
-  border-top: 1px solid var(--border-color-dark);
+  border-top: 1px solid var(--border-color);
   height: 3rem;
   padding: 0.5rem;
 }

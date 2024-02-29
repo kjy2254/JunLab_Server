@@ -1,32 +1,30 @@
-import React from "react";
-import { useState, useEffect, useMemo, useRef } from "react";
-import { useParams } from "react-router-dom";
-import { useTable, useSortBy } from "react-table";
-import "../../css/Dashboard.css";
-import finedust from "../../image/finedust.svg";
-import temperature from "../../image/temperature.svg";
-import co2 from "../../image/co2.svg";
-import tvoc from "../../image/tvoc.svg";
-import defaultProfile from "../../image/profile_default.png";
-import axios from "axios";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Autoplay } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import { WorkerModal } from "./WorkerModal";
-import EnvModal from "./EnvModal";
-import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faSort,
-  faSortDown,
-  faSortUp,
   faBatteryThreeQuarters,
   faPause,
   faPlay,
-  faChartLine,
+  faSort,
+  faSortDown,
+  faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useSortBy, useTable } from "react-table";
+import "swiper/css";
+import "swiper/css/pagination";
+import { Autoplay, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "../../css/Dashboard.css";
+import co2 from "../../image/co2.svg";
+import finedust from "../../image/finedust.svg";
+import defaultProfile from "../../image/profile_default.png";
+import temperature from "../../image/temperature.svg";
+import tvoc from "../../image/tvoc.svg";
+import EnvModal from "./EnvModal";
+import WorkerModal from "./WorkerModal";
 
 function Dashboard(props) {
   const [onlineData, setOnlineData] = useState([]);
@@ -36,6 +34,19 @@ function Dashboard(props) {
   const [selectedWorker, setSelectedWorker] = useState(0);
   const [selectedEnvCard, setSelectedEnvCard] = useState(0);
   const [img, setImg] = useState();
+
+  const envCardsData = [
+    { title: "TVOC", unit: "ppb", endpoint: "tvoc", img: tvoc },
+    { title: "CO2", unit: "ppb", endpoint: "co2", img: co2 },
+    {
+      title: "Temperature",
+      unit: "°C",
+      endpoint: "temperature",
+      img: temperature,
+    },
+    { title: "Fine Dust", unit: "㎍/㎥", endpoint: "finedust", img: finedust },
+  ];
+
   const handlePlayPause = () => {
     setIsPaused((p) => !p);
   };
@@ -45,10 +56,8 @@ function Dashboard(props) {
 
   useEffect(() => {
     if (envModalOpen || workerModalOpen) {
-      // 모달이 열릴 때 스크롤 비활성화
       document.body.style.overflow = "hidden";
     } else {
-      // 모달이 닫힐 때 스크롤 활성화
       document.body.style.overflow = "auto";
     }
     return () => {
@@ -68,48 +77,20 @@ function Dashboard(props) {
             )}
           </div>
         </div>
-
         <div className="first-row">
-          <EnvCard
-            title={"TVOC"}
-            unit={"ppb"}
-            endpoint={"tvoc"}
-            img={tvoc}
-            isPaused={isPaused}
-            setSelectedEnvCard={setSelectedEnvCard}
-            setEnvModalOpen={setEnvModalOpen}
-            setImg={setImg}
-          />
-          <EnvCard
-            title={"CO2"}
-            unit={"ppb"}
-            endpoint={"co2"}
-            img={co2}
-            isPaused={isPaused}
-            setSelectedEnvCard={setSelectedEnvCard}
-            setEnvModalOpen={setEnvModalOpen}
-            setImg={setImg}
-          />
-          <EnvCard
-            title={"Temperature"}
-            unit={"°C"}
-            endpoint={"temperature"}
-            img={temperature}
-            isPaused={isPaused}
-            setSelectedEnvCard={setSelectedEnvCard}
-            setEnvModalOpen={setEnvModalOpen}
-            setImg={setImg}
-          />
-          <EnvCard
-            title={"Fine Dust"}
-            unit={"㎍/㎥"}
-            endpoint={"finedust"}
-            img={finedust}
-            isPaused={isPaused}
-            setSelectedEnvCard={setSelectedEnvCard}
-            setEnvModalOpen={setEnvModalOpen}
-            setImg={setImg}
-          />
+          {envCardsData.map((data) => (
+            <EnvCard
+              key={data.endpoint}
+              title={data.title}
+              unit={data.unit}
+              endpoint={data.endpoint}
+              img={data.img}
+              isPaused={isPaused}
+              setSelectedEnvCard={setSelectedEnvCard}
+              setEnvModalOpen={setEnvModalOpen}
+              setImg={setImg}
+            />
+          ))}
         </div>
         <div className="second-row">
           <WorkerSummary

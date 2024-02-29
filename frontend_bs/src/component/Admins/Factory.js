@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "../../css/Factory.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as fS1 } from "@fortawesome/free-regular-svg-icons";
 import {
   faStar as fS2,
+  faClose,
   faFilter,
   faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import "../../css/Factory.css";
 import { createFuzzyMatcher } from "../../util";
 
 function Factory({ setHeaderText }) {
@@ -80,7 +81,7 @@ function Factory({ setHeaderText }) {
                   setFilterZone({ ...filterZone, overlay: !filterZone.overlay })
                 }
               >
-                x
+                <FontAwesomeIcon icon={faClose} />
               </button>
             ) : (
               <></>
@@ -213,7 +214,7 @@ function FactoryDetail({ detail }) {
   return (
     <div className="detail">
       <img
-        src={`http://junlab.postech.ac.kr:880/api2/image/factory_${detail.factory_id}.png`}
+        src={`http://junlab.postech.ac.kr:880/api2/image/${detail.factory_image_url}`}
       />
       <div className="text">
         <div className="wrapper">

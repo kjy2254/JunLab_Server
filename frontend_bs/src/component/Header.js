@@ -1,8 +1,8 @@
-import React from "react";
-import { Navbar, Nav, Button } from "react-bootstrap";
-import "../css/Header.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
+import { Button, Nav, Navbar } from "react-bootstrap";
+import "../css/Header.css";
 
 export function toggleTheme(darkMode, setDarkMode) {
   if (darkMode) {

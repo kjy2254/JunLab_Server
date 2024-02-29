@@ -1,102 +1,19 @@
-import "../../css/Labeling.css";
-import axios from "axios";
-import { Navbar, Nav, Button } from "react-bootstrap";
-import { useState, useEffect, useRef } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faMars,
   faMoon,
   faSun,
   faVenus,
-  faMars,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { useEffect, useState } from "react";
+import { Nav, Navbar } from "react-bootstrap";
+import "../../css/Labeling.css";
+import { toggleTheme } from "../Header";
 
 function Labeling({ darkMode, setDarkMode }) {
-  const toggleTheme = () => {
-    if (darkMode) {
-      // 토글 전에 다크 모드일 경우 라이트 모드로 변경
-      // 라이트 모드 색상
-      document.documentElement.style.setProperty(
-        "--layer1-bg-color",
-        "rgb(244, 246, 249)"
-      );
-      document.documentElement.style.setProperty(
-        "--layer2-bg-color",
-        "rgb(255, 255, 255)"
-      );
-      document.documentElement.style.setProperty(
-        "--layerSB-bg-color",
-        "rgb(36, 42, 51)"
-      );
-      document.documentElement.style.setProperty(
-        "--layerHD-bg-color",
-        "rgb(255, 255, 255)"
-      );
-      document.documentElement.style.setProperty(
-        "--layerModal-bg-color",
-        "rgb(244, 246, 249)"
-      );
-      document.documentElement.style.setProperty(
-        "--border-color",
-        "rgb(228, 231, 234)"
-      );
-      document.documentElement.style.setProperty("--select-color", "#ececec");
-      document.documentElement.style.setProperty("--text-color", "black");
-      document.documentElement.style.setProperty(
-        "--spinner-color",
-        "rgb(228, 231, 234)"
-      );
-      document.documentElement.style.setProperty("--spinner-top-color", "gray");
-      document.documentElement.style.setProperty(
-        "--graph-lable-color",
-        "black"
-      );
-    } else {
-      // 다크 모드 색상
-      document.documentElement.style.setProperty(
-        "--layer1-bg-color",
-        "rgb(48, 58, 69)"
-      );
-      document.documentElement.style.setProperty(
-        "--layer2-bg-color",
-        "rgb(25, 36, 48)"
-      );
-      document.documentElement.style.setProperty(
-        "--layerSB-bg-color",
-        "rgb(25, 36, 48)"
-      );
-      document.documentElement.style.setProperty(
-        "--layerHD-bg-color",
-        "rgb(25, 36, 48)"
-      );
-      document.documentElement.style.setProperty(
-        "--layerModal-bg-color",
-        "rgb(48, 58, 69)"
-      );
-      document.documentElement.style.setProperty(
-        "--border-color",
-        "rgba(255, 255, 255, 0.2)"
-      );
-      document.documentElement.style.setProperty("--select-color", "#303a45");
-      document.documentElement.style.setProperty("--text-color", "white");
-      document.documentElement.style.setProperty(
-        "--spinner-color",
-        "rgba(255, 255, 255, 0.3)"
-      );
-      document.documentElement.style.setProperty(
-        "--spinner-top-color",
-        "white"
-      );
-      document.documentElement.style.setProperty(
-        "--graph-lable-color",
-        "rgb(230, 233, 236)"
-      );
-    }
-    localStorage.setItem("darkMode", darkMode ? "false" : "true");
-    setDarkMode((prev) => !prev);
-  };
-
   const [data, setData] = useState({});
   const [tvoc, setTVOC] = useState({});
   const [co2, setCO2] = useState({});
@@ -372,7 +289,10 @@ function Labeling({ darkMode, setDarkMode }) {
             <span className="header-text">라벨링</span>
           </div>
           <Nav className="buttons">
-            <div className="theme-toggle-button" onClick={toggleTheme}>
+            <div
+              className="theme-toggle-button"
+              onClick={() => toggleTheme(darkMode, setDarkMode)}
+            >
               <div className={`toggle-switch ${darkMode ? "active" : ""}`}>
                 <FontAwesomeIcon icon={faMoon} className="icon moon-icon" />
                 <FontAwesomeIcon icon={faSun} className="icon sun-icon" />

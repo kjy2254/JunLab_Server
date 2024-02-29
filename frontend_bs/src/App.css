@@ -98,14 +98,17 @@ button {
 
 .layerSB {
   background-color: var(--layerSB-bg-color);
+  color: var(--text-color);
 }
 
 .layerHD {
   background-color: var(--layerHD-bg-color);
+  color: var(--text-color);
 }
 
 .layerModal {
   background-color: var(--layerModal-bg-color);
+  color: var(--text-color);
 }
 
 input[type="text"],

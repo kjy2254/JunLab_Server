@@ -9,7 +9,7 @@ import {
   faSortDown,
   faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
+import { notify } from "../../util";
 
 function Logs(props) {
   const [data, setData] = useState([]);
@@ -175,18 +175,6 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
   const { factoryId } = useParams();
   const [list, setList] = useState([]);
   const [selected, setSelected] = useState({ type: "id", value: "전체" });
-
-  const notify = () => {
-    toast("이전 요청이 실행중입니다!", {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
 
   useEffect(() => {
     axios

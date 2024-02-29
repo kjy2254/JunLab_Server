@@ -1,14 +1,10 @@
-import React from "react";
-import "../../css/WorkerModal.css";
-import { useState, useEffect, useRef } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
-import Modal from "react-modal";
 import axios from "axios";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import React, { useEffect, useState } from "react";
+import "../../css/WorkerModal.css";
 
-function GraphCard({ header, selectedWorker, endpoint, title }) {
+function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
   const [data, setData] = useState([]);
   const getFormattedDate = (date) => {
     const year = date.getFullYear();
@@ -238,4 +234,4 @@ function GraphCard({ header, selectedWorker, endpoint, title }) {
   );
 }
 
-export default GraphCard;
+export default HealthGraphCard;

@@ -1,11 +1,10 @@
-import React from "react";
-import "../../css/WorkerModal.css";
-import { useState, useEffect, useRef } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
-import Modal from "react-modal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import GraphCard from "./GraphCard";
+import React, { useEffect, useState } from "react";
+import Modal from "react-modal";
+import "../../css/WorkerModal.css";
+import HealthGraphCard from "./HealthGraphCard";
 
 const customModalStyles = {
   overlay: {
@@ -19,7 +18,7 @@ const customModalStyles = {
   },
 };
 
-export function WorkerModal({ modalOpen, setModalOpen, selectedWorker }) {
+function WorkerModal({ modalOpen, setModalOpen, selectedWorker }) {
   const [data, setData] = useState({});
 
   useEffect(() => {
@@ -54,17 +53,17 @@ export function WorkerModal({ modalOpen, setModalOpen, selectedWorker }) {
           <FontAwesomeIcon icon={faClose} onClick={() => setModalOpen(false)} />
         </div>
       </div>
-      <GraphCard
+      <HealthGraphCard
         header={"심박수(bpm)"}
         selectedWorker={selectedWorker}
         endpoint={"heartrate"}
       />
-      <GraphCard
+      <HealthGraphCard
         header={"체온(°C)"}
         selectedWorker={selectedWorker}
         endpoint={"temperature"}
       />
-      <GraphCard
+      <HealthGraphCard
         header={"산소포화도(%)"}
         selectedWorker={selectedWorker}
         endpoint={"oxygen"}
@@ -73,4 +72,4 @@ export function WorkerModal({ modalOpen, setModalOpen, selectedWorker }) {
   );
 }
 
-// export default WorkerModal;
+export default WorkerModal;
