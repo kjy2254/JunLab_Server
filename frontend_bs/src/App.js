@@ -411,6 +411,7 @@ function RestrictRoute({ element, isAllow, manageOf, loginUserId }) {
     isAllowed = isAllow && (manageOf == factoryId || manageOf < 0);
   } else if (loginUserId) {
     isAllowed = isAllow && userId == loginUserId;
+    console.log(isAllow, isAllowed);
   } else {
     isAllowed = isAllow;
   }

@@ -43,6 +43,10 @@ function UserInit(props) {
     const file = e.target.files[0];
 
     if (file) {
+      if (!file.type.includes("image")) {
+        alert(`해당 파일은 이미지 파일이 아닙니다.`);
+        return;
+      }
       setProfileImgFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -91,6 +95,7 @@ function UserInit(props) {
                 className="hidden"
                 type="file"
                 onChange={handleImageChange}
+                accept="image/*"
               />
             </label>
           )}

@@ -20,7 +20,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "../../css/Dashboard.css";
 import co2 from "../../image/co2.svg";
 import finedust from "../../image/finedust.svg";
-import defaultProfile from "../../image/profile_default.png";
 import temperature from "../../image/temperature.svg";
 import tvoc from "../../image/tvoc.svg";
 import EnvModal from "./EnvModal";
@@ -293,7 +292,11 @@ function WorkerSummary({
         accessor: "name",
         Cell: ({ row }) => (
           <div className="table-worker">
-            <img src={defaultProfile} width={42} height={42} />
+            <img
+              src={`http://junlab.postech.ac.kr:880/api2/image/${row.original.profile_image_path}`}
+              width={50}
+              height={50}
+            />
             <div className="info">
               <span className="name">{row.original.name}</span>
               <span className="watch">

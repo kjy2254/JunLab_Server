@@ -46,14 +46,6 @@
   text-wrap: nowrap;
 }
 
-.bar {
-  position: absolute;
-  top: 1.5rem;
-  background: rgb(57, 139, 247);
-  width: 2px;
-  height: 30px;
-}
-
 .airwall-wrapper form {
   /* background: #000; */
   width: calc(100% - 3rem);

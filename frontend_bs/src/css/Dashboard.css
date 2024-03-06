@@ -98,12 +98,12 @@
   margin-right: 1rem;
 }
 
-.bar {
-  position: absolute;
+.dashboard .bar {
+  /* position: absolute; */
   top: 30%;
-  background: rgb(57, 139, 247);
-  width: 2px;
-  height: 30px;
+  /* background: rgb(57, 139, 247); */
+  /* width: 2px; */
+  /* height: 30px; */
 }
 
 .env-card .module-name {
@@ -229,7 +229,12 @@
 .table-worker .info {
   display: flex;
   flex-direction: column;
-  padding-left: 0.8rem;
+  padding-left: 0.6rem;
+  justify-content: center;
+}
+
+.table-worker img {
+  border-radius: 100%;
 }
 
 .info .watch {

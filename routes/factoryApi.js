@@ -80,6 +80,8 @@ api.post("/factory", upload.single("image"), (req, res) => {
     code,
   ];
 
+  if (!name) return res.status(500).send("Factory name is must be filled!");
+
   connection.query(query, queryParams, (error, result) => {
     if (error) {
       console.log(error);
@@ -188,7 +190,7 @@ api.get("/factory/:factoryId/workers", (req, res) => {
 
   const query = `
     SELECT
-      u.watch_id,
+      u.watch_id, u.profile_image_path,
       w.last_sync,
       CASE
         WHEN w.last_battery_level BETWEEN 2.7 AND 4.2 THEN

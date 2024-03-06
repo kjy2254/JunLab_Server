@@ -321,15 +321,13 @@ api.put("/:userId/profile", upload.single("image"), (req, res) => {
 
     const healthParams = [
       req.body.user_id,
-      req.body.height ? parseFloat(req.body.height) : null,
-      req.body.weight ? parseFloat(req.body.weight) : null,
-      req.body.smoke_per_day ? parseFloat(req.body.smoke_per_day) : null,
-      req.body.drink_per_week ? parseFloat(req.body.drink_per_week) : null,
-      req.body.job,
-      req.body.employment_period
-        ? parseFloat(req.body.employment_period)
-        : null,
-      req.body.illness,
+      toNullable(req.body.height),
+      toNullable(req.body.weight),
+      toNullable(req.body.smoke_per_day),
+      toNullable(req.body.drink_per_week),
+      toNullable(req.body.job),
+      toNullable(req.body.employment_period),
+      toNullable(req.body.illness),
     ];
 
     connection.query(
