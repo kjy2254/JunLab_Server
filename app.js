@@ -53,10 +53,13 @@ app.use("/api2", factoryApi);
 app.use("/api/labeling", labelingApi);
 app.use("/login", longinApi);
 app.use("/api2/user", userApi);
-app.get("/factorymanagement/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend_bs/build/index.html"));
-});
-app.get("/labeling/*", (req, res) => {
+// app.get("/factorymanagement/*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "frontend_bs/build/index.html"));
+// });
+// app.get("/labeling/*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "frontend_bs/build/index.html"));
+// });
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend_bs/build/index.html"));
 });
 

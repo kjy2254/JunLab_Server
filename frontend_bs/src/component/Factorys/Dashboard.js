@@ -36,7 +36,7 @@ function Dashboard(props) {
 
   const envCardsData = [
     { title: "TVOC", unit: "ppb", endpoint: "tvoc", img: tvoc },
-    { title: "CO2", unit: "ppb", endpoint: "co2", img: co2 },
+    { title: "CO2", unit: "ppm", endpoint: "co2", img: co2 },
     {
       title: "Temperature",
       unit: "°C",
@@ -440,7 +440,10 @@ function WorkerSummary({
     <div className="worker-summary layer2">
       <span className="bar" />
       <div className="header">
-        <span>작업자 상태</span>
+        <span>
+          작업자 상태
+          {/* <a href="tel:01022540504"> 전화걸기 </a> */}
+        </span>
       </div>
       <table {...getTableProps()}>
         <thead>

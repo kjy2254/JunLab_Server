@@ -23,7 +23,7 @@ const customModalStyles = {
 function EnvModal({ modalOpen, setModalOpen, selectedEnvCard, img }) {
   const header = {
     tvoc: "총휘발성유기화합물(ppb)",
-    co2: "이산화탄소(ppb)",
+    co2: "이산화탄소(ppm)",
     temperature: "온도(°C)",
     finedust: "미세먼지(㎍/㎥)",
   };

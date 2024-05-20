@@ -85,6 +85,9 @@ function Login() {
           <div className="button-wrapper">
             <button onClick={postLogin}>로그인</button>
           </div>
+          <a href="/junlabband_v0.1.apk" download>
+            APK 다운로드
+          </a>
         </div>
       </div>
     </div>

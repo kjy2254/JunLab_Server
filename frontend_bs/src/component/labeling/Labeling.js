@@ -11,6 +11,7 @@ import HighchartsReact from "highcharts-react-official";
 import { useEffect, useState } from "react";
 import { Nav, Navbar } from "react-bootstrap";
 import "../../css/Labeling.css";
+import { initHorizontalScroll } from "../../util";
 import { toggleTheme } from "../Header";
 
 function Labeling({ darkMode, setDarkMode }) {
@@ -240,6 +241,7 @@ function Labeling({ darkMode, setDarkMode }) {
           setHealthbox(data.type == "health");
         }
       });
+    initHorizontalScroll();
   }, []);
 
   useEffect(() => {
@@ -447,7 +449,7 @@ function Labeling({ darkMode, setDarkMode }) {
               </div>
             </div>
           </div>
-          <div className="progress-data layer2">
+          <div className="progress-data layer2 js-horizontal-scroll">
             {progressData.labeled?.map((e) => (
               <div
                 key={e.id}
