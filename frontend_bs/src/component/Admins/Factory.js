@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "../../css/Factory.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as fS1 } from "@fortawesome/free-regular-svg-icons";
 import {
   faStar as fS2,
+  faClose,
   faFilter,
   faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import "../../css/Factory.css";
 import { createFuzzyMatcher } from "../../util";
+import FactoryAddModal from "./FactoryAddModal";
 
 function Factory({ setHeaderText }) {
   const [factories, setFactories] = useState([]);
@@ -22,12 +24,13 @@ function Factory({ setHeaderText }) {
     overlay: false,
   });
   const [filter, setFilter] = useState("");
+  const [addModalOpen, setAddModalOpen] = useState(false);
 
   useEffect(() => {
     setHeaderText("공장관리");
   }, []);
 
-  useEffect(() => {
+  const fetchData = () => {
     axios
       .get("http://junlab.postech.ac.kr:880/api2/factories")
       .then((response) => {
@@ -38,6 +41,10 @@ function Factory({ setHeaderText }) {
       .catch((error) => {
         console.error("API 요청 실패:", error);
       });
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -72,7 +79,12 @@ function Factory({ setHeaderText }) {
           }
         >
           <div className="buttons">
-            <button className="add-factory">공장 추가</button>
+            <button
+              className="add-factory"
+              onClick={() => setAddModalOpen(true)}
+            >
+              공장 추가
+            </button>
             {filterZone.smallview ? (
               <button
                 className="close"
@@ -80,26 +92,26 @@ function Factory({ setHeaderText }) {
                   setFilterZone({ ...filterZone, overlay: !filterZone.overlay })
                 }
               >
-                x
+                <FontAwesomeIcon icon={faClose} />
               </button>
             ) : (
               <></>
             )}
           </div>
           <div className="filter">
-            <span>Filter</span>
-            <li>All</li>
-            <li>Starred</li>
+            <span>필터링</span>
+            <li>전체</li>
+            <li>별</li>
           </div>
           <div className="filter">
-            <span>Filter By Categories</span>
+            <span>카테고리</span>
             <li>주조</li>
             <li>소성</li>
             <li>용접</li>
             <li>금형</li>
           </div>
           <div className="filter">
-            <span>Filter By Location</span>
+            <span>지역</span>
             <li>경북</li>
             <li>전남</li>
             <li>충남</li>
@@ -154,7 +166,9 @@ function Factory({ setHeaderText }) {
           <div className="header">
             <div className="text">
               <span className="name">{detail.factory_name}</span>
-              <span className="industry">ID: {detail.factory_id}</span>
+              <span className="industry">
+                ID: {detail.factory_id} / Code: {detail.code}{" "}
+              </span>
             </div>
             {detailZone.smallview ? (
               <FontAwesomeIcon
@@ -179,6 +193,11 @@ function Factory({ setHeaderText }) {
           </div>
         </div>
       </div>
+      <FactoryAddModal
+        modalOpen={addModalOpen}
+        setModalOpen={setAddModalOpen}
+        fetchData={fetchData}
+      />
     </div>
   );
 }
@@ -213,7 +232,7 @@ function FactoryDetail({ detail }) {
   return (
     <div className="detail">
       <img
-        src={`http://junlab.postech.ac.kr:880/api2/image/factory_${detail.factory_id}.png`}
+        src={`http://junlab.postech.ac.kr:880/api2/image/${detail.factory_image_url}`}
       />
       <div className="text">
         <div className="wrapper">

@@ -46,14 +46,6 @@
   text-wrap: nowrap;
 }
 
-.bar {
-  position: absolute;
-  top: 1.5rem;
-  background: rgb(57, 139, 247);
-  width: 2px;
-  height: 30px;
-}
-
 .logs-wrapper form {
   /* background: #000; */
   width: calc(100% - 3rem);
@@ -185,13 +177,9 @@
 }
 
 .logs-table td {
-  border-top: 1px solid var(--border-color-dark);
+  border-top: 1px solid var(--border-color);
   height: 3rem;
   padding: 0.5rem;
-}
-
-.light-mode .logs-table td {
-  border-top: 1px solid var(--border-color-light);
 }
 
 @keyframes spin {

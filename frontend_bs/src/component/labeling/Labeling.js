@@ -1,29 +1,20 @@
-import "../../css/Labeling.css";
-import axios from "axios";
-import { Navbar, Nav, Button } from "react-bootstrap";
-import { useState, useEffect, useRef } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faMars,
   faMoon,
   faSun,
   faVenus,
-  faMars,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { useEffect, useState } from "react";
+import { Nav, Navbar } from "react-bootstrap";
+import "../../css/Labeling.css";
+import { initHorizontalScroll } from "../../util";
+import { toggleTheme } from "../Header";
 
-function Labeling() {
-  const [lightMode, setLightMode] = useState(
-    localStorage.getItem("lightMode") === "true"
-  );
-
-  const toggleTheme = () => {
-    const newLightMode = !lightMode;
-    setLightMode(newLightMode);
-    localStorage.setItem("lightMode", newLightMode ? "true" : "false");
-    document.body.classList.toggle("light-mode", newLightMode);
-  };
-
+function Labeling({ darkMode, setDarkMode }) {
   const [data, setData] = useState({});
   const [tvoc, setTVOC] = useState({});
   const [co2, setCO2] = useState({});
@@ -50,7 +41,7 @@ function Labeling() {
       margin: 30,
       align: "left",
       style: {
-        color: lightMode ? "inherit" : "rgb(230, 233, 236)",
+        color: "var(--graph-lable-color)",
       },
     },
     yAxis: {
@@ -59,12 +50,10 @@ function Labeling() {
       },
       labels: {
         style: {
-          color: lightMode ? "inherit" : "rgb(230, 233, 236)",
+          color: "var(--graph-lable-color)",
         },
       },
-      gridLineColor: lightMode
-        ? "var(--border-color-light)"
-        : "var(--border-color-dark)",
+      gridLineColor: "var(--border-color)",
     },
     legend: {
       enabled: false,
@@ -73,7 +62,7 @@ function Labeling() {
       type: "datetime",
       labels: {
         style: {
-          color: lightMode ? "inherit" : "rgb(230, 233, 236)",
+          color: "var(--graph-lable-color)",
         },
         // formatter: function () {
         //   return Highcharts.dateFormat("%Y-%m-%d %H:%M:%S", this.value); // 원하는 날짜 포맷으로 설정
@@ -86,8 +75,8 @@ function Labeling() {
           value: 2020, // 마지막 데이터 포인트의 X 위치 값
         },
       ],
-      lineColor: lightMode ? "black" : "rgb(230, 233, 236)",
-      tickColor: lightMode ? "black" : "rgb(230, 233, 236)",
+      lineColor: "var(--graph-lable-color)",
+      tickColor: "var(--graph-lable-color)",
     },
     credits: {
       enabled: false, // 워터마크 제거
@@ -243,12 +232,16 @@ function Labeling() {
         if (!data.isLogin) {
           alert("코드가 잘못되었습니다.");
         } else {
-          alert("확인되었습니다.");
+          const text = `[${data.name}]님 확인되었습니다.\n라벨링: ${
+            data.type == "env" ? "환경" : "건강"
+          }점수`;
+          alert(text);
           setAuthData(data);
           setEnvbox(data.type == "env");
           setHealthbox(data.type == "health");
         }
       });
+    initHorizontalScroll();
   }, []);
 
   useEffect(() => {
@@ -262,44 +255,6 @@ function Labeling() {
       fetchData();
     }
   }, [authData]);
-
-  useEffect(() => {
-    const updateGraphOptions = (currentOptions, newTitleText) => {
-      return {
-        ...currentOptions,
-        chart: { ...defaultOptions.chart },
-        title: {
-          ...currentOptions.title,
-          text: newTitleText || currentOptions.title.text,
-          style: { color: lightMode ? "inherit" : "rgb(230, 233, 236)" },
-        },
-        yAxis: {
-          ...defaultOptions.yAxis,
-          labels: {
-            style: { color: lightMode ? "inherit" : "rgb(230, 233, 236)" },
-          },
-        },
-        xAxis: {
-          ...defaultOptions.xAxis,
-          labels: {
-            style: { color: lightMode ? "inherit" : "rgb(230, 233, 236)" },
-          },
-        },
-        legend: { ...defaultOptions.legend },
-        credits: { ...defaultOptions.credits },
-        plotOptions: { ...defaultOptions.plotOptions },
-      };
-    };
-
-    setTVOC((prevOptions) => updateGraphOptions(prevOptions, "TVOC 농도"));
-    setCO2((prevOptions) => updateGraphOptions(prevOptions, "이산화탄소(ppm)"));
-    setHeartrate((prevOptions) =>
-      updateGraphOptions(prevOptions, "심박수(bpm)")
-    );
-    setOxygen((prevOptions) =>
-      updateGraphOptions(prevOptions, "산소포화도(%)")
-    );
-  }, [lightMode]);
 
   const putData = () => {
     if (score == 0) {
@@ -336,8 +291,11 @@ function Labeling() {
             <span className="header-text">라벨링</span>
           </div>
           <Nav className="buttons">
-            <div className="theme-toggle-button" onClick={toggleTheme}>
-              <div className={`toggle-switch ${lightMode ? "" : "active"}`}>
+            <div
+              className="theme-toggle-button"
+              onClick={() => toggleTheme(darkMode, setDarkMode)}
+            >
+              <div className={`toggle-switch ${darkMode ? "active" : ""}`}>
                 <FontAwesomeIcon icon={faMoon} className="icon moon-icon" />
                 <FontAwesomeIcon icon={faSun} className="icon sun-icon" />
                 <div className="toggle-handle"></div>
@@ -491,7 +449,7 @@ function Labeling() {
               </div>
             </div>
           </div>
-          <div className="progress-data layer2">
+          <div className="progress-data layer2 js-horizontal-scroll">
             {progressData.labeled?.map((e) => (
               <div
                 key={e.id}

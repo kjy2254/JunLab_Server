@@ -49,17 +49,12 @@
 }
 
 .confirm table tbody td {
-  /* max-width: 5rem; */
   height: 2rem;
-  border-top: 1px solid var(--border-color-dark);
-}
-
-.light-mode .confirm table tbody td {
-  border-top: 1px solid var(--border-color-light);
+  border-top: 1px solid var(--border-color);
 }
 
 .confirm thead {
-  font-weight: bold;
+  /* font-weight: bold; */
 }
 
 .confirm td {

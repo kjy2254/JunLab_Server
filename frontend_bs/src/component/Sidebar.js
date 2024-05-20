@@ -1,18 +1,17 @@
-import React from "react";
-import { Nav } from "react-bootstrap";
-import "../css/Sidebar.css";
-import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleDown,
   faAngleRight,
-  faHouse,
+  faCheckDouble,
   faFileLines,
   faGear,
-  faCheckDouble,
+  faHouse,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Nav } from "react-bootstrap";
+import { Link, useParams } from "react-router-dom";
+import "../css/Sidebar.css";
 function Sidebar(props) {
   const [toggleLog, setToggleLog] = useState(true);
   const [factoryName, setFactoryName] = useState("");

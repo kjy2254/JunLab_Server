@@ -79,14 +79,14 @@ login.post("/login2", (req, res) => {
               // 비밀번호가 일치하면
               req.session.is_logined = true; // 세션 정보 갱신
               req.session.name = results[0].name;
-              req.session.userId = results[0].id;
+              req.session.userId = results[0].user_id;
               req.session.authority = results[0].authority;
               req.session.manageOf = results[0].manager_of;
 
               req.session.save(function () {
                 sendData.isLogin = true;
                 sendData.name = results[0].name;
-                sendData.userId = results[0].id;
+                sendData.userId = results[0].user_id;
                 sendData.authority = results[0].authority;
                 sendData.manageOf = results[0].manager_of;
                 res.send(sendData);
@@ -121,7 +121,12 @@ login.post("/label-login", (req, res) => {
       [id],
       (error, results) => {
         if (results.length != 0) {
-          res.send({ isLogin: true, id: results[0].id, type: results[0].type });
+          res.send({
+            isLogin: true,
+            id: results[0].id,
+            name: results[0].name,
+            type: results[0].type,
+          });
         } else {
           res.send({ isLogin: false });
         }
@@ -129,6 +134,54 @@ login.post("/label-login", (req, res) => {
     );
   } else {
     res.send({ isLogin: false });
+  }
+});
+
+login.post("/app-login", (req, res) => {
+  // 데이터 받아서 결과 전송
+  const id = req.body.userId;
+  const password = req.body.userPassword;
+
+  const sendData = {
+    result: false,
+    message: "",
+  };
+
+  console.log("applogin:", id, password);
+
+  if (id && password) {
+    // id와 pw가 입력되었는지 확인
+    connection.query(
+      "SELECT * FROM users WHERE id = ?",
+      [id],
+      function (error, results) {
+        if (error) throw error;
+        if (results.length > 0) {
+          // db에서의 반환값이 있다 = 일치하는 아이디가 있다.
+          bcrypt.compare(password, results[0].password, (err, result) => {
+            // 입력된 비밀번호가 해시된 저장값과 같은 값인지 비교
+            if (result === true) {
+              // 비밀번호가 일치하면
+              sendData.result = true;
+              sendData.message = "로그인 성공";
+              res.send(sendData);
+            } else {
+              // 비밀번호가 다른 경우
+              sendData.message = "로그인 정보가 일치하지 않습니다.";
+              res.send(sendData);
+            }
+          });
+        } else {
+          // db에 해당 아이디가 없는 경우
+          sendData.message = "아이디 정보가 일치하지 않습니다.";
+          res.send(sendData);
+        }
+      }
+    );
+  } else {
+    // 아이디, 비밀번호 중 입력되지 않은 값이 있는 경우
+    sendData.message = "아이디와 비밀번호를 입력하세요!";
+    res.send(sendData);
   }
 });
 
@@ -160,7 +213,7 @@ login.post("/signup2", (req, res) => {
           // DB에 같은 이름의 회원아이디가 없고, 비밀번호가 올바르게 입력된 경우
           const hasedPassword = bcrypt.hashSync(password, 10); // 입력된 비밀번호를 해시한 값
           connection.query(
-            "INSERT INTO users (id, password, name, gender, date_of_birth, email, phone_number, address, role, code, join_date) VALUES(?,?,?,?,?,?,?,?,?,?, NOW())",
+            "INSERT INTO users (id, password, name, gender, date_of_birth, email, phone_number, address, code, join_date) VALUES(?,?,?,?,?,?,?,?,?, NOW())",
             [
               id,
               hasedPassword,
@@ -170,7 +223,6 @@ login.post("/signup2", (req, res) => {
               email,
               phone,
               address,
-              "Default",
               code,
             ],
             (error) => {

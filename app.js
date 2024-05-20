@@ -5,6 +5,7 @@ var logger = require("morgan");
 var factoryApi = require("./routes/factoryApi");
 var labelingApi = require("./routes/labelingApi");
 var longinApi = require("./routes/loginApi");
+var userApi = require("./routes/userApi");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 var app = express();
@@ -31,12 +32,12 @@ app.use(
 app.get("/", (req, res) => {
   res.render("Home");
 });
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "frontend_bs/build")));
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.text());
 // cors 설정
 app.use(
@@ -51,10 +52,14 @@ app.get("/iitp", (req, res) => {
 app.use("/api2", factoryApi);
 app.use("/api/labeling", labelingApi);
 app.use("/login", longinApi);
-app.get("/factorymanagement/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "frontend_bs/build/index.html"));
-});
-app.get("/labeling/*", (req, res) => {
+app.use("/api2/user", userApi);
+// app.get("/factorymanagement/*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "frontend_bs/build/index.html"));
+// });
+// app.get("/labeling/*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "frontend_bs/build/index.html"));
+// });
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend_bs/build/index.html"));
 });
 

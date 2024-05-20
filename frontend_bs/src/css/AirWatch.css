@@ -46,14 +46,6 @@
   text-wrap: nowrap;
 }
 
-.bar {
-  position: absolute;
-  top: 1.5rem;
-  background: rgb(57, 139, 247);
-  width: 2px;
-  height: 30px;
-}
-
 .airwatch-wrapper form {
   /* background: #000; */
   width: calc(100% - 3rem);
@@ -183,13 +175,9 @@
 }
 
 .airwatch-table td {
-  border-top: 1px solid var(--border-color-dark);
+  border-top: 1px solid var(--border-color);
   height: 3rem;
   padding: 0.5rem;
-}
-
-.light-mode .airwatch-table td {
-  border-top: 1px solid var(--border-color-light);
 }
 
 select {
@@ -201,22 +189,6 @@ select {
   border-radius: 3px;
   font-weight: 400;
   outline: none;
-}
-
-#spinner {
-  margin: auto;
-  width: 50px;
-  height: 50px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  box-sizing: border-box;
-  border-top-color: white;
-  border-radius: 100%;
-  animation: spin 1s ease-in-out infinite;
-}
-
-.light-mode #spinner {
-  border: 3px solid rgb(228, 231, 234);
-  border-top-color: gray;
 }
 
 @keyframes spin {

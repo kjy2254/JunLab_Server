@@ -23,15 +23,9 @@
 .filter-zone,
 .list-zone,
 .detail-zone {
-  border: 1px solid var(--border-color-dark);
+  border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-}
-
-.light-mode .filter-zone,
-.light-mode .list-zone,
-.light-mode .detail-zone {
-  border: 1px solid var(--border-color-light);
 }
 
 .filter-zone::-webkit-scrollbar,
@@ -86,22 +80,14 @@
   background-color: inherit;
   height: calc(100% - 3rem);
   /* box-shadow: 3px 1px 5px 1px rgba(0, 0, 0, 0.2); */
-  border-right: 1px solid var(--border-color-dark) !important;
-}
-
-.light-mode .filter-zone.overlay {
-  border-right: 1px solid var(--border-color-light) !important;
+  border-right: 1px solid var(--border-color) !important;
 }
 
 .filter {
-  border-top: 1px solid var(--border-color-dark);
+  border-top: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-}
-
-.light-mode .filter {
-  border-top: 1px solid var(--border-color-light);
 }
 
 .filter li {
@@ -145,11 +131,7 @@
 }
 
 .search {
-  border-bottom: 1px solid var(--border-color-dark);
-}
-
-.light-mode .search {
-  border-bottom: 1px solid var(--border-color-light);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .factory-card,
@@ -159,12 +141,7 @@
   justify-content: space-between;
   align-items: center;
   /* background: #000; */
-  border-bottom: 1px solid var(--border-color-dark);
-}
-
-.light-mode .factory-card,
-.light-mode .detail-zone .header {
-  border-bottom: 1px solid var(--border-color-light);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .factory-card .text,
@@ -179,11 +156,7 @@
 }
 
 .factory-card.selected {
-  background: var(--border-color-dark);
-}
-
-.light-mode .factory-card.selected {
-  background: var(--border-color-light);
+  background: var(--border-color);
 }
 
 .factory-card .industry,
@@ -192,18 +165,13 @@
   font-size: 13px;
 }
 
-/* .detail-zone .header {
-  padding: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-} */
-
-/* .selected {
-  background: rgb(48, 58, 69);
-} */
-
 .detail-zone .header {
   padding-top: 0.8rem;
   padding-bottom: 0.8rem;
+}
+
+.detail-zone svg {
+  cursor: pointer;
 }
 
 .detail-zone .detail {
@@ -319,16 +287,96 @@ button:hover {
     min-width: 10rem;
     transition: 100ms all;
     flex-grow: 0;
-    border-right: 1px solid var(--border-color-dark) !important;
-  }
-
-  .light-mode .list-zone {
-    border-right: 1px solid var(--border-color-light) !important;
+    border-right: 1px solid var(--border-color) !important;
   }
 }
 
 @media (max-width: 480px) {
   .detail .text .wrapper {
     flex-direction: column;
+  }
+}
+
+.factory-modal {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 13rem);
+  max-width: 70rem;
+  height: calc(100% - 13rem);
+  max-height: 60rem;
+  z-index: 15;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 0.3rem;
+  overflow: auto;
+  border: none;
+}
+
+.factory-modal .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.factory-modal .header .right {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.factory-modal .contents {
+  display: flex;
+  border: none;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.3rem;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.factory-modal .image-preview {
+  text-align: center;
+}
+
+.factory-modal .contents img {
+  width: 50%;
+  border-radius: 0.3rem;
+}
+
+.factory-modal .contents label {
+  width: 70%;
+  margin-top: 1rem;
+}
+
+.factory-modal .contents button {
+  margin-top: 1rem;
+  background: rgb(57, 139, 247);
+}
+
+.factory-modal .contents button:hover {
+  background: rgb(52, 108, 172);
+}
+
+.factory-modal .contents input {
+  width: 100%;
+}
+
+.factory-modal .hidden {
+  display: none;
+}
+
+@media (max-width: 680px) {
+  .factory-modal {
+    width: calc(100% - 1rem);
+    height: calc(100% - 1rem);
   }
 }

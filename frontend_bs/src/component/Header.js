@@ -1,25 +1,96 @@
-import React from "react";
-import { Navbar, Nav, Button } from "react-bootstrap";
-import "../css/Header.css";
-import { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
+import { Button, Nav, Navbar } from "react-bootstrap";
+import "../css/Header.css";
 
-function ThemeToggleButton() {
-  const [lightMode, setLightMode] = useState(
-    localStorage.getItem("lightMode") === "true"
-  );
+export function toggleTheme(darkMode, setDarkMode) {
+  if (darkMode) {
+    // 토글 전에 다크 모드일 경우 라이트 모드로 변경
+    // 라이트 모드 색상
+    document.documentElement.style.setProperty(
+      "--layer1-bg-color",
+      "rgb(244, 246, 249)"
+    );
+    document.documentElement.style.setProperty(
+      "--layer2-bg-color",
+      "rgb(255, 255, 255)"
+    );
+    document.documentElement.style.setProperty(
+      "--layerSB-bg-color",
+      "rgb(36, 42, 51)"
+    );
+    document.documentElement.style.setProperty(
+      "--layerHD-bg-color",
+      "rgb(255, 255, 255)"
+    );
+    document.documentElement.style.setProperty(
+      "--layerModal-bg-color",
+      "rgb(244, 246, 249)"
+    );
+    document.documentElement.style.setProperty(
+      "--border-color",
+      "rgb(228, 231, 234)"
+    );
+    document.documentElement.style.setProperty("--select-color", "#ececec");
+    document.documentElement.style.setProperty("--text-color", "black");
+    document.documentElement.style.setProperty(
+      "--spinner-color",
+      "rgb(228, 231, 234)"
+    );
+    document.documentElement.style.setProperty("--spinner-top-color", "gray");
+    document.documentElement.style.setProperty("--graph-lable-color", "black");
+    document.documentElement.style.setProperty("--drag-over-color", "#555");
+  } else {
+    // 다크 모드 색상
+    document.documentElement.style.setProperty(
+      "--layer1-bg-color",
+      "rgb(48, 58, 69)"
+    );
+    document.documentElement.style.setProperty(
+      "--layer2-bg-color",
+      "rgb(25, 36, 48)"
+    );
+    document.documentElement.style.setProperty(
+      "--layerSB-bg-color",
+      "rgb(25, 36, 48)"
+    );
+    document.documentElement.style.setProperty(
+      "--layerHD-bg-color",
+      "rgb(25, 36, 48)"
+    );
+    document.documentElement.style.setProperty(
+      "--layerModal-bg-color",
+      "rgb(48, 58, 69)"
+    );
+    document.documentElement.style.setProperty(
+      "--border-color",
+      "rgba(255, 255, 255, 0.2)"
+    );
+    document.documentElement.style.setProperty("--select-color", "#303a45");
+    document.documentElement.style.setProperty("--text-color", "white");
+    document.documentElement.style.setProperty(
+      "--spinner-color",
+      "rgba(255, 255, 255, 0.3)"
+    );
+    document.documentElement.style.setProperty("--spinner-top-color", "white");
+    document.documentElement.style.setProperty(
+      "--graph-lable-color",
+      "rgb(230, 233, 236)"
+    );
+    document.documentElement.style.setProperty("--drag-over-color", "#ccc");
+  }
+  localStorage.setItem("darkMode", darkMode ? "false" : "true");
+  setDarkMode((prev) => !prev);
+}
 
-  const toggleTheme = () => {
-    const newLightMode = !lightMode;
-    setLightMode(newLightMode);
-    localStorage.setItem("lightMode", newLightMode ? "true" : "false");
-    document.body.classList.toggle("light-mode", newLightMode);
-  };
-
+function ThemeToggleButton({ setDarkMode, darkMode }) {
   return (
-    <div className="theme-toggle-button" onClick={toggleTheme}>
-      <div className={`toggle-switch ${lightMode ? "" : "active"}`}>
+    <div
+      className="theme-toggle-button"
+      onClick={() => toggleTheme(darkMode, setDarkMode)}
+    >
+      <div className={`toggle-switch ${darkMode ? "active" : ""}`}>
         <FontAwesomeIcon icon={faMoon} className="icon moon-icon" />
         <FontAwesomeIcon icon={faSun} className="icon sun-icon" />
         <div className="toggle-handle"></div>
@@ -31,10 +102,7 @@ function ThemeToggleButton() {
 function Header(props) {
   return (
     <Navbar className="custom-navbar layerHD" expand={true}>
-      <Navbar.Brand
-        href="/factorymanagement/admin/factory"
-        className="logo layerHD"
-      >
+      <Navbar.Brand href="/factorymanagement/" className="logo layerHD">
         Logo
       </Navbar.Brand>
       <Navbar.Collapse
@@ -54,7 +122,10 @@ function Header(props) {
           <span className="header-text">{props.headerText}</span>
         </div>
         <Nav className="buttons">
-          <ThemeToggleButton />
+          <ThemeToggleButton
+            setDarkMode={props.setDarkMode}
+            darkMode={props.darkMode}
+          />
           <Button
             variant="outline-secondary"
             className="login-btn"

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useParams } from "react-router-dom";
 import "react-tabs/style/react-tabs.css";
 import "../../css/Settings.css";
-import axios from "axios";
 import default_watch from "../../image/default_watch.png";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import defaultProfile from "../../image/profile_default.png";
 import { createFuzzyMatcher } from "../../util";
 

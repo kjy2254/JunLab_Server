@@ -1,9 +1,8 @@
+import { faFileLines, faIndustry } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Nav } from "react-bootstrap";
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faIndustry, faFileLines } from "@fortawesome/free-solid-svg-icons";
 
 function SidebarAD(props) {
   return (
@@ -15,7 +14,7 @@ function SidebarAD(props) {
       `}
     >
       <Nav className="flex-column">
-        <div className="header">{props.factoryName}</div>
+        <div className="header">{props.headerText}</div>
         <ul className="item">
           <Link
             className="link-unstyled"

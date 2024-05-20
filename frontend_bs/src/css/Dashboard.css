@@ -55,9 +55,6 @@
 .worker-summary,
 .worker-statistic,
 .advice {
-  /* padding: 1rem; */
-  background: rgb(25, 36, 48);
-  /* color: white; */
   display: flex;
   flex-direction: row;
   min-width: calc(25% - 1.2rem);
@@ -101,12 +98,12 @@
   margin-right: 1rem;
 }
 
-.bar {
-  position: absolute;
+.dashboard .bar {
+  /* position: absolute; */
   top: 30%;
-  background: rgb(57, 139, 247);
-  width: 2px;
-  height: 30px;
+  /* background: rgb(57, 139, 247); */
+  /* width: 2px; */
+  /* height: 30px; */
 }
 
 .env-card .module-name {
@@ -195,14 +192,10 @@
 }
 
 .worker-summary td {
-  border-top: 1px solid var(--border-color-dark);
+  border-top: 1px solid var(--border-color);
   height: 3rem;
   padding: 0.5rem;
   cursor: pointer;
-}
-
-.light-mode .worker-summary td {
-  border-top: 1px solid var(--border-color-light);
 }
 
 .worker-summary .level {
@@ -236,7 +229,12 @@
 .table-worker .info {
   display: flex;
   flex-direction: column;
-  padding-left: 0.8rem;
+  padding-left: 0.6rem;
+  justify-content: center;
+}
+
+.table-worker img {
+  border-radius: 100%;
 }
 
 .info .watch {
@@ -261,11 +259,7 @@
   justify-content: space-between;
   padding: 0 1rem 0.7rem 1rem;
   margin: 0 2rem 1rem 2rem;
-  border-bottom: 1px solid var(--border-color-dark);
-}
-
-.light-mode .description {
-  border-bottom: 1px solid var(--border-color-light);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .advice {

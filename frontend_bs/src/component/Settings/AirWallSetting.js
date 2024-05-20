@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "react-tabs/style/react-tabs.css";
 import "../../css/Settings.css";
-import axios from "axios";
 
 function AirWallSetting() {
   const [data, setData] = useState([]);
