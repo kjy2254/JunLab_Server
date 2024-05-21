@@ -107,7 +107,7 @@ function App() {
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const debug = 1;
+  const debug = 0;
 
   useEffect(() => {
     const fetchData = async () => {

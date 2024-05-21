@@ -63,7 +63,7 @@ function WorkerAndAirWatch() {
     const sourceId = result.source.droppableId;
     const destinationId = result.destination.droppableId;
     const draggableId = result.draggableId;
-    const watchId = parseInt(draggableId.split("-")[1], 10);
+    const watchId = draggableId.split("-")[1];
 
     // Watch list -> Watch list (현재 상태 유지)
     if (sourceId === "watches" && destinationId === "watches") {

@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
-import { useTable, usePagination, useSortBy } from "react-table";
-import "../../css/Logs.css";
-import axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSort,
   faSortDown,
   faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
+import React, { useEffect, useMemo, useState } from "react";
+import { usePagination, useSortBy, useTable } from "react-table";
+import "../../css/Logs.css";
 import { notify } from "../../util";
 
 function Logs(props) {
@@ -106,7 +105,7 @@ function Logs(props) {
       },
       {
         Header: "CREATED_AT",
-        accessor: "CREATED_AT",
+        accessor: "created_at",
       },
     ],
     []
@@ -172,7 +171,7 @@ function downloadCSV(data, filename) {
 }
 
 function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
-  const { factoryId } = useParams();
+  // const { factoryId } = useParams();
   const [list, setList] = useState([]);
   const [selected, setSelected] = useState({ type: "id", value: "전체" });
 
@@ -225,7 +224,7 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
       )
       .then((response) => {
         setIsLoading(false);
-        console.log(response.data);
+        // console.log(response.data);
         setData(response.data);
       })
       .catch((error) => {
@@ -347,6 +346,7 @@ function MyTable({ columns, data, hiddenColumns, isLoading }) {
 
   function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
+    console.log(timestamp);
     return date.toLocaleString(); // 기본 로컬 시간 형식 사용
   }
 
@@ -390,9 +390,10 @@ function MyTable({ columns, data, hiddenColumns, isLoading }) {
                         {...cell.getCellProps()}
                         className={getClassName(cell.column.id, hiddenColumns)}
                       >
-                        {cell.column.id === "CREATED_AT"
+                        {cell.column.id === "created_at"
                           ? formatTimestamp(cell.value)
                           : cell.render("Cell")}
+                        {/* {cell.render("Cell")} */}
                       </td>
                     );
                   })}

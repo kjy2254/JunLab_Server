@@ -205,7 +205,8 @@ api.get("/factory/:factoryId/workers", (req, res) => {
       w.last_tvoc,
       w.last_co2,
       u.name, u.user_id,
-      w.last_sync
+      w.last_sync,
+      w.last_wear
     FROM
        users u
     LEFT JOIN
@@ -368,7 +369,7 @@ api.get("/factory/logs", (req, res) => {
   let query = ``;
 
   if (!start || !end || !id) {
-    query += `SELECT DISTINCT ID FROM airwall_data ORDER BY CAST(ID AS SIGNED) ASC;`;
+    query += `SELECT DISTINCT ID FROM raw_data ORDER BY CAST(ID AS SIGNED) ASC;`;
     connection.query(query, (error, result) => {
       if (error) {
         console.log(error);
@@ -378,7 +379,7 @@ api.get("/factory/logs", (req, res) => {
       return res.status(200).json(result);
     });
   } else {
-    query += `SELECT * FROM airwall_data WHERE CREATED_AT >= ? AND CREATED_AT <= ?`;
+    query += `SELECT * FROM raw_data WHERE CREATED_AT >= ? AND CREATED_AT <= ?`;
     let queryParams = [start, end];
 
     if (id && id != "전체") {

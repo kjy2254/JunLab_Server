@@ -1,10 +1,11 @@
 import {
-  faBatteryThreeQuarters,
   faPause,
   faPlay,
   faSort,
   faSortDown,
   faSortUp,
+  faUserCheck,
+  faUserTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
@@ -332,7 +333,9 @@ function WorkerSummary({
         Cell: ({ row }) =>
           row.original.online ? (
             <div className="left">
-              {parseInt(row.original.last_oxygen_saturation)}
+              {isNaN(parseInt(row.original.last_oxygen_saturation))
+                ? "-"
+                : parseInt(row.original.last_oxygen_saturation)}
             </div>
           ) : (
             <div className="left">-</div>
@@ -361,9 +364,9 @@ function WorkerSummary({
             className="state"
             title={`마지막 동기화: ${formatTimestamp(row.original.last_sync)}`}
           >
-            {row.original.online ? (
-              <>
-                <div>
+            <div>
+              {row.original.online ? (
+                <>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="13"
@@ -374,31 +377,43 @@ function WorkerSummary({
                     <circle cx="6.5" cy="6.5" r="6.5" fill="#81FF02" />
                   </svg>
                   Online
-                </div>
-                <div>
-                  <FontAwesomeIcon icon={faBatteryThreeQuarters} />
-                  {row.original.adjusted_battery_level}%
-                </div>
-              </>
-            ) : (
-              <>
-                <div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="13"
-                    height="13"
-                    viewBox="0 0 13 13"
-                    fill="none"
-                  >
-                    <circle cx="6.5" cy="6.5" r="6.5" fill="#FF0000" />
-                  </svg>
-                  Offline
-                </div>
-                <div>
-                  <FontAwesomeIcon icon={faBatteryThreeQuarters} />- %
-                </div>
-              </>
-            )}
+                </>
+              ) : (
+                <>
+                  <div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="13"
+                      height="13"
+                      viewBox="0 0 13 13"
+                      fill="none"
+                    >
+                      <circle cx="6.5" cy="6.5" r="6.5" fill="#FF0000" />
+                    </svg>
+                    Offline
+                  </div>
+                </>
+              )}
+            </div>
+            <div>
+              {row.original.last_wear ? (
+                <>
+                  <FontAwesomeIcon
+                    icon={faUserCheck}
+                    style={{ color: "#81FF02" }}
+                  />
+                  착용중
+                </>
+              ) : (
+                <>
+                  <FontAwesomeIcon
+                    icon={faUserTimes}
+                    style={{ color: "#FF0000" }}
+                  />
+                  미착용
+                </>
+              )}
+            </div>
           </div>
         ),
       },
