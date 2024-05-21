@@ -1,7 +1,7 @@
 const express = require("express");
 const api = express.Router();
-const connection = require("../database/apiConnection.js");
-const connection2 = require("../database/mysql.js");
+// const connection = require("../database/apiConnection.js");
+const connection = require("../database/mysql");
 const path = require("path");
 const multer = require("multer");
 const fs = require("fs");
@@ -124,7 +124,7 @@ api.get("/factory/:factoryId/name", (req, res) => {
 api.get("/factory/:factoryId/tvoc", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
   const query = `SELECT module_id, module_name, last_update, last_tvoc as tvoc, module_description 
-  FROM sensor_modules 
+  FROM airwall 
   WHERE factory_id = ? AND enable = 1`;
 
   connection.query(query, [factoryId], (error, result) => {
@@ -140,7 +140,7 @@ api.get("/factory/:factoryId/tvoc", (req, res) => {
 api.get("/factory/:factoryId/co2", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
   const query = `SELECT module_id, module_name, last_update, last_co2 as co2, module_description 
-  FROM sensor_modules 
+  FROM airwall 
   WHERE factory_id = ? AND enable = 1`;
 
   connection.query(query, [factoryId], (error, result) => {
@@ -156,7 +156,7 @@ api.get("/factory/:factoryId/co2", (req, res) => {
 api.get("/factory/:factoryId/temperature", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
   const query = `SELECT module_id, module_name, last_update, last_temperature as temperature, module_description 
-  FROM sensor_modules 
+  FROM airwall 
   WHERE factory_id = ? AND enable = 1`;
 
   connection.query(query, [factoryId], (error, result) => {
@@ -172,7 +172,7 @@ api.get("/factory/:factoryId/temperature", (req, res) => {
 api.get("/factory/:factoryId/finedust", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
   const query = `SELECT module_id, module_name, last_update, last_pm1_0 as finedust, module_description 
-  FROM sensor_modules 
+  FROM airwall 
   WHERE factory_id = ? AND enable = 1`;
 
   connection.query(query, [factoryId], (error, result) => {
@@ -209,7 +209,7 @@ api.get("/factory/:factoryId/workers", (req, res) => {
     FROM
        users u
     LEFT JOIN
-      watches w ON w.watch_id = u.watch_id
+    airwatch w ON w.watch_id = u.watch_id
     WHERE
       u.factory_id = ?;
   `;
@@ -277,7 +277,7 @@ api.get("/airwatchdata", (req, res) => {
   }
 
   let query = `SELECT name, device_id, heart_rate, body_temperature, oxygen_saturation, tvoc, co2, battery_level, timestamp
-               FROM watch_data w 
+               FROM airwatch_data w 
                JOIN users u ON w.user_id = u.user_id
                WHERE timestamp >= ? AND timestamp <= ?`;
   let queryParams = [start, end];
@@ -306,7 +306,7 @@ api.get("/airwatchdata", (req, res) => {
 
 api.get("/factory/:factoryId/airwalls", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
-  const query = `SELECT module_name FROM sensor_modules WHERE factory_id = ?;`;
+  const query = `SELECT module_name FROM airwall WHERE factory_id = ?;`;
 
   connection.query(query, [factoryId], (error, result) => {
     if (error) {
@@ -337,8 +337,8 @@ api.get("/airwalldata", (req, res) => {
   }
 
   let query = `SELECT module_name, temperature, tvoc, co2, pm1_0, pm2_5, pm10, timestamp
-               FROM sensor_data d 
-               JOIN sensor_modules m ON d.sensor_module_id = m.module_id
+               FROM airwall_data d 
+               JOIN airwall m ON d.sensor_module_id = m.module_id
                WHERE timestamp >= ? AND timestamp <= ?`;
   let queryParams = [start, end];
 
@@ -368,8 +368,8 @@ api.get("/factory/logs", (req, res) => {
   let query = ``;
 
   if (!start || !end || !id) {
-    query += `SELECT DISTINCT ID FROM sensor_data ORDER BY CAST(ID AS SIGNED) ASC;`;
-    connection2.query(query, (error, result) => {
+    query += `SELECT DISTINCT ID FROM airwall_data ORDER BY CAST(ID AS SIGNED) ASC;`;
+    connection.query(query, (error, result) => {
       if (error) {
         console.log(error);
         return res.status(500).send("Internal Server Error!");
@@ -378,7 +378,7 @@ api.get("/factory/logs", (req, res) => {
       return res.status(200).json(result);
     });
   } else {
-    query += `SELECT * FROM sensor_data WHERE CREATED_AT >= ? AND CREATED_AT <= ?`;
+    query += `SELECT * FROM airwall_data WHERE CREATED_AT >= ? AND CREATED_AT <= ?`;
     let queryParams = [start, end];
 
     if (id && id != "전체") {
@@ -388,7 +388,7 @@ api.get("/factory/logs", (req, res) => {
 
     query += ` ORDER BY CREATED_AT DESC;`;
 
-    connection2.query(query, queryParams, (error, result) => {
+    connection.query(query, queryParams, (error, result) => {
       if (error) {
         console.log(error);
         return res.status(500).send("Internal Server Error!");
@@ -403,7 +403,7 @@ api.get("/settings/:factoryId/airwalls", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
 
   query = `SELECT module_id, module_name, module_description, enable
-            FROM sensor_modules
+            FROM airwall
             WHERE factory_id = ?`;
 
   connection.query(query, [factoryId], (error, result) => {
@@ -421,7 +421,7 @@ api.put("/settings/:factoryId/airwalls", (req, res) => {
 
   // 업데이트 쿼리 예시 (구체적인 필드와 조건은 데이터베이스에 맞게 조정 필요)
   const query =
-    "UPDATE sensor_modules SET module_name = ?, module_description = ?, enable = ? WHERE factory_id = ? AND module_id = ?";
+    "UPDATE airwall SET module_name = ?, module_description = ?, enable = ? WHERE factory_id = ? AND module_id = ?";
 
   // 모든 업데이트 작업을 순차적으로 처리
   updatedData.forEach((item) => {
@@ -452,7 +452,7 @@ api.get("/settings/:factoryId/watchlist", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
 
   query = `SELECT watch_id
-            FROM watches
+            FROM airwatch
             WHERE factory_id = ?`;
 
   connection.query(query, [factoryId], (error, result) => {
@@ -593,7 +593,7 @@ api.get("/airwalldata/:env", (req, res) => {
             information_schema.partitions
           WHERE
             table_schema = 'factorymanagement' AND
-            table_name = 'sensor_data' AND
+            table_name = 'airwall_data' AND
             partition_name = ?;
           `;
 
@@ -619,9 +619,9 @@ api.get("/airwalldata/:env", (req, res) => {
     SELECT
     s.${env}, s.timestamp, m.module_name
     FROM
-      sensor_data PARTITION(${partitionName}) s 
+    airwall_data PARTITION(${partitionName}) s 
     JOIN
-      sensor_modules m ON s.sensor_module_id = m.module_id
+      airwall m ON s.sensor_module_id = m.module_id
     WHERE
       s.factory_id = ?;
     `;
@@ -632,9 +632,9 @@ api.get("/airwalldata/:env", (req, res) => {
     SELECT
     s.${env}, s.timestamp, m.module_name
     FROM
-      sensor_data s 
+    airwall_data s 
     JOIN
-      sensor_modules m ON s.sensor_module_id = m.module_id
+      airwall m ON s.sensor_module_id = m.module_id
     WHERE
       s.factory_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE);
     `;

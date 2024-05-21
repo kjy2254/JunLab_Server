@@ -1,6 +1,6 @@
 const express = require("express");
 const api = express.Router();
-const connection = require("../database/apiConnection.js");
+const connection = require("../database/mysql");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
 const multer = require("multer");
@@ -27,7 +27,7 @@ api.get("/:userId/info", (req, res) => {
     FROM
     users u
     LEFT JOIN
-    watches w ON w.watch_id = u.watch_id
+    airwatch w ON w.watch_id = u.watch_id
     WHERE
       u.user_id = ?;
   `;
@@ -57,7 +57,7 @@ api.get("/:userId/heartrate", (req, res) => {
       SELECT
         heart_rate as heartrate, timestamp
       FROM
-        watch_data w
+        airwatch_data w
       JOIN
         users u ON w.user_id = u.user_id
       WHERE
@@ -70,7 +70,7 @@ api.get("/:userId/heartrate", (req, res) => {
       SELECT
         heart_rate as heartrate, timestamp
       FROM
-        watch_data w
+        airwatch_data w
       JOIN
         users u ON w.user_id = u.user_id
       WHERE
@@ -103,7 +103,7 @@ api.get("/:userId/temperature", (req, res) => {
       SELECT
         body_temperature as temperature, timestamp
       FROM
-        watch_data w
+        airwatch_data w
       JOIN
         users u ON w.user_id = u.user_id
       WHERE
@@ -116,7 +116,7 @@ api.get("/:userId/temperature", (req, res) => {
       SELECT
         body_temperature as temperature, timestamp
       FROM
-        watch_data w
+        airwatch_data w
       JOIN
         users u ON w.user_id = u.user_id
       WHERE
@@ -149,7 +149,7 @@ api.get("/:userId/oxygen", (req, res) => {
       SELECT
       oxygen_saturation as oxygen, timestamp
       FROM
-        watch_data w
+        airwatch_data w
       JOIN
         users u ON w.user_id = u.user_id
       WHERE
@@ -162,7 +162,7 @@ api.get("/:userId/oxygen", (req, res) => {
       SELECT
       oxygen_saturation as oxygen, timestamp
       FROM
-        watch_data w
+        airwatch_data w
       JOIN
         users u ON w.user_id = u.user_id
       WHERE

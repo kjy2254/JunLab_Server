@@ -3,8 +3,8 @@ const session = require("express-session");
 const path = require("path");
 const login = express.Router();
 
-const connection = require("../database/apiConnection");
-const labelConnection = require("../database/labelConnection");
+const connection = require("../database/mysql");
+// const connection = require("../database/connection");
 const sessionOption = require("../database/sessionOptions");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
@@ -116,7 +116,7 @@ login.post("/label-login", (req, res) => {
   const id = req.body.labelerId;
 
   if (id) {
-    labelConnection.query(
+    connection.query(
       "SELECT * FROM labeler WHERE id = ?",
       [id],
       (error, results) => {

@@ -1,6 +1,6 @@
 var net = require("net");
 const connection = require("./database/mysql");
-const connection2 = require("./database/apiConnection");
+// const connection = require("./database/apiConnection");
 var ws = require("ws");
 
 var socketServer = net.createServer();
@@ -215,7 +215,7 @@ function save(rawData) {
   let keys = [
     "ID",
     "BATT",
-    "magx",
+    "MAGx",
     "MAGy",
     "MAGz",
     "ZYROx",
@@ -253,7 +253,7 @@ function save(rawData) {
       return false;
     }
 
-    connection.query("INSERT INTO SENSOR_DATA SET ?", data, (er) => {
+    connection.query("INSERT INTO raw_data SET ?", data, (er) => {
       return !er;
     });
   }
@@ -270,8 +270,8 @@ function saveAirWallData(rawData) {
       return false;
     }
 
-    connection2.query(
-      "SELECT factory_id FROM sensor_modules WHERE module_id = ?",
+    connection.query(
+      "SELECT factory_id FROM airwall WHERE module_id = ?",
       parseInt(values[0]),
       (error, result) => {
         if (error) {
@@ -282,7 +282,7 @@ function saveAirWallData(rawData) {
           console.log(values[0] + ": not registered airwall\n");
           return false;
         }
-        const insert_query = `INSERT INTO sensor_data (factory_id,
+        const insert_query = `INSERT INTO airwall_data (factory_id,
                                           tvoc,
                                           co2,
                                           temperature,
@@ -304,7 +304,7 @@ function saveAirWallData(rawData) {
           parseInt(values[0]),
         ];
 
-        connection2.query(insert_query, insert_value, (error, result) => {
+        connection.query(insert_query, insert_value, (error, result) => {
           if (error) {
             console.log(error);
           }
@@ -312,8 +312,8 @@ function saveAirWallData(rawData) {
       }
     );
 
-    connection2.query(
-      `update sensor_modules set last_update = ?, last_tvoc = ?, last_co2 = ?, last_temperature = ?, last_pm1_0 = ?, last_pm2_5 = ?, last_pm10 = ? where module_id = ?`,
+    connection.query(
+      `update airwall set last_update = ?, last_tvoc = ?, last_co2 = ?, last_temperature = ?, last_pm1_0 = ?, last_pm2_5 = ?, last_pm10 = ? where module_id = ?`,
       [
         new Date(Date.now()),
         parseInt(values[12]),
@@ -348,9 +348,9 @@ function saveWatchData(rawData) {
       return false;
     }
 
-    connection2.query(
+    connection.query(
       `SELECT u.user_id, w.last_heart_rate, w.last_oxygen_saturation 
-      FROM watches w
+      FROM airwatch w
       LEFT JOIN users u ON w.watch_id = u.watch_id
       WHERE w.watch_id = ?`,
       values[0],
@@ -369,7 +369,7 @@ function saveWatchData(rawData) {
         const lastOxygen = result[0].last_oxygen_saturation;
         const timestamp = new Date(Date.now());
 
-        const insert_query1 = `INSERT INTO watch_data (
+        const insert_query1 = `INSERT INTO airwatch_data (
           heart_rate,
           body_temperature,
           battery_level,
@@ -392,7 +392,7 @@ function saveWatchData(rawData) {
           timestamp,
         ];
 
-        connection2.query(insert_query1, insert_value1, (error) => {
+        connection.query(insert_query1, insert_value1, (error) => {
           if (error) {
             console.log(error);
           }
@@ -414,7 +414,7 @@ function saveWatchData(rawData) {
           values[0],
         ];
 
-        const insert_query2 = `UPDATE watches SET
+        const insert_query2 = `UPDATE airwatch SET
           last_sync = ?,
           last_heart_rate = ?,
           last_oxygen_saturation = ?,
@@ -424,7 +424,7 @@ function saveWatchData(rawData) {
           last_co2 = ?
           WHERE watch_id = ?`;
 
-        connection2.query(insert_query2, insert_value2, (error, result) => {
+        connection.query(insert_query2, insert_value2, (error, result) => {
           if (error) {
             console.log(error);
           }
@@ -435,57 +435,57 @@ function saveWatchData(rawData) {
   return true;
 }
 
-wsServer.on("connection", (ws, req) => {
-  // 웹소켓 연결 시
-  const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
-  console.log("새로운 클라이언트 접속", ip);
-  ws.on("message", (message) => {
-    // 클라이언트로부터 메시지
-    console.log("message:", message.toString());
-  });
-  ws.on("error", (error) => {
-    // 에러 시
-    console.error(error);
-  });
-  ws.on("close", () => {
-    // 연결 종료 시
-    console.log("클라이언트 접속 해제", ip);
-    clearInterval(ws.interval);
-    wsIntervalMap.delete(ws); // 맵에서 제거
-  });
+// wsServer.on("connection", (ws, req) => {
+//   // 웹소켓 연결 시
+//   const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+//   console.log("새로운 클라이언트 접속", ip);
+//   ws.on("message", (message) => {
+//     // 클라이언트로부터 메시지
+//     console.log("message:", message.toString());
+//   });
+//   ws.on("error", (error) => {
+//     // 에러 시
+//     console.error(error);
+//   });
+//   ws.on("close", () => {
+//     // 연결 종료 시
+//     console.log("클라이언트 접속 해제", ip);
+//     clearInterval(ws.interval);
+//     wsIntervalMap.delete(ws); // 맵에서 제거
+//   });
 
-  let query = `SELECT
-    sd.ID,
-        sd.BATT,
-        sd.AQI,
-        sd.TVOC,
-        sd.EC2,
-        sd.PM10,
-        sd.PM25,
-        sd.PM100,
-        sd.IRUN,
-        sd.TEMP,
-        DATE_FORMAT(sd.created_at, '%Y/%m/%d %H:%i:%s') AS CREATED_AT
-    FROM SENSOR_DATA sd
-    INNER JOIN (
-        SELECT
-    ID,
-        MAX(created_at) AS max_created_at
-    FROM SENSOR_DATA
-    GROUP BY ID
-) max_data
-    ON sd.ID = max_data.ID AND sd.created_at = max_data.max_created_at;`;
+//   let query = `SELECT
+//     sd.ID,
+//         sd.BATT,
+//         sd.AQI,
+//         sd.TVOC,
+//         sd.EC2,
+//         sd.PM10,
+//         sd.PM25,
+//         sd.PM100,
+//         sd.IRUN,
+//         sd.TEMP,
+//         DATE_FORMAT(sd.created_at, '%Y/%m/%d %H:%i:%s') AS CREATED_AT
+//     FROM raw_data sd
+//     INNER JOIN (
+//         SELECT
+//     ID,
+//         MAX(created_at) AS max_created_at
+//     FROM raw_data
+//     GROUP BY ID
+// ) max_data
+//     ON sd.ID = max_data.ID AND sd.created_at = max_data.max_created_at;`;
 
-  const wsInterval = setInterval(() => {
-    if (ws.readyState === ws.OPEN) {
-      connection.query(query, (error, result) => {
-        if (error) {
-          console.log(error);
-        }
-        result.forEach((e) => ws.send(JSON.stringify(e)));
-      });
-    }
-  }, 1000);
+//   const wsInterval = setInterval(() => {
+//     if (ws.readyState === ws.OPEN) {
+//       connection.query(query, (error, result) => {
+//         if (error) {
+//           console.log(error);
+//         }
+//         result.forEach((e) => ws.send(JSON.stringify(e)));
+//       });
+//     }
+//   }, 1000);
 
-  wsIntervalMap.set(ws, wsInterval); // WebSocket과 해당 인터벌을 맵에 추가
-});
+//   wsIntervalMap.set(ws, wsInterval); // WebSocket과 해당 인터벌을 맵에 추가
+// });
