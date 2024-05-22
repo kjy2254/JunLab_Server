@@ -46,7 +46,9 @@ server.on("message", (msg, rinfo) => {
                         last_heart_rate = VALUES(last_heart_rate),
                         last_body_temperature = VALUES(last_body_temperature),
                         last_wear = VALUES(last_wear)`;
-    const query4 = `UPDATE users SET watch_id = ?
+    // const query4 = `UPDATE users SET watch_id = NULL
+    //                 WHERE watch_id = ?`;
+    const query5 = `UPDATE users SET watch_id = ?
                     WHERE id = ?`;
 
     // 1번 쿼리 실행
@@ -83,8 +85,16 @@ server.on("message", (msg, rinfo) => {
           }
         );
 
-        // 4번 쿼리 실행
-        connection.query(query4, [mac, id], (err, results) => {
+        // // 4번 쿼리 실행
+        // connection.query(query4, [mac], (err, results) => {
+        //   if (err) {
+        //     console.error(`데이터 업데이트 에러: ${err.message}`);
+        //     return;
+        //   }
+        // });
+
+        // 5번 쿼리 실행
+        connection.query(query5, [mac, id], (err, results) => {
           if (err) {
             console.error(`데이터 업데이트 에러: ${err.message}`);
             return;
