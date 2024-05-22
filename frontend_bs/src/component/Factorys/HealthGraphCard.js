@@ -70,6 +70,9 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
           text: title,
         },
         labels: {
+          formatter: function () {
+            return this.value.toFixed(1); // 소수점 첫째 자리까지 표시
+          },
           style: {
             color: "var(--graph-lable-color)",
           },
@@ -105,7 +108,7 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
         formatter: function () {
           const date = new Date(this.x);
           const dateStr = date.toLocaleString();
-          return `${dateStr}<br>${endpoint}:${this.point.y}`;
+          return `${dateStr}<br>${endpoint}:${this.point.y.toFixed(1)}`;
         },
       },
 
@@ -114,7 +117,7 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
           // name: "Heart Rate",
           data: data.map((item) => [
             new Date(item.timestamp).getTime(),
-            parseInt(item[endpoint]),
+            parseFloat(item[endpoint]),
           ]),
           marker: {
             enabled: false, // 점 비활성화

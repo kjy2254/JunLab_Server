@@ -185,6 +185,12 @@ login.post("/app-login", (req, res) => {
   }
 });
 
+// login.post("/app-sync", (req, res) => {
+//   // 데이터 받아서 결과 전송
+//   const id = req.body.userId;
+//   const mac = req.body.mac;
+// });
+
 login.post("/signup2", (req, res) => {
   // 데이터 받아서 결과 전송
   const id = req.body.id;
@@ -229,7 +235,7 @@ login.post("/signup2", (req, res) => {
               if (error) throw error;
               req.session.save(function () {
                 sendData.isSuccess = true;
-                console.log("저장성공");
+                // console.log("저장성공");
                 res.send(sendData);
               });
             }

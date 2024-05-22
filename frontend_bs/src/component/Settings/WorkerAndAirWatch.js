@@ -65,6 +65,11 @@ function WorkerAndAirWatch() {
     const draggableId = result.draggableId;
     const watchId = draggableId.split("-")[1];
 
+    if (watchId.includes(":")) {
+      alert("Fitrus는 App에서만 변경이 가능합니다.");
+      return;
+    }
+
     // Watch list -> Watch list (현재 상태 유지)
     if (sourceId === "watches" && destinationId === "watches") {
       // 아무것도 하지 않음
@@ -72,6 +77,18 @@ function WorkerAndAirWatch() {
     // Watch list -> Worker card (선택된 watch를 선택된 worker와 페어링)
     else if (sourceId === "watches" && destinationId !== "watches") {
       const destinationWorkerId = parseInt(destinationId, 10);
+      const currentWorker = workers.find(
+        (worker) => worker.user_id === destinationWorkerId
+      );
+      if (
+        currentWorker &&
+        currentWorker.watch_id &&
+        currentWorker.watch_id.includes(":")
+      ) {
+        alert("기존 작업자가 Fitrus 워치를 사용 중입니다.");
+        return;
+      }
+
       assignWatchToWorker(watchId, destinationWorkerId);
     }
     // Worker card -> Watch list (선택된 watch의 페어링 해제)
@@ -81,6 +98,17 @@ function WorkerAndAirWatch() {
     // Worker card -> Worker card (시작점과 도착점의 watch를 모두 페어링 해제 후 시작점의 watch를 도착점의 worker와 페어링)
     else if (sourceId !== "watches" && destinationId !== "watches") {
       const destinationWorkerId = parseInt(destinationId, 10);
+      const currentWorker = workers.find(
+        (worker) => worker.user_id === destinationWorkerId
+      );
+      if (
+        currentWorker &&
+        currentWorker.watch_id &&
+        currentWorker.watch_id.includes(":")
+      ) {
+        alert("기존 작업자가 Fitrus 워치를 사용 중입니다.");
+        return;
+      }
       reassignWatch(watchId, destinationWorkerId);
     }
   };

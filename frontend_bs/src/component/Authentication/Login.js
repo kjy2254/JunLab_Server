@@ -24,6 +24,12 @@ function Login() {
       });
   }
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      postLogin();
+    }
+  };
+
   return (
     <div className="login layer1">
       <svg
@@ -80,6 +86,7 @@ function Login() {
               id="password"
               type="password"
               onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={handleKeyPress}
             />
           </div>
           <div className="button-wrapper">

@@ -2,6 +2,9 @@ const dgram = require("dgram");
 const server = dgram.createSocket("udp4");
 const connection = require("./database/mysql");
 
+const lastSavedTime = {};
+const saveInterval = 5000; // db에 저장하는 주기
+
 server.on("error", (err) => {
   console.log(`서버 에러:\n${err.stack}`);
   server.close();
@@ -20,11 +23,31 @@ server.on("message", (msg, rinfo) => {
     const temp = data.Temp;
     const wear = data.Wear === "true" ? 1 : 0;
 
+    const currentTime = new Date().getTime();
+
+    // 마지막 저장 시간과 현재 시간의 차이를 계산
+    if (lastSavedTime[id] && currentTime - lastSavedTime[id] < saveInterval) {
+      //   console.log(`ID = ${id} 메시지가 최근에 저장되어 무시되었습니다.`);
+      return;
+    }
+
+    console.log(JSON.stringify(data));
+
+    // 마지막 저장 시간을 업데이트
+    lastSavedTime[id] = currentTime;
+
     const query1 = `SELECT user_id FROM users WHERE id = ?`;
     const query2 = `INSERT INTO airwatch_data(user_id, device_id, heart_rate, body_temperature, wear, timestamp) 
-                    VALUES(?,?,?,?,?,?)`;
-    const query3 = `UPDATE airwatch SET last_sync = ?, last_heart_rate = ?, last_body_temperature = ?, last_wear = ? 
-                    WHERE watch_id = ?`;
+                        VALUES(?,?,?,?,?,?)`;
+    const query3 = `INSERT INTO airwatch (watch_id, last_sync, last_heart_rate, last_body_temperature, last_wear) 
+                        VALUES (?, ?, ?, ?, ?)
+                      ON DUPLICATE KEY UPDATE 
+                        last_sync = VALUES(last_sync),
+                        last_heart_rate = VALUES(last_heart_rate),
+                        last_body_temperature = VALUES(last_body_temperature),
+                        last_wear = VALUES(last_wear)`;
+    const query4 = `UPDATE users SET watch_id = ?
+                    WHERE id = ?`;
 
     // 1번 쿼리 실행
     connection.query(query1, [id], (err, results) => {
@@ -51,7 +74,7 @@ server.on("message", (msg, rinfo) => {
         // 3번 쿼리 실행
         connection.query(
           query3,
-          [time, hrp, temp, wear, mac],
+          [mac, time, hrp, temp, wear],
           (err, results) => {
             if (err) {
               console.error(`데이터 업데이트 에러: ${err.message}`);
@@ -59,6 +82,14 @@ server.on("message", (msg, rinfo) => {
             }
           }
         );
+
+        // 4번 쿼리 실행
+        connection.query(query4, [mac, id], (err, results) => {
+          if (err) {
+            console.error(`데이터 업데이트 에러: ${err.message}`);
+            return;
+          }
+        });
       } else {
         console.error(`사용자를 찾을 수 없습니다: ID = ${id}`);
       }
