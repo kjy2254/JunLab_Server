@@ -1,10 +1,11 @@
 import {
-  faBatteryThreeQuarters,
   faPause,
   faPlay,
   faSort,
   faSortDown,
   faSortUp,
+  faUserCheck,
+  faUserTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
@@ -33,7 +34,8 @@ function Dashboard(props) {
   const [selectedWorker, setSelectedWorker] = useState(0);
   const [selectedEnvCard, setSelectedEnvCard] = useState(0);
   const [img, setImg] = useState();
-
+  const [envData, setEnvData] = useState({});
+  const { factoryId } = useParams();
   const envCardsData = [
     { title: "TVOC", unit: "ppb", endpoint: "tvoc", img: tvoc },
     { title: "CO2", unit: "ppm", endpoint: "co2", img: co2 },
@@ -64,6 +66,62 @@ function Dashboard(props) {
     };
   }, [envModalOpen, workerModalOpen]); // 모달 상태가 변경될 때마다 실행
 
+  useEffect(() => {
+    const fetchData = () => {
+      axios
+        .get(
+          `http://junlab.postech.ac.kr:880/api2/factory/${factoryId}/airwalls`
+        )
+        .then((response) => {
+          const rawData = response.data;
+
+          const envData = {
+            tvoc: rawData.map((module) => ({
+              module_id: module.module_id,
+              module_name: module.module_name,
+              value: module.tvoc,
+              type: module.type,
+              module_description: module.module_description,
+              last_update: module.last_update,
+            })),
+            co2: rawData.map((module) => ({
+              module_id: module.module_id,
+              module_name: module.module_name,
+              value: module.co2,
+              type: module.type,
+              module_description: module.module_description,
+              last_update: module.last_update,
+            })),
+            temperature: rawData.map((module) => ({
+              module_id: module.module_id,
+              module_name: module.module_name,
+              value: module.temperature,
+              type: module.type,
+              module_description: module.module_description,
+              last_update: module.last_update,
+            })),
+            finedust: rawData.map((module) => ({
+              module_id: module.module_id,
+              module_name: module.module_name,
+              value: module.finedust,
+              type: module.type,
+              module_description: module.module_description,
+              last_update: module.last_update,
+            })),
+          };
+
+          setEnvData(envData);
+        })
+        .catch((error) => {
+          console.error("API 요청 실패:", error);
+        });
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 7000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="dashboard">
       <div className="dashboard-wrapper">
@@ -88,6 +146,7 @@ function Dashboard(props) {
               setSelectedEnvCard={setSelectedEnvCard}
               setEnvModalOpen={setEnvModalOpen}
               setImg={setImg}
+              envData={envData[data.endpoint]}
             />
           ))}
         </div>
@@ -128,10 +187,10 @@ function EnvCard({
   setSelectedEnvCard,
   setEnvModalOpen,
   setImg,
+  envData,
 }) {
-  const { factoryId } = useParams();
-  const [data, setData] = useState([]);
   const [index, setIndex] = useState(0);
+  const [sortedData, setSortedData] = useState([]);
   const swiperRef = useRef(null);
 
   useEffect(() => {
@@ -142,36 +201,25 @@ function EnvCard({
       } else {
         swiper.autoplay.start();
       }
-    } else {
     }
   }, [isPaused]);
 
   useEffect(() => {
-    const fetchData = () => {
-      axios
-        .get(
-          `http://junlab.postech.ac.kr:880/api2/factory/${factoryId}/${endpoint}`
-        )
-        .then((response) => {
-          setData(response.data);
-        })
-        .catch((error) => {
-          console.error("API 요청 실패:", error);
-        });
-    };
-
-    fetchData();
-    const interval = setInterval(fetchData, 7000);
-    return () => clearInterval(interval);
-  }, []);
+    if (envData?.length > 0) {
+      const sorted = [...envData].sort((a, b) =>
+        a.module_name.localeCompare(b.module_name)
+      );
+      setSortedData(sorted);
+    }
+  }, [envData]);
 
   const [displayValue, setDisplayValue] = useState(0);
   const [fade, setFade] = useState(false);
 
   useEffect(() => {
-    if (data.length > 0) {
-      const newValue = data[index][endpoint];
-      if (displayValue != newValue) {
+    if (sortedData?.length > 0) {
+      const newValue = sortedData[index]?.value;
+      if (displayValue !== newValue) {
         setFade(true);
         setTimeout(() => {
           setFade(false);
@@ -179,7 +227,7 @@ function EnvCard({
         }, 300);
       }
     }
-  }, [data, displayValue]);
+  }, [sortedData, displayValue, index]);
 
   const settings = {
     spaceBetween: 20,
@@ -189,9 +237,10 @@ function EnvCard({
       clickable: true,
     },
     autoplay: {
-      delay: 14000, // 5초 간격
-      disableOnInteraction: true, // 사용자 상호작용 후에도 계속 재생
+      delay: 14000,
+      disableOnInteraction: true,
     },
+    loop: true, // 루프 설정
     modules: [Pagination, Autoplay],
   };
 
@@ -208,32 +257,34 @@ function EnvCard({
           setImg(img);
         }}
       />
-      {data.length > 0 && (
+      {sortedData?.length > 0 && (
         <Swiper
           {...settings}
           onSwiper={(swiper) => (swiperRef.current = swiper)}
         >
-          {data.length > 0 &&
-            data.map((e, idx) => (
-              <SwiperSlide key={idx} className="text">
-                <span className="title">{title}</span>
-                <span className={`value ${fade ? "fade-out" : "fade-in"}`}>
-                  {new Date() - new Date(e.last_update) < 30000
-                    ? e[endpoint] + unit
-                    : "Offline"}
-                </span>
-              </SwiperSlide>
-            ))}
+          {sortedData.map((e, idx) => (
+            <SwiperSlide key={idx} className="text">
+              <span className="title">{title}</span>
+              <span className={`value ${fade ? "fade-out" : "fade-in"}`}>
+                {new Date() - new Date(e.last_update) < 90000
+                  ? parseFloat(e.value) + unit
+                  : "Offline"}
+              </span>
+            </SwiperSlide>
+          ))}
         </Swiper>
       )}
-      {data.length == 0 && (
+      {sortedData?.length === 0 && (
         <div className="text">
           <span className="title">{title}</span>
           <span className={`value ${fade ? "fade-out" : "fade-in"}`}>-</span>
         </div>
       )}
-      <div title={data[index]?.module_description} className="module-name">
-        {data[index]?.module_name}
+      <div
+        title={sortedData && sortedData[index]?.module_description}
+        className="module-name"
+      >
+        {sortedData && sortedData[index]?.module_name}
       </div>
     </div>
   );
@@ -332,7 +383,9 @@ function WorkerSummary({
         Cell: ({ row }) =>
           row.original.online ? (
             <div className="left">
-              {parseInt(row.original.last_oxygen_saturation)}
+              {isNaN(parseInt(row.original.last_oxygen_saturation))
+                ? "-"
+                : parseInt(row.original.last_oxygen_saturation)}
             </div>
           ) : (
             <div className="left">-</div>
@@ -361,9 +414,9 @@ function WorkerSummary({
             className="state"
             title={`마지막 동기화: ${formatTimestamp(row.original.last_sync)}`}
           >
-            {row.original.online ? (
-              <>
-                <div>
+            <div>
+              {row.original.online ? (
+                <>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="13"
@@ -374,31 +427,43 @@ function WorkerSummary({
                     <circle cx="6.5" cy="6.5" r="6.5" fill="#81FF02" />
                   </svg>
                   Online
-                </div>
-                <div>
-                  <FontAwesomeIcon icon={faBatteryThreeQuarters} />
-                  {row.original.adjusted_battery_level}%
-                </div>
-              </>
-            ) : (
-              <>
-                <div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="13"
-                    height="13"
-                    viewBox="0 0 13 13"
-                    fill="none"
-                  >
-                    <circle cx="6.5" cy="6.5" r="6.5" fill="#FF0000" />
-                  </svg>
-                  Offline
-                </div>
-                <div>
-                  <FontAwesomeIcon icon={faBatteryThreeQuarters} />- %
-                </div>
-              </>
-            )}
+                </>
+              ) : (
+                <>
+                  <div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="13"
+                      height="13"
+                      viewBox="0 0 13 13"
+                      fill="none"
+                    >
+                      <circle cx="6.5" cy="6.5" r="6.5" fill="#FF0000" />
+                    </svg>
+                    Offline
+                  </div>
+                </>
+              )}
+            </div>
+            <div>
+              {row.original.last_wear ? (
+                <>
+                  <FontAwesomeIcon
+                    icon={faUserCheck}
+                    style={{ color: "#81FF02" }}
+                  />
+                  착용중
+                </>
+              ) : (
+                <>
+                  <FontAwesomeIcon
+                    icon={faUserTimes}
+                    style={{ color: "#FF0000" }}
+                  />
+                  미착용
+                </>
+              )}
+            </div>
           </div>
         ),
       },

@@ -165,9 +165,9 @@ function Factory({ setHeaderText }) {
         >
           <div className="header">
             <div className="text">
-              <span className="name">{detail.factory_name}</span>
+              <span className="name">{detail?.factory_name}</span>
               <span className="industry">
-                ID: {detail.factory_id} / Code: {detail.code}{" "}
+                ID: {detail?.factory_id} / Code: {detail?.code}{" "}
               </span>
             </div>
             {detailZone.smallview ? (
@@ -185,7 +185,7 @@ function Factory({ setHeaderText }) {
             <button
               className="move"
               onClick={() =>
-                (window.location.href = `/factorymanagement/factory/${detail.factory_id}/dashboard`)
+                (window.location.href = `/factorymanagement/factory/${detail?.factory_id}/dashboard`)
               }
             >
               이동
@@ -232,33 +232,33 @@ function FactoryDetail({ detail }) {
   return (
     <div className="detail">
       <img
-        src={`http://junlab.postech.ac.kr:880/api2/image/${detail.factory_image_url}`}
+        src={`http://junlab.postech.ac.kr:880/api2/image/${detail?.factory_image_url}`}
       />
       <div className="text">
         <div className="wrapper">
           <div className="key">Name</div>
-          <span>: {detail.factory_name}</span>
+          <span>: {detail?.factory_name}</span>
         </div>
         <div className="wrapper">
           <div className="key">Industry</div>
-          <span>: {detail.industry}</span>
+          <span>: {detail?.industry}</span>
         </div>
         <div className="wrapper">
           <div className="key">Manager</div>
-          <span>: {detail.manager}</span>
+          <span>: {detail?.manager}</span>
         </div>
         <div className="wrapper">
           <div className="key">Contact</div>
-          <span>: {detail.contact_number}</span>
+          <span>: {detail?.contact_number}</span>
         </div>
         <div className="wrapper">
           <div className="key">Location</div>
-          <span>: {detail.location}</span>
+          <span>: {detail?.location}</span>
         </div>
         <div className="wrapper">
           <div className="key">Join Date</div>
           <span>
-            : {new Date(detail.join_date).toLocaleDateString("ko-KR")}
+            : {new Date(detail?.join_date).toLocaleDateString("ko-KR")}
           </span>
         </div>
       </div>

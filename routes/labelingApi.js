@@ -1,6 +1,6 @@
 const express = require("express");
 const api = express.Router();
-const connection = require("../database/labelConnection");
+const connection = require("../database/mysql");
 
 api.put("/env", (req, res) => {
   const id = req.body.id;

@@ -21,12 +21,12 @@ import AirWatch from "./component/Factorys/AirWatch";
 import Confirm from "./component/Factorys/Confirm";
 import Dashboard from "./component/Factorys/Dashboard";
 import Header from "./component/Header";
-import Labeling from "./component/Labeling/Labeling";
 import Settings from "./component/Settings/Settings";
 import Sidebar from "./component/Sidebar";
 import UserInit from "./component/Users/MyPage";
 import SidebarUser from "./component/Users/SidebarUser";
 import Vital from "./component/Users/Vital";
+import Labeling from "./component/labeling/Labeling";
 import { authcheck } from "./util";
 
 function App() {
@@ -107,7 +107,7 @@ function App() {
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const debug = 0;
+  const debug = 1;
 
   useEffect(() => {
     const fetchData = async () => {

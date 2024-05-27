@@ -3,8 +3,8 @@ const session = require("express-session");
 const path = require("path");
 const login = express.Router();
 
-const connection = require("../database/apiConnection");
-const labelConnection = require("../database/labelConnection");
+const connection = require("../database/mysql");
+// const connection = require("../database/connection");
 const sessionOption = require("../database/sessionOptions");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
@@ -116,7 +116,7 @@ login.post("/label-login", (req, res) => {
   const id = req.body.labelerId;
 
   if (id) {
-    labelConnection.query(
+    connection.query(
       "SELECT * FROM labeler WHERE id = ?",
       [id],
       (error, results) => {
@@ -185,6 +185,12 @@ login.post("/app-login", (req, res) => {
   }
 });
 
+// login.post("/app-sync", (req, res) => {
+//   // 데이터 받아서 결과 전송
+//   const id = req.body.userId;
+//   const mac = req.body.mac;
+// });
+
 login.post("/signup2", (req, res) => {
   // 데이터 받아서 결과 전송
   const id = req.body.id;
@@ -229,7 +235,7 @@ login.post("/signup2", (req, res) => {
               if (error) throw error;
               req.session.save(function () {
                 sendData.isSuccess = true;
-                console.log("저장성공");
+                // console.log("저장성공");
                 res.send(sendData);
               });
             }

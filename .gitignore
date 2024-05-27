@@ -124,3 +124,6 @@ dist
 package-lock.json
 /database/
 
+docker-compose.yml
+database/mysql.js
+database/sessionOptions.js
