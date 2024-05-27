@@ -21,6 +21,7 @@ const fetchAirQualityData = (serialNum) => {
     type: "Co2,Humid,Pm10,Pm25,Temperature,Tvoc",
   };
 
+  //   console.log(startTime, endTime);
   axios
     .post("http://mqtt.brilcom.com:8080/mqtt/GetAirQuality", payload, {
       headers: {
@@ -41,7 +42,7 @@ const fetchAirQualityData = (serialNum) => {
         const { myreport, Tvoc, Co2, Pm10, Temperature } = latestData;
 
         // 데이터베이스 업데이트
-        const query = `
+        const query1 = `
           UPDATE airwall SET 
             last_update = ?, 
             last_tvoc = ?, 
@@ -51,7 +52,7 @@ const fetchAirQualityData = (serialNum) => {
           WHERE module_id = ? AND (last_update IS NULL OR last_update < ?)
         `;
 
-        const values = [
+        const values1 = [
           myreport,
           Tvoc,
           Co2,
@@ -61,13 +62,37 @@ const fetchAirQualityData = (serialNum) => {
           myreport,
         ];
 
-        connection.query(query, values, (error, results) => {
+        connection.query(query1, values1, (error, results) => {
           if (error) {
             console.error("DB 업데이트 실패:", error);
           } else {
             console.log(
               `DB 업데이트 {${serialNum}} myreport: ${myreport}, tvoc: ${Tvoc}, co2: ${Co2}, pm10: ${Pm10}, temp: ${Temperature}`
             );
+          }
+        });
+
+        // 데이터베이스 삽입
+        const query2 = `
+            INSERT INTO airwall_data (sensor_module_id, factory_id, temperature, tvoc, co2, pm10, timestamp)
+            SELECT ?, factory_id, ?, ?, ?, ?, ?
+            FROM airwall
+            WHERE module_id = ?;`;
+
+        const values2 = [
+          serialNum,
+          Temperature,
+          Tvoc,
+          Co2,
+          Pm10,
+          now,
+          serialNum,
+          serialNum,
+        ];
+
+        connection.query(query2, values2, (error, results) => {
+          if (error) {
+            console.error("DB 삽입 실패:", error);
           }
         });
       } else {
