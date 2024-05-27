@@ -36,7 +36,7 @@ server.on("message", (msg, rinfo) => {
     // 마지막 저장 시간을 업데이트
     lastSavedTime[id] = currentTime;
 
-    const query1 = `SELECT user_id FROM users WHERE id = ?`;
+    const query1 = `SELECT user_id, watch_id FROM users WHERE id = ?`;
     const query2 = `INSERT INTO airwatch_data(user_id, device_id, heart_rate, body_temperature, wear, timestamp) 
                         VALUES(?,?,?,?,?,?)`;
     const query3 = `INSERT INTO airwatch (watch_id, last_sync, last_heart_rate, last_body_temperature, last_wear) 
@@ -46,10 +46,9 @@ server.on("message", (msg, rinfo) => {
                         last_heart_rate = VALUES(last_heart_rate),
                         last_body_temperature = VALUES(last_body_temperature),
                         last_wear = VALUES(last_wear)`;
-    // const query4 = `UPDATE users SET watch_id = NULL
-    //                 WHERE watch_id = ?`;
-    const query5 = `UPDATE users SET watch_id = ?
-                    WHERE id = ?`;
+    const query5_get = `SELECT id FROM users WHERE watch_id = ?`;
+    const query5_update_old = `UPDATE users SET watch_id = NULL WHERE id = ?`;
+    const query5_update_new = `UPDATE users SET watch_id = ? WHERE id = ?`;
 
     // 1번 쿼리 실행
     connection.query(query1, [id], (err, results) => {
@@ -60,6 +59,7 @@ server.on("message", (msg, rinfo) => {
 
       if (results.length > 0) {
         const userId = results[0].user_id;
+        const currentWatchId = results[0].watch_id;
 
         // 2번 쿼리 실행
         connection.query(
@@ -85,21 +85,52 @@ server.on("message", (msg, rinfo) => {
           }
         );
 
-        // // 4번 쿼리 실행
-        // connection.query(query4, [mac], (err, results) => {
-        //   if (err) {
-        //     console.error(`데이터 업데이트 에러: ${err.message}`);
-        //     return;
-        //   }
-        // });
+        // 5번 쿼리 실행 - 새로운 로직 추가
+        if (currentWatchId !== mac) {
+          // 기존 watch_id가 mac과 다를 때
+          connection.query(query5_get, [mac], (err, results) => {
+            if (err) {
+              console.error(`쿼리 실행 에러: ${err.message}`);
+              return;
+            }
 
-        // 5번 쿼리 실행
-        connection.query(query5, [mac, id], (err, results) => {
-          if (err) {
-            console.error(`데이터 업데이트 에러: ${err.message}`);
-            return;
-          }
-        });
+            if (results.length > 0) {
+              const oldUserId = results[0].id;
+
+              // 기존 사용자의 watch_id를 null로 업데이트
+              connection.query(
+                query5_update_old,
+                [oldUserId],
+                (err, results) => {
+                  if (err) {
+                    console.error(`데이터 업데이트 에러: ${err.message}`);
+                    return;
+                  }
+
+                  // 새로운 사용자의 watch_id를 업데이트
+                  connection.query(
+                    query5_update_new,
+                    [mac, id],
+                    (err, results) => {
+                      if (err) {
+                        console.error(`데이터 업데이트 에러: ${err.message}`);
+                        return;
+                      }
+                    }
+                  );
+                }
+              );
+            } else {
+              // 새로운 사용자의 watch_id를 업데이트
+              connection.query(query5_update_new, [mac, id], (err, results) => {
+                if (err) {
+                  console.error(`데이터 업데이트 에러: ${err.message}`);
+                  return;
+                }
+              });
+            }
+          });
+        }
       } else {
         console.error(`사용자를 찾을 수 없습니다: ID = ${id}`);
       }

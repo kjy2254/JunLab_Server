@@ -43,23 +43,22 @@ api.get("/:userId/info", (req, res) => {
 
 api.get("/:userId/heartrate", (req, res) => {
   const userId = parseInt(req.params.userId);
-  let start = req.query.start;
-  let end = req.query.end;
+  let date = req.query.date;
   let timeSlot = req.query.timeSlot;
 
   let queryParams = [userId];
 
   let query = ``;
 
-  if (start && end) {
-    queryParams.push(start, end);
+  if (date) {
+    queryParams.push(date);
     query += `
       SELECT
         heart_rate as heartrate, timestamp
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= ? AND timestamp <= ?;
+        user_id = ? AND date(timestamp) = ?;
       `;
   } else {
     if (!timeSlot) timeSlot = 30;
@@ -70,7 +69,7 @@ api.get("/:userId/heartrate", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL 30 MINUTE);
+        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE);
       `;
   }
 
@@ -85,23 +84,22 @@ api.get("/:userId/heartrate", (req, res) => {
 
 api.get("/:userId/temperature", (req, res) => {
   const userId = parseInt(req.params.userId);
-  let start = req.query.start;
-  let end = req.query.end;
+  let date = req.query.date;
   let timeSlot = req.query.timeSlot;
 
   let queryParams = [userId];
 
   let query = ``;
 
-  if (start && end) {
-    queryParams.push(start, end);
+  if (date) {
+    queryParams.push(date);
     query += `
       SELECT
         body_temperature as temperature, timestamp
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= ? AND timestamp <= ?;
+        user_id = ? AND date(timestamp) = ?;
       `;
   } else {
     if (!timeSlot) timeSlot = 30;
@@ -112,7 +110,7 @@ api.get("/:userId/temperature", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL 30 MINUTE);
+        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE);
       `;
   }
 
@@ -127,23 +125,22 @@ api.get("/:userId/temperature", (req, res) => {
 
 api.get("/:userId/oxygen", (req, res) => {
   const userId = parseInt(req.params.userId);
-  let start = req.query.start;
-  let end = req.query.end;
+  let date = req.query.date;
   let timeSlot = req.query.timeSlot;
 
   let queryParams = [userId];
 
   let query = ``;
 
-  if (start && end) {
-    queryParams.push(start, end);
+  if (date) {
+    queryParams.push(date);
     query += `
       SELECT
       oxygen_saturation as oxygen, timestamp
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= ? AND timestamp <= ? AND oxygen_saturation != ".ING.";
+        user_id = ? AND date(timestamp) = ? AND oxygen_saturation != ".ING.";
       `;
   } else {
     if (!timeSlot) timeSlot = 30;
@@ -154,7 +151,7 @@ api.get("/:userId/oxygen", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND oxygen_saturation != ".ING.";
+        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND oxygen_saturation != ".ING.";
       `;
   }
 
