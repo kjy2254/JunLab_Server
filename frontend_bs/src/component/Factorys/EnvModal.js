@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
 import { useParams } from "react-router-dom";
 import "../../css/EnvModal.css";
@@ -65,6 +65,8 @@ function EnvGraphCard({ header, img, endpoint, title }) {
   const [minute, setMinute] = useState(15);
   const [selectedRadio, setSelectedRadio] = useState(0);
   const [options, setOptions] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const firstLoad = useRef(true); // 최초 로드 여부 추적
 
   const groupDataByModuleName = (data) => {
     return data.reduce((acc, item) => {
@@ -188,18 +190,24 @@ function EnvGraphCard({ header, img, endpoint, title }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      axios
-        .get(
+      if (firstLoad.current) {
+        setIsLoading(true); // 데이터 로딩 시작
+      }
+      try {
+        const response = await axios.get(
           `http://junlab.postech.ac.kr:880/api2/airwalldata/${endpoint}?factoryId=${factoryId}&` +
             (selectedRadio == 0 ? `timeSlot=${minute}` : `date=${date}`)
-        )
-        .then((response) => {
-          const data = response.data;
-          setData(data);
-        })
-        .catch((error) => {
-          console.error("API 요청 실패:", error);
-        });
+        );
+        const data = response.data;
+        setData(data);
+      } catch (error) {
+        console.error("API 요청 실패:", error);
+      } finally {
+        if (firstLoad.current) {
+          setIsLoading(false); // 데이터 로딩 실패
+          firstLoad.current = false; // 최초 로드 완료
+        }
+      }
     };
 
     fetchData();
@@ -264,18 +272,44 @@ function EnvGraphCard({ header, img, endpoint, title }) {
         </div>
       </div>
       <div className="chart">
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={options}
-          containerProps={{
-            style: {
+        {isLoading ? (
+          <p
+            style={{
               width: "100%",
-              // maxHeight: "15rem",
-              height: "100%",
-            },
-          }}
-        />
+              height: "240px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            Loading...
+          </p>
+        ) : data.length === 0 ? (
+          <p
+            style={{
+              width: "100%",
+              height: "240px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            No data available
+          </p>
+        ) : (
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+            containerProps={{
+              style: {
+                width: "100%",
+                height: "100%",
+              },
+            }}
+          />
+        )}
       </div>
+
       <div></div>
     </div>
   );
