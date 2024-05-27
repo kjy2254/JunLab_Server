@@ -121,57 +121,18 @@ api.get("/factory/:factoryId/name", (req, res) => {
   });
 });
 
-api.get("/factory/:factoryId/tvoc", (req, res) => {
+api.get("/factory/:factoryId/airwalls", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
-  const query = `SELECT module_id, module_name, last_update, last_tvoc as tvoc, module_description 
-  FROM airwall 
-  WHERE factory_id = ? AND enable = 1`;
 
-  connection.query(query, [factoryId], (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-
-    return res.status(200).json(result);
-  });
-});
-
-api.get("/factory/:factoryId/co2", (req, res) => {
-  const factoryId = parseInt(req.params.factoryId);
-  const query = `SELECT module_id, module_name, last_update, last_co2 as co2, module_description 
-  FROM airwall 
-  WHERE factory_id = ? AND enable = 1`;
-
-  connection.query(query, [factoryId], (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-
-    return res.status(200).json(result);
-  });
-});
-
-api.get("/factory/:factoryId/temperature", (req, res) => {
-  const factoryId = parseInt(req.params.factoryId);
-  const query = `SELECT module_id, module_name, last_update, last_temperature as temperature, module_description 
-  FROM airwall 
-  WHERE factory_id = ? AND enable = 1`;
-
-  connection.query(query, [factoryId], (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-
-    return res.status(200).json(result);
-  });
-});
-
-api.get("/factory/:factoryId/finedust", (req, res) => {
-  const factoryId = parseInt(req.params.factoryId);
-  const query = `SELECT module_id, module_name, last_update, last_pm1_0 as finedust, module_description 
+  const query = `SELECT module_id,
+                         module_name,
+                          last_update,
+                           last_tvoc as tvoc,
+                            last_co2 as co2,
+                            last_temperature as temperature,
+                             last_pm10 as finedust,
+                             module_description,
+                              type
   FROM airwall 
   WHERE factory_id = ? AND enable = 1`;
 
@@ -296,6 +257,8 @@ api.get("/airwatchdata", (req, res) => {
     queryParams.push(factoryId);
   }
 
+  query += ` ORDER BY timestamp DESC`;
+
   connection.query(query, queryParams, (error, result) => {
     if (error) {
       console.log(error);
@@ -351,6 +314,8 @@ api.get("/airwalldata", (req, res) => {
     query += ` AND m.factory_id = ?`;
     queryParams.push(factoryId);
   }
+
+  query += ` ORDER BY timestamp DESC`;
 
   connection.query(query, queryParams, (error, result) => {
     if (error) {
@@ -575,80 +540,50 @@ api.put("/confirms/reject/:userId", (req, res) => {
   return res.status(200).send("User has been successfully updated.");
 });
 
-// api.get("/airwalldata/:env", (req, res) => {
-//   const env =
-//     req.params.env == "finedust" ? "pm1_0 AS finedust" : req.params.env;
-//   let factoryId = req.query.factoryId;
-//   let date = req.query.date;
-//   let timeSlot = req.query.timeSlot;
+api.get("/airwalldata/:env", (req, res) => {
+  const validEnvs = {
+    finedust: "pm10 AS finedust",
+    tvoc: "tvoc",
+    co2: "co2",
+    temperature: "temperature",
+  };
 
-//   if (!factoryId) return res.status(400).send("factory id is necessary");
+  const rawEnv = req.params.env;
+  const env = validEnvs[rawEnv];
 
-//   let queryParams = [factoryId];
+  if (!env) {
+    return res.status(400).send("Invalid env parameter");
+  }
 
-//   // 파티션 존재 여부를 확인하는 쿼리
-//   const checkPartitionQuery = `
-//           SELECT
-//             COUNT(*) as count
-//           FROM
-//             information_schema.partitions
-//           WHERE
-//             table_schema = 'factorymanagement' AND
-//             table_name = 'airwall_data' AND
-//             partition_name = ?;
-//           `;
+  const factory_id = req.query.factoryId;
+  const date = req.query.date;
+  const timeSlot = req.query.timeSlot || 30;
 
-//   // 파티션 이름 생성
-//   const partitionName = "p" + date?.replaceAll("/", "").replaceAll("-", "");
+  let query = "";
+  let queryParams = [];
 
-//   // 파티션 존재 여부 확인
-//   connection.query(checkPartitionQuery, [partitionName], (error, result) => {
-//     if (error) {
-//       console.log(error);
-//       return res.status(500).send("Internal Server Error!");
-//     }
+  if (date) {
+    query = `SELECT ${env}, timestamp, a.module_name
+               FROM airwall_data d
+               JOIN airwall a ON a.module_id = d.sensor_module_id
+               WHERE DATE(timestamp) = ? AND d.factory_id = ?`;
+    queryParams.push(date);
+  } else {
+    query = `SELECT ${env}, timestamp, a.module_name
+               FROM airwall_data d
+               JOIN airwall a ON a.module_id = d.sensor_module_id
+               WHERE timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND d.factory_id = ?`;
+    queryParams.push(timeSlot);
+  }
+  queryParams.push(factory_id);
 
-//     // 파티션이 존재하지 않는 경우
-//     if (!timeSlot && result[0].count === 0) {
-//       return res.status(200).json([]);
-//     }
-//     // 파티션이 존재하는 경우, 원래 쿼리 실행
-//     let query = ``;
-//     if (date) {
-//       queryParams.push(date);
-//       query += `
-//     SELECT
-//     s.${env}, s.timestamp, m.module_name
-//     FROM
-//     airwall_data PARTITION(${partitionName}) s
-//     JOIN
-//       airwall m ON s.sensor_module_id = m.module_id
-//     WHERE
-//       s.factory_id = ?;
-//     `;
-//     } else {
-//       if (!timeSlot) timeSlot = 90;
-//       queryParams.push(timeSlot);
-//       query += `
-//     SELECT
-//     s.${env}, s.timestamp, m.module_name
-//     FROM
-//     airwall_data s
-//     JOIN
-//       airwall m ON s.sensor_module_id = m.module_id
-//     WHERE
-//       s.factory_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE);
-//     `;
-//     }
-
-//     connection.query(query, queryParams, (error, result) => {
-//       if (error) {
-//         console.log(error);
-//         return res.status(500).send("Internal Server Error!");
-//       }
-//       return res.status(200).json(result);
-//     });
-//   });
-// });
+  connection.query(query, queryParams, (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json(result);
+  });
+});
 
 module.exports = api;

@@ -70,7 +70,7 @@ api.get("/:userId/heartrate", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= DATE_ADD(DATE_SUB(NOW(), INTERVAL 30 MINUTE), INTERVAL 9 HOUR);
+        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL 30 MINUTE);
       `;
   }
 
@@ -112,7 +112,7 @@ api.get("/:userId/temperature", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= DATE_ADD(DATE_SUB(NOW(), INTERVAL 30 MINUTE), INTERVAL 9 HOUR);
+        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL 30 MINUTE);
       `;
   }
 
@@ -154,7 +154,7 @@ api.get("/:userId/oxygen", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= DATE_ADD(DATE_SUB(NOW(), INTERVAL 30 MINUTE), INTERVAL 9 HOUR) AND oxygen_saturation != ".ING.";
+        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND oxygen_saturation != ".ING.";
       `;
   }
 

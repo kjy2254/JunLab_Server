@@ -322,7 +322,7 @@ function saveAirWallData(rawData) {
         parseInt(values[14]),
         parseInt(values[15]),
         parseInt(values[16]),
-        parseInt(values[0]),
+        values[0],
       ],
       (error, result) => {
         if (error) {

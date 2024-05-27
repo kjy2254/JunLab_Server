@@ -69,7 +69,7 @@ function EnvGraphCard({ header, img, endpoint, title }) {
   const groupDataByModuleName = (data) => {
     return data.reduce((acc, item) => {
       const { timestamp, module_name } = item;
-      const value = parseInt(item[endpoint], 10);
+      const value = parseFloat(item[endpoint], 10);
       if (!acc[module_name]) {
         acc[module_name] = [];
       }
