@@ -41,6 +41,7 @@ export function toggleTheme(darkMode, setDarkMode) {
     document.documentElement.style.setProperty("--spinner-top-color", "gray");
     document.documentElement.style.setProperty("--graph-lable-color", "black");
     document.documentElement.style.setProperty("--drag-over-color", "#555");
+    document.documentElement.style.setProperty("--dot-color", "black");
   } else {
     // 다크 모드 색상
     document.documentElement.style.setProperty(
@@ -79,6 +80,7 @@ export function toggleTheme(darkMode, setDarkMode) {
       "rgb(230, 233, 236)"
     );
     document.documentElement.style.setProperty("--drag-over-color", "#ccc");
+    document.documentElement.style.setProperty("--dot-color", "white");
   }
   localStorage.setItem("darkMode", darkMode ? "false" : "true");
   setDarkMode((prev) => !prev);

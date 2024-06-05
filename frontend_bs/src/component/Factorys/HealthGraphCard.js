@@ -113,7 +113,23 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
         formatter: function () {
           const date = new Date(this.x);
           const dateStr = date.toLocaleString();
-          return `${dateStr}<br>${endpoint}:${this.point.y.toFixed(1)}`;
+          let kr, unit;
+          if (endpoint === "heartrate") {
+            kr = "심박수";
+            unit = "bpm";
+          } else if (endpoint === "temperature") {
+            kr = "체온";
+            unit = "°C";
+          } else {
+            kr = "산소포화도";
+            unit = "%";
+          }
+          return `${dateStr}<br>${kr}:${this.point.y.toFixed(1)}${unit}`;
+        },
+        style: {
+          color: "black",
+          fontWeight: "light",
+          fontFamily: "SUITE-Regular",
         },
       },
       series: [
@@ -210,14 +226,6 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
                 onChange={(e) => setDate(e.target.value)}
               />
             </label>
-            {/* <label>
-              <span>끝 날짜:</span>
-              <input
-                type="datetime-local"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </label> */}
           </div>
           <div
             className={

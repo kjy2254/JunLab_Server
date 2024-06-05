@@ -94,6 +94,8 @@ button {
 
   /* 기본 라이트 모드에서의 드래그오버색상 */
   --drag-over-color: #555;
+
+  --dot-color: black;
 }
 
 .layer1 {
