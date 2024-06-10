@@ -437,12 +437,29 @@ api.get("/settings/:factoryId/watchlist", (req, res) => {
   });
 });
 
+api.get("/settings/:factoryId/airwalllist", (req, res) => {
+  const factoryId = parseInt(req.params.factoryId);
+
+  query = `SELECT module_id AS airwall_id, module_name
+            FROM airwall
+            WHERE factory_id = ?`;
+
+  connection.query(query, [factoryId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json(result);
+  });
+});
+
 api.get("/settings/:factoryId/workers", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
 
-  query = `SELECT user_id, name, gender, watch_id, airwall_id
-            FROM users
-            WHERE factory_id = ?`;
+  query = `SELECT user_id, name, gender, watch_id, u.airwall_id, a.module_name, u.profile_image_path
+            FROM users u
+            LEFT JOIN airwall a ON u.airwall_id = a.module_id
+            WHERE u.factory_id = ?`;
 
   connection.query(query, [factoryId], (error, result) => {
     if (error) {
@@ -457,16 +474,21 @@ api.put("/settings/:factoryId/workers", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
   const updatedData = req.body; // 클라이언트가 보낸 업데이트할 데이터
 
-  const query = "UPDATE users SET watch_id = ? WHERE user_id = ?";
+  const query =
+    "UPDATE users SET watch_id = ?, airwall_id = ? WHERE user_id = ?";
 
   // 모든 업데이트 작업을 순차적으로 처리
   updatedData.forEach((item) => {
-    connection.query(query, [item.watch_id, item.user_id], (error, result) => {
-      if (error) {
-        console.log(error);
-        return res.status(500).send("Internal Server Error!");
+    connection.query(
+      query,
+      [item.watch_id, item.airwall_id, item.user_id],
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          return res.status(500).send("Internal Server Error!");
+        }
       }
-    });
+    );
   });
 
   // 모든 업데이트가 성공적으로 완료된 후 응답

@@ -56,6 +56,7 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
           const newGraphData = response.data.map((module) => {
             const newData = {
               name: module.module_name,
+              module_description: module.module_description,
               id: module.module_id,
               data: [
                 parseFloat(module.tvoc) / scale.tvoc || 0,
@@ -230,7 +231,12 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
           </>
         ))}
       </div>
-      <div className="module-name">측정기: {envData[moduleIndex]?.name}</div>
+      <div
+        className="module-name"
+        title={envData[moduleIndex]?.module_description}
+      >
+        측정기: {envData[moduleIndex]?.name}
+      </div>
       <div className="module-update">
         마지막 측정 시간: {envData[moduleIndex]?.last_update}
       </div>

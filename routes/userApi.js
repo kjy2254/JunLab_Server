@@ -23,11 +23,13 @@ api.get("/:userId/info", (req, res) => {
 
   const query = `
     SELECT
-      u.user_id, u.name, u.airwall_id, u.watch_id, w.last_sync, w.level
+      u.user_id, u.name, a.module_name AS airwall_name, u.watch_id, w.last_sync, w.level
     FROM
     users u
     LEFT JOIN
     airwatch w ON w.watch_id = u.watch_id
+    LEFT JOIN
+    airwall a ON a.module_id = u.airwall_id
     WHERE
       u.user_id = ?;
   `;

@@ -3,6 +3,11 @@ const { predictWorkLoadByUserId } = require("../model/model");
 
 const userList = [];
 
+test_data["tvoc"] = test_data["tvoc"] / 1000 / 0.6;
+test_data["co2"] = test_data["co2"] / 825;
+test_data["heart_rate"] = test_data["heart_rate"] / 80;
+test_data["Temperature"] = test_data["Temperature"] / 36.5;
+
 const getUsers = () => {
   return new Promise((resolve, reject) => {
     const query = `SELECT user_id FROM users;`;

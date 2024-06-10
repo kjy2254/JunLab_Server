@@ -46,7 +46,7 @@ function WorkerModal({ modalOpen, setModalOpen, selectedWorker }) {
         <div className="user-info">
           <span className="name">{data?.name}</span>
           <span className="watch">Watch: {data?.watch_id}</span>
-          <span className="watch">AirWall: {data?.airwall_id}</span>
+          <span className="watch">AirWall: {data?.airwall_name}</span>
         </div>
         <div className="right">
           위험도: &nbsp;

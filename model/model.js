@@ -7,7 +7,7 @@ let model;
 // 모델 로드 함수
 async function loadModel() {
   if (!model) {
-    const modelPath = path.resolve(__dirname, "./wl_model2/model.json");
+    const modelPath = path.resolve(__dirname, "./wl_model5/model.json");
     model = await tf.loadLayersModel(`file://${modelPath}`);
     console.log("Model loaded");
   }

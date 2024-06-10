@@ -5,13 +5,13 @@ import { useParams } from "react-router-dom";
 import "react-tabs/style/react-tabs.css";
 import "../../css/Settings.css";
 import default_watch from "../../image/default_watch.png";
-import defaultProfile from "../../image/profile_default.png";
 import { createFuzzyMatcher } from "../../util";
 
 function WorkerAndAirWatch() {
   const { factoryId } = useParams();
   const [watches, setWatches] = useState([]);
   const [workers, setWorkers] = useState([]);
+  const [airwalls, setAirwalls] = useState([]);
 
   const [workerFilter, setWorkerFilter] = useState("");
   const [watchFilter, setWatchFilter] = useState("");
@@ -23,6 +23,16 @@ function WorkerAndAirWatch() {
       )
       .then((response) => {
         setWatches(response.data);
+      })
+      .catch((error) => {
+        console.error("API 요청 실패:", error);
+      });
+    axios
+      .get(
+        `http://junlab.postech.ac.kr:880/api2/settings/${factoryId}/airwalllist`
+      )
+      .then((response) => {
+        setAirwalls(response.data);
       })
       .catch((error) => {
         console.error("API 요청 실패:", error);
@@ -159,6 +169,22 @@ function WorkerAndAirWatch() {
     );
   };
 
+  const assignAirWallToWorker = (airwallId, workerId) => {
+    // 작업자의 페어링 업데이트
+    setWorkers((prevWorkers) =>
+      prevWorkers.map((worker) => {
+        if (worker.user_id === workerId) {
+          return { ...worker, airwall_id: airwallId };
+        }
+        return worker;
+      })
+    );
+  };
+
+  // useEffect(() => {
+  //   console.log(workers);
+  // }, [workers]);
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="worker-airwatch">
@@ -178,12 +204,31 @@ function WorkerAndAirWatch() {
               .map((worker) => (
                 <div className="worker-card" key={worker.user_id}>
                   <div className="text">
-                    <img src={defaultProfile} width={42} height={42} />
+                    <img
+                      src={`http://junlab.postech.ac.kr:880/api2/image/${worker.profile_image_path}`}
+                      width={42}
+                      height={42}
+                    />
                     <div className="text-col">
                       <span>
                         {worker.name}({worker.gender})
                       </span>
-                      <span className="role">{worker.role}</span>
+                      <select
+                        onChange={(e) =>
+                          assignAirWallToWorker(
+                            e.target.value === "null" ? null : e.target.value,
+                            worker.user_id
+                          )
+                        }
+                        value={worker.airwall_id || ""}
+                      >
+                        <option value="null">선택없음</option>
+                        {airwalls.map((e, idx) => (
+                          <option key={idx} value={e.airwall_id}>
+                            {e.module_name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                   <Droppable droppableId={`${worker.user_id}`} type="WATCH">
