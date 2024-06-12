@@ -1,9 +1,11 @@
+import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import "../../../css/WorkerModal.css";
+import Tooltip from "../../Tooltip";
 import HealthGraphCard from "../HealthGraphCard";
 
 const customModalStyles = {
@@ -49,9 +51,18 @@ function WorkerModal({ modalOpen, setModalOpen, selectedWorker }) {
           <span className="watch">AirWall: {data?.airwall_name}</span>
         </div>
         <div className="right">
-          위험도: &nbsp;
-          <div className={"level lv1"}>1단계</div>
           <FontAwesomeIcon icon={faClose} onClick={() => setModalOpen(false)} />
+          <div className="score">
+            <span>건강 점수: 0.67 &nbsp;</span>
+            <Tooltip
+              content={[
+                "건강 점수는 바이오 측정치들을 복합적으로 고려한 수치입니다.",
+                "- 1을 초과하는 경우 인체에 영향이 있을 수 있습니다.",
+              ]}
+            >
+              <FontAwesomeIcon icon={faCircleQuestion} />
+            </Tooltip>
+          </div>
         </div>
       </div>
       <HealthGraphCard

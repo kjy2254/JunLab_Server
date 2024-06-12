@@ -31,6 +31,13 @@
   flex-direction: column;
 }
 
+.workermodal .header .score {
+  font-size: small;
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+}
+
 .workermodal .header svg {
   cursor: pointer;
 }
@@ -134,6 +141,8 @@
 .workermodal .header .right {
   display: flex;
   margin-bottom: auto;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .workermodal .level {
@@ -195,11 +204,6 @@
   }
   .graph-card .setting {
     flex-wrap: wrap !important;
-  }
-
-  .graph-card label {
-    /* background: #000; */
-    /* flex-wrap: nowrap; */
   }
 }
 

@@ -48,7 +48,7 @@
 }
 
 .worker-summary,
-.workshop-summary,
+.airwall-summary,
 .worker-statistic,
 .advice {
   display: flex;
@@ -64,18 +64,29 @@
   justify-content: flex-start;
 }
 
-.workshop-summary {
+.airwall-summary {
   flex-direction: column;
   width: 100%;
   overflow: scroll;
 }
 
-.workshop-summary .header {
+.airwall-summary .header {
   display: flex;
   width: calc(100% - 3rem);
+  flex-wrap: wrap;
 }
 
-.workshop-summary .envList {
+.airwall-summary .header .score {
+  font-size: small;
+  display: flex;
+  align-items: center;
+}
+
+.airwall-summary .header .score svg:hover {
+  opacity: 0.85;
+}
+
+.airwall-summary .envList {
   width: calc(100% - 500px);
   display: flex;
   flex-direction: column;
@@ -85,36 +96,51 @@
   padding-bottom: 1rem;
 }
 
-.workshop-summary .envList .row {
+.airwall-summary .envList .row {
   /* background: blue; */
   width: 100%;
   display: flex;
   min-width: 28rem;
 }
 
-.workshop-summary .envList hr {
+.airwall-summary .envList hr {
   width: 100%;
   border-top: 1px solid var(--border-color);
   opacity: 1;
 }
 
-.workshop-summary .module-list {
+.airwall-summary .module-list {
   display: flex;
   /* background: #000; */
   width: 100%;
   justify-content: center;
-  padding-bottom: 2.5rem;
+  align-items: center;
+  padding-bottom: 4.5rem;
   padding-top: 1rem;
 }
 
-.workshop-summary .module-list .dot {
-  width: 0.8rem;
-  height: 0.8rem;
+.airwall-summary .module-list .dot {
+  width: 0.7rem;
+  height: 0.7rem;
   border-radius: 1rem;
   background: var(--dot-color);
   cursor: pointer;
   margin: 0 0.1rem;
   opacity: 0.2;
+}
+
+.airwall-summary .module-list .right,
+.airwall-summary .module-list .left {
+  margin-right: 0.2rem;
+  margin-left: 0.2rem;
+  height: 0.8rem;
+  opacity: 0.4;
+  cursor: pointer;
+}
+
+.airwall-summary .module-list .right:hover,
+.airwall-summary .module-list .left:hover {
+  opacity: 1;
 }
 
 /* .highcharts-container {
@@ -174,9 +200,10 @@
   padding-top: 0.1rem;
   padding-right: 2.5rem;
   opacity: 0.75;
+  font-style: italic;
 }
 
-.workshop-summary .module-name {
+.airwall-summary .module-name {
   position: absolute;
   right: 0.5rem;
   bottom: 0.5rem;
@@ -185,9 +212,15 @@
   opacity: 0.3;
   z-index: 1;
   user-select: none;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* width: 10rem; */
+  text-align: end;
 }
 
-.workshop-summary .module-update {
+.airwall-summary .module-update {
   position: absolute;
   left: 1.5rem;
   bottom: 0.5rem;
@@ -196,6 +229,23 @@
   opacity: 0.3;
   z-index: 1;
   user-select: none;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: start;
+}
+
+.airwall-summary .options {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 2rem;
+  opacity: 0.75;
+}
+
+.airwall-summary .options svg {
+  margin-right: 1rem;
+  cursor: pointer;
 }
 
 .third-row {
@@ -257,7 +307,7 @@
   text-wrap: nowrap;
 }
 
-.workshop-summary .level,
+.airwall-summary .level,
 .worker-summary .level {
   min-width: 3rem;
   width: 3rem;
@@ -308,6 +358,7 @@
 
 .worker-statistic {
   width: calc(30% - 0.5rem);
+  /* align-items: center; */
 }
 
 .pie-chart {
@@ -388,6 +439,8 @@
 
   .envList {
     width: 100% !important;
+    padding: 2rem !important;
+    padding-bottom: 0 !important;
   }
 
   /* .first-row .env-card {
@@ -435,11 +488,6 @@
     align-content: center;
     padding-top: 1rem;
     scale: 0.8;
-  }
-
-  .radar {
-    /* scale: 0.7; */
-    /* overflow: visible; */
   }
 }
 

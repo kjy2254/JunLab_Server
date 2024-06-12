@@ -102,13 +102,17 @@ function App() {
       );
       document.documentElement.style.setProperty("--drag-over-color", "#ccc");
       document.documentElement.style.setProperty("--dot-color", "white");
+
+      document.documentElement.style.setProperty("--radar-red", "#d65959");
+      document.documentElement.style.setProperty("--radar-yellow", "#e0e050");
+      document.documentElement.style.setProperty("--radar-green", "#50eb50");
     }
   }, []);
 
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const debug = 0;
+  const debug = 1;
 
   useEffect(() => {
     const fetchData = async () => {

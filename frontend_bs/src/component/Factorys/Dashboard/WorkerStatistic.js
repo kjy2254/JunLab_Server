@@ -39,7 +39,6 @@ function WorkerStatistic({ data }) {
       backgroundColor: "transparent", // 배경을 투명하게 설정
       plotBorderWidth: null, // 테두리 제거
       plotShadow: false, // 그림자 제거
-      // height: 250,
       width: 300,
       height: 300,
       plotBorderColor: "transparent",

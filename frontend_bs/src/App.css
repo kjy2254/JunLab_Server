@@ -96,6 +96,14 @@ button {
   --drag-over-color: #555;
 
   --dot-color: black;
+
+  --radar-red: #ff9a9a;
+  --radar-yellow: #f8f88a;
+  --radar-green: #a2ffa2;
+
+  --radar-red: #d65959;
+  --radar-yellow: #e0e050;
+  --radar-green: #50eb50;
 }
 
 .layer1 {

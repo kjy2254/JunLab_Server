@@ -1,13 +1,21 @@
+import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
+import {
+  faChevronLeft,
+  faChevronRight,
+  faPause,
+  faPlay,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsMore from "highcharts/highcharts-more";
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import "swiper/css";
 import "swiper/css/pagination";
 import "../../../css/Dashboard2.css";
+import Tooltip from "../../Tooltip";
 import EnvList from "./EnvList";
 
 HighchartsMore(Highcharts);
@@ -16,6 +24,9 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
   const [envData, setEnvData] = useState([]);
   const { factoryId } = useParams();
   const [moduleIndex, setModuleIndex] = useState(0);
+  const [pause, setPause] = useState(false);
+  const [showColor, setShowColor] = useState(false);
+
   const scale = {
     tvoc: 2500,
     co2: 2500,
@@ -25,13 +36,25 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
     humid: 100,
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
+  const slide = (forward) => {
+    if (forward) {
       setModuleIndex((prevIndex) => (prevIndex + 1) % envData.length);
-    }, 10000);
+    } else {
+      setModuleIndex(
+        (prevIndex) => (prevIndex - 1 + envData.length) % envData.length
+      );
+    }
+  };
 
+  useEffect(() => {
+    let interval;
+    if (!pause) {
+      interval = setInterval(() => {
+        slide(true);
+      }, 10000);
+    }
     return () => clearInterval(interval);
-  }, [envData.length]);
+  }, [envData.length, pause]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -74,7 +97,11 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
                 parseFloat(module.temperature) || 0,
                 parseFloat(module.humid) || 0,
               ],
-              last_update: new Date(module.last_update).toLocaleString(),
+              last_update: module.isOnline
+                ? new Date(module.last_update).toLocaleTimeString()
+                : new Date(module.last_update).toLocaleTimeString() +
+                  "(오프라인)",
+              last_update_long: new Date(module.last_update).toLocaleString(),
             };
             return newData;
           });
@@ -100,6 +127,26 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
   ];
 
   const options = useMemo(() => {
+    const plotBands = showColor
+      ? [
+          {
+            from: 0,
+            to: 1.0,
+            color: "var(--radar-green)",
+          },
+          {
+            from: 1.0,
+            to: 1.5,
+            color: "var(--radar-yellow)",
+          },
+          {
+            from: 1.5,
+            to: 2.0,
+            color: "var(--radar-red)",
+          },
+        ]
+      : [];
+
     return {
       chart: {
         polar: true,
@@ -114,6 +161,7 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
         size: "90%",
         startAngle: 0,
         endAngle: 360,
+        background: [],
       },
       xAxis: {
         categories: [
@@ -146,8 +194,9 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
         lineWidth: 0,
         min: 0,
         max: 1.5,
+        plotBands: plotBands,
         labels: {
-          enabled: true,
+          enabled: false,
           style: {
             color: "var(--graph-lable-color)",
             fontWeight: "light",
@@ -165,6 +214,7 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
             duration: 500, // 애니메이션 지속 시간 줄이기
             easing: "none", // 이징 효과 (선택 사항)
           },
+          color: "#5fc8f1",
         },
       },
       tooltip: {
@@ -193,14 +243,24 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
       },
       series: envData.length > 0 ? [envData[moduleIndex]] : defaultSeries,
     };
-  }, [envData, moduleIndex]);
+  }, [envData, moduleIndex, showColor]);
 
   return (
-    <div className="workshop-summary layer2">
+    <div className="airwall-summary layer2">
       <span className="bar" />
       <div className="header">
         <span>작업장 환경 상태</span>
-        <div className={"level lv" + "1"}>1단계</div>
+        <div className="score">
+          <span>환경 점수: 0.67 &nbsp;</span>
+          <Tooltip
+            content={[
+              "환경 점수는 측정된 환경 값들을 복합적으로 고려한 수치입니다.",
+              "- 1을 초과하는 경우 인체에 영향이 있을 수 있습니다.",
+            ]}
+          >
+            <FontAwesomeIcon icon={faCircleQuestion} />
+          </Tooltip>
+        </div>
       </div>
       <div className="radar-env">
         <div className="radar">
@@ -214,22 +274,24 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
         />
       </div>
       <div className="module-list">
+        <FontAwesomeIcon
+          icon={faChevronLeft}
+          className="left"
+          onClick={() => slide(false)}
+        />
         {envData.map((module, idx) => (
-          <>
-            <div
-              className={`dot${idx == moduleIndex ? " selected" : ""}`}
-              id={module.module_id}
-              onClick={() => setModuleIndex(idx)}
-              data-tooltip-id={"module-tooltip" + module.module_id}
-              data-tooltip-content={module.module_name}
-            />
-            <ReactTooltip
-              id={"module-tooltip" + module.module_id}
-              place="left"
-              effect="solid"
-            />
-          </>
+          <div
+            className={`dot${idx == moduleIndex ? " selected" : ""}`}
+            id={module.module_id}
+            title={`ID: ${module.id}`}
+            onClick={() => setModuleIndex(idx)}
+          />
         ))}
+        <FontAwesomeIcon
+          icon={faChevronRight}
+          className="right"
+          onClick={() => slide(true)}
+        />
       </div>
       <div
         className="module-name"
@@ -237,8 +299,23 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
       >
         측정기: {envData[moduleIndex]?.name}
       </div>
-      <div className="module-update">
+      <div
+        className="module-update"
+        title={envData[moduleIndex]?.last_update_long}
+      >
         마지막 측정 시간: {envData[moduleIndex]?.last_update}
+      </div>
+      <div className="options">
+        <FontAwesomeIcon
+          icon={pause ? faPlay : faPause}
+          onClick={() => setPause((prev) => !prev)}
+        />
+        <span>차트에 색상 표시 &nbsp;</span>
+        <input
+          type="checkbox"
+          checked={showColor}
+          onChange={() => setShowColor((prev) => !prev)}
+        />
       </div>
     </div>
   );
