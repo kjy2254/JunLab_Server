@@ -161,7 +161,6 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
         size: "90%",
         startAngle: 0,
         endAngle: 360,
-        background: [],
       },
       xAxis: {
         categories: [

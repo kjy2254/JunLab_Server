@@ -16,9 +16,9 @@ config = {
 }
 
 # 모델 로드
-model_path = './wl_best_model_ver6.h5'
+model_path = './wl_best_model_ver7.h5'
 model = tf.keras.models.load_model(model_path)
-model_version = 'wl_best_model_ver6.h5'
+model_version = 'wl_best_model_ver7.h5'
 
 pd.options.display.float_format = '{:.2f}'.format
 
@@ -106,10 +106,16 @@ def predict_workload_for_user(user_id):
     avg_body_temperatures = np.nan_to_num(avg_body_temperatures)
     avg_tvoc = np.nan_to_num(avg_tvoc)
     avg_co2 = np.nan_to_num(avg_co2)
+    avg_tvoc = avg_tvoc / 1000
+
+    # 소숫점 아래 둘째 자리까지만 출력되도록 설정
+    np.set_printoptions(precision=2, suppress=True)
 
     # 30분 데이터를 4x30 형태로 변환
-    input_data = np.array([avg_tvoc, avg_co2, avg_heart_rates, avg_body_temperatures]).T
+    input_data = np.array([avg_co2, avg_tvoc, avg_heart_rates, avg_body_temperatures]).T
     input_data = input_data.reshape(1, 30, 4)  # 모델 입력에 맞게 reshape
+
+    print(input_data)
 
     # 예측 수행
     prediction = model.predict(input_data)
@@ -123,11 +129,17 @@ def save_prediction_to_db(user_id, prediction_value):
     conn = mysql.connector.connect(**config)
     cursor = conn.cursor()
 
-    query = """
+    query1 = """
     INSERT INTO workload_data (timestamp, value, user_id, model_version)
     VALUES (%s, %s, %s, %s)
     """
-    cursor.execute(query, (datetime.now(), prediction_value, user_id, model_version))
+
+    query2 = """
+    UPDATE users SET last_workload = %s WHERE user_id = %s
+    """
+
+    cursor.execute(query1, (datetime.now(), prediction_value, user_id, model_version))
+    cursor.execute(query2, (prediction_value, user_id))
     conn.commit()
     cursor.close()
     conn.close()
