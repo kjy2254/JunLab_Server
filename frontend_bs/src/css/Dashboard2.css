@@ -1,0 +1,518 @@
+.dashboard {
+  /* color: white; */
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  /* background: #000; */
+}
+
+.dashboard-wrapper {
+  width: 100%;
+  max-width: 100rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* background: #000; */
+}
+
+.dashboard-wrapper h5 {
+  font-weight: bold;
+}
+
+.play-pause {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  /* background: #000; */
+  padding-right: 0.5rem;
+}
+
+.play-pause svg {
+  cursor: pointer;
+}
+
+.play-pause svg:hover {
+  opacity: 0.85;
+}
+
+.first-row,
+.second-row,
+.third-row {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  /* background: #000; */
+}
+
+.worker-summary,
+.airwall-summary,
+.worker-statistic,
+.advice {
+  display: flex;
+  flex-direction: row;
+  min-width: calc(25% - 1.2rem);
+  border: none;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  align-items: flex-start;
+  border-radius: 0.3rem;
+  position: relative;
+  z-index: 1;
+  justify-content: flex-start;
+}
+
+.airwall-summary {
+  flex-direction: column;
+  width: 100%;
+  overflow: scroll;
+}
+
+.airwall-summary .header {
+  display: flex;
+  width: calc(100% - 3rem);
+  flex-wrap: wrap;
+}
+
+.airwall-summary .header .score {
+  font-size: small;
+  display: flex;
+  align-items: center;
+}
+
+.airwall-summary .header .score svg:hover {
+  opacity: 0.85;
+}
+
+.airwall-summary .envList {
+  width: calc(100% - 500px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  padding-bottom: 1rem;
+}
+
+.airwall-summary .envList .row {
+  /* background: blue; */
+  width: 100%;
+  display: flex;
+  min-width: 28rem;
+}
+
+.airwall-summary .envList hr {
+  width: 100%;
+  border-top: 1px solid var(--border-color);
+  opacity: 1;
+}
+
+.airwall-summary .module-list {
+  display: flex;
+  /* background: #000; */
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 4.5rem;
+  padding-top: 1rem;
+}
+
+.airwall-summary .module-list .dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 1rem;
+  background: var(--dot-color);
+  cursor: pointer;
+  margin: 0 0.1rem;
+  opacity: 0.2;
+}
+
+.airwall-summary .module-list .right,
+.airwall-summary .module-list .left {
+  margin-right: 0.2rem;
+  margin-left: 0.2rem;
+  height: 0.8rem;
+  opacity: 0.4;
+  cursor: pointer;
+}
+
+.airwall-summary .module-list .right:hover,
+.airwall-summary .module-list .left:hover {
+  opacity: 1;
+}
+
+/* .highcharts-container {
+  width: 100% !important;
+  height: 100% !important;
+} */
+
+.dot.selected {
+  opacity: 0.8 !important;
+  background: var(--dot-color);
+}
+
+.radar-env {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.radar {
+  /* padding: 1rem; */
+  /* padding-top: 0; */
+  width: 100%;
+  /* height: 100%; */
+  max-width: 520px;
+  max-height: 450px;
+}
+
+.env-card {
+  width: 50%;
+  height: 6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.env-card .title {
+  /* padding-top: 0.2rem; */
+  display: flex;
+  align-items: center;
+}
+
+.env-card img {
+  margin-right: 0.6rem;
+  width: 2rem;
+}
+
+.env-card span {
+  text-wrap: nowrap;
+}
+
+.env-card .value {
+  width: 100%;
+  font-size: 25px;
+  /* font-weight: bold; */
+  text-align: end;
+  padding-top: 0.1rem;
+  padding-right: 2.5rem;
+  opacity: 0.75;
+  font-style: italic;
+}
+
+.airwall-summary .module-name {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  font-size: medium;
+  font-weight: lighter;
+  opacity: 0.3;
+  z-index: 1;
+  user-select: none;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* width: 10rem; */
+  text-align: end;
+}
+
+.airwall-summary .module-update {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 0.5rem;
+  font-size: medium;
+  font-weight: lighter;
+  opacity: 0.3;
+  z-index: 1;
+  user-select: none;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: start;
+}
+
+.airwall-summary .options {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 2rem;
+  opacity: 0.75;
+}
+
+.airwall-summary .options svg {
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.third-row {
+  width: 100%;
+}
+
+.worker-summary,
+.worker-statistic {
+  width: calc(70% - 0.5rem);
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 41rem;
+  max-height: 41rem;
+  overflow: scroll;
+}
+
+.dashboard .header {
+  display: flex;
+  justify-content: space-between;
+  margin: 1.5rem;
+  text-align: left;
+  text-wrap: nowrap;
+}
+
+.worker-summary .bar,
+.worker-statistic .bar,
+.advice .bar {
+  top: 1.5rem;
+}
+
+.dashboard .header span {
+  font-size: larger;
+}
+
+.worker-summary table {
+  width: calc(100% - 3rem);
+  text-align: left;
+  margin: 1.5rem;
+  margin-top: 0;
+  min-width: 45rem;
+  /* background: #000; */
+}
+
+.worker-summary .left {
+  text-align: left;
+}
+
+.worker-summary thead th {
+  padding: 0 0.5rem 1rem 0.5rem;
+  font-weight: 100;
+  text-wrap: nowrap;
+}
+
+.worker-summary td {
+  border-top: 1px solid var(--border-color);
+  height: 3rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  text-wrap: nowrap;
+}
+
+.airwall-summary .level,
+.worker-summary .level {
+  min-width: 3rem;
+  width: 3rem;
+  border-radius: 2rem;
+  padding: 0.1rem;
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+.worker-summary .table-worker {
+  display: flex;
+  align-items: center;
+}
+
+.worker-summary .state {
+  display: flex;
+  align-items: center;
+}
+
+.worker-summary .state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.state svg {
+  margin-right: 0.5rem;
+}
+
+.table-worker .info {
+  display: flex;
+  flex-direction: column;
+  padding-left: 0.6rem;
+  justify-content: center;
+}
+
+.table-worker img {
+  border-radius: 100%;
+}
+
+.info .watch {
+  font-size: smaller;
+  opacity: 0.8;
+}
+
+.worker-statistic {
+  width: calc(30% - 0.5rem);
+  /* align-items: center; */
+}
+
+.pie-chart {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.description {
+  width: calc(100% - 4rem);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem 0.7rem 1rem;
+  margin: 0 2rem 1rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.advice {
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  /* min-height: 10rem; */
+  /* max-height: 10rem; */
+  overflow: scroll;
+}
+
+.advice .box {
+  text-align: left;
+  margin: 0 1rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  width: calc(20%);
+  /* background: #000; */
+}
+
+.advice-content {
+  display: flex;
+  width: 100%;
+  /* background: #000; */
+}
+
+.box .color {
+  height: 0.15rem;
+  border-radius: 1rem;
+}
+.lv1 {
+  background: rgb(34, 180, 237);
+}
+.lv2 {
+  background: rgb(150, 208, 96);
+}
+.lv3 {
+  background: rgb(255, 252, 75);
+}
+.lv4 {
+  background: rgb(253, 188, 58);
+}
+.lv5 {
+  background: rgb(250, 0, 25);
+}
+
+.box .level,
+.box .text {
+  padding: 0.3rem;
+}
+
+@media (max-width: 1350px) {
+  .first-row,
+  .second-row {
+    flex-wrap: wrap;
+  }
+
+  .radar-env {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .envList {
+    width: 100% !important;
+    padding: 2rem !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* .first-row .env-card {
+    min-width: calc(50% - 1rem);
+    max-width: calc(50% - 1rem);
+  } */
+
+  .second-row {
+    flex-direction: column;
+  }
+
+  .worker-summary,
+  .worker-statistic {
+    width: 100%;
+  }
+}
+
+@media (max-width: 800px) {
+  .first-row {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 950px) {
+  .advice-content {
+    flex-direction: column;
+  }
+  .advice .box {
+    width: calc(90%);
+  }
+}
+
+@media (max-width: 950px) {
+  .advice-content {
+    flex-direction: column;
+  }
+  .advice .box {
+    width: calc(90%);
+  }
+}
+
+@media (max-width: 600px) {
+  .envList .row {
+    flex-direction: column;
+    align-content: center;
+    padding-top: 1rem;
+    scale: 0.8;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.2s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0.15;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.15;
+  }
+}

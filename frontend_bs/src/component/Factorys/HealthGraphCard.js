@@ -1,23 +1,27 @@
 import axios from "axios";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../../css/WorkerModal.css";
 
 function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
   const [data, setData] = useState([]);
+  const [options, setOptions] = useState({});
+  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
+  const firstLoad = useRef(true); // 최초 로드 여부 추적
+
   const getFormattedDate = (date) => {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const day = date.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+
   const today = getFormattedDate(new Date());
-  const [startDate, setStartDate] = useState(today + " 00:00:00");
-  const [endDate, setEndDate] = useState(today + " 23:59:59");
+  const [date, setDate] = useState(today);
+  // const [endDate, setEndDate] = useState(today + " 23:59:59");
   const [minute, setMinute] = useState(30);
   const [selectedRadio, setSelectedRadio] = useState(0);
-  const [options, setOptions] = useState({});
 
   useEffect(() => {
     const newOptions = {
@@ -84,15 +88,16 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
           endOnTick: false, // y축이 max 값에서 끝나도록 강제
         }),
         ...(endpoint === "temperature" && {
-          min: 20,
-          max: 42,
+          // min: 15,
+          // max: 42,
           startOnTick: false, // y축이 min 값에서 시작하도록 강제
           endOnTick: false, // y축이 max 값에서 끝나도록 강제
         }),
-        ...(endpoint === "heartrate" && {
-          min: 60,
-          max: 140,
-        }),
+        ...(endpoint === "heartrate" &&
+          {
+            // min: 60,
+            // max: 140,
+          }),
         gridLineColor: "var(--border-color)",
       },
       legend: {
@@ -108,10 +113,25 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
         formatter: function () {
           const date = new Date(this.x);
           const dateStr = date.toLocaleString();
-          return `${dateStr}<br>${endpoint}:${this.point.y.toFixed(1)}`;
+          let kr, unit;
+          if (endpoint === "heartrate") {
+            kr = "심박수";
+            unit = "bpm";
+          } else if (endpoint === "temperature") {
+            kr = "체온";
+            unit = "°C";
+          } else {
+            kr = "산소포화도";
+            unit = "%";
+          }
+          return `${dateStr}<br>${kr}:${this.point.y.toFixed(1)}${unit}`;
+        },
+        style: {
+          color: "black",
+          fontWeight: "light",
+          fontFamily: "SUITE-Regular",
         },
       },
-
       series: [
         {
           // name: "Heart Rate",
@@ -139,26 +159,36 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (firstLoad.current) {
+        setIsLoading(true); // 데이터 로딩 시작
+      }
+
       axios
         .get(
           `http://junlab.postech.ac.kr:880/api2/user/${selectedWorker}/${endpoint}?` +
-            (selectedRadio == 0
-              ? `timeSlot=${minute}`
-              : `start=${startDate}&end=${endDate}`)
+            (selectedRadio == 0 ? `timeSlot=${minute}` : `date=${date}`)
         )
         .then((response) => {
           const data = response.data;
           setData(data);
+          if (firstLoad.current) {
+            setIsLoading(false); // 데이터 로딩 완료
+            firstLoad.current = false; // 최초 로드 완료
+          }
         })
         .catch((error) => {
           console.error("API 요청 실패:", error);
+          if (firstLoad.current) {
+            setIsLoading(false); // 데이터 로딩 실패
+            firstLoad.current = false; // 최초 로드 완료
+          }
         });
     };
 
     fetchData();
     const interval = setInterval(fetchData, 7000);
     return () => clearInterval(interval);
-  }, [selectedWorker, minute, startDate, endDate, selectedRadio]);
+  }, [selectedWorker, minute, date, selectedRadio]);
 
   return (
     <div className="graph-card layer2">
@@ -173,7 +203,7 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
                 value={0}
                 name={"search-type" + endpoint}
                 checked={selectedRadio == 0 ? "checked" : ""}
-                onChange={(e) => setSelectedRadio(e.target.value)}
+                onChange={(e) => setSelectedRadio(parseInt(e.target.value))}
               />
               <span>최근 데이터</span>
             </label>
@@ -182,26 +212,18 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
                 type="radio"
                 value={1}
                 name={"search-type" + endpoint}
-                onChange={(e) => setSelectedRadio(e.target.value)}
+                onChange={(e) => setSelectedRadio(parseInt(e.target.value))}
               />
               <span>날짜 데이터</span>
             </label>
           </div>
           <div className={"date" + (selectedRadio == 0 ? " disabled" : "")}>
             <label>
-              <span>시작 날짜:</span>
+              <span>날짜:</span>
               <input
-                type="datetime-local"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </label>
-            <label>
-              <span>끝 날짜:</span>
-              <input
-                type="datetime-local"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
               />
             </label>
           </div>
@@ -221,17 +243,45 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
         </div>
       </div>
       <div className="chart">
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={options}
-          containerProps={{
-            style: {
+        {isLoading ? (
+          <p
+            style={{
               width: "100%",
-              // maxHeight: "15rem",
               height: "240px",
-            },
-          }}
-        />
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+            }}
+          >
+            Loading...
+          </p>
+        ) : data.length === 0 ? (
+          <p
+            style={{
+              width: "100%",
+              height: "240px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+            }}
+          >
+            No data available
+          </p>
+        ) : (
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+            containerProps={{
+              style: {
+                width: "100%",
+                // maxHeight: "15rem",
+                height: "240px",
+              },
+            }}
+          />
+        )}
       </div>
     </div>
   );

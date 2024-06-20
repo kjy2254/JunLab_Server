@@ -6,6 +6,7 @@ const path = require("path");
 const multer = require("multer");
 const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./images/factory");
@@ -109,7 +110,7 @@ api.get("/factories", (req, res) => {
 
 api.get("/factory/:factoryId/name", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
-  const query = `SELECT factory_name FROM factories WHERE factory_id = ?`;
+  const query = `SELECT factory_name, code FROM factories WHERE factory_id = ?`;
 
   connection.query(query, [factoryId], (error, result) => {
     if (error) {
@@ -126,58 +127,62 @@ api.get("/factory/:factoryId/airwalls", (req, res) => {
 
   const query = `SELECT module_id,
                          module_name,
-                          last_update,
-                           last_tvoc as tvoc,
-                            last_co2 as co2,
-                            last_temperature as temperature,
-                             last_pm10 as finedust,
-                             module_description,
-                              type
-  FROM airwall 
-  WHERE factory_id = ? AND enable = 1`;
+                         last_update,
+                         last_tvoc as tvoc,
+                         last_co2 as co2,
+                         last_temperature as temperature,
+                         last_pm10 as pm10,
+                         last_pm2_5 as pm2_5,
+                         last_humid as humid,
+                         module_description,
+                         type,
+                         CASE 
+                           WHEN last_update >= DATE_SUB(NOW(), INTERVAL 3 MINUTE) THEN true
+                           ELSE false
+                         END as isOnline
+                  FROM airwall 
+                  WHERE factory_id = ? AND enable = 1`;
 
-  connection.query(query, [factoryId], (error, result) => {
+  connection.query(query, [factoryId], (error, results) => {
     if (error) {
       console.log(error);
       return res.status(500).send("Internal Server Error!");
     }
 
-    return res.status(200).json(result);
+    return res.status(200).json(results);
   });
 });
 
-api.get("/factory/:factoryId/workers", (req, res) => {
+api.get("/factory/:factoryId/workers", async (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
 
   const query = `
     SELECT
-      u.watch_id, u.profile_image_path,
+      u.name, u.user_id,
+      u.watch_id, 
+      u.profile_image_path,
+      aw.module_name AS airwall_id,
       w.last_sync,
-      CASE
-        WHEN w.last_battery_level BETWEEN 2.7 AND 4.2 THEN
-          ROUND(((w.last_battery_level - 2.7) / (4.2 - 2.7)) * 100)
-        ELSE
-          NULL
-      END AS adjusted_battery_level,
       w.last_heart_rate,
       w.last_body_temperature,
       w.last_oxygen_saturation,
       w.last_battery_level,
       w.last_tvoc,
       w.last_co2,
-      u.name, u.user_id,
       w.last_sync,
+      u.last_workload AS workload,
       w.last_wear
     FROM
        users u
     LEFT JOIN
-    airwatch w ON w.watch_id = u.watch_id
+      airwall aw ON aw.module_id = u.airwall_id
+    LEFT JOIN
+      airwatch w ON w.watch_id = u.watch_id
     WHERE
       u.factory_id = ?;
   `;
 
-  // 쿼리 실행
-  connection.query(query, [factoryId], (error, result) => {
+  connection.query(query, [factoryId], async (error, result) => {
     if (error) {
       console.log(error);
       return res.status(500).send("Internal Server Error!");
@@ -186,19 +191,21 @@ api.get("/factory/:factoryId/workers", (req, res) => {
     // 현재 시간
     const currentTime = new Date();
 
-    // 30초 미만이면 online: true, 그 외에는 online: false로 설정
-    const updatedResult = result.map((user) => ({
-      ...user,
-      online: Math.abs(currentTime - new Date(user.last_sync)) < 30000,
-      // online: true,
-      work_level: calclevel(
-        calcWorkLoadIndex(user.last_heart_rate, 0, 0),
-        calcEnviromentIndex(user.last_tvoc, user.last_co2, 0, 0, 0)
-      ).level,
-    }));
+    // work_load 예측 비동기 처리
+    const promises = result.map(async (user) => {
+      return {
+        ...user,
+        online: Math.abs(currentTime - new Date(user.last_sync)) < 30000,
+      };
+    });
 
-    // 결과를 JSON 형식으로 응답
-    return res.status(200).json(updatedResult);
+    try {
+      const updatedResult = await Promise.all(promises);
+      return res.status(200).json(updatedResult);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
   });
 });
 
@@ -430,12 +437,29 @@ api.get("/settings/:factoryId/watchlist", (req, res) => {
   });
 });
 
+api.get("/settings/:factoryId/airwalllist", (req, res) => {
+  const factoryId = parseInt(req.params.factoryId);
+
+  query = `SELECT module_id AS airwall_id, module_name
+            FROM airwall
+            WHERE factory_id = ?`;
+
+  connection.query(query, [factoryId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json(result);
+  });
+});
+
 api.get("/settings/:factoryId/workers", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
 
-  query = `SELECT user_id, name, gender, watch_id
-            FROM users
-            WHERE factory_id = ?`;
+  query = `SELECT user_id, name, gender, watch_id, u.airwall_id, a.module_name, u.profile_image_path
+            FROM users u
+            LEFT JOIN airwall a ON u.airwall_id = a.module_id
+            WHERE u.factory_id = ?`;
 
   connection.query(query, [factoryId], (error, result) => {
     if (error) {
@@ -450,16 +474,21 @@ api.put("/settings/:factoryId/workers", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
   const updatedData = req.body; // 클라이언트가 보낸 업데이트할 데이터
 
-  const query = "UPDATE users SET watch_id = ? WHERE user_id = ?";
+  const query =
+    "UPDATE users SET watch_id = ?, airwall_id = ? WHERE user_id = ?";
 
   // 모든 업데이트 작업을 순차적으로 처리
   updatedData.forEach((item) => {
-    connection.query(query, [item.watch_id, item.user_id], (error, result) => {
-      if (error) {
-        console.log(error);
-        return res.status(500).send("Internal Server Error!");
+    connection.query(
+      query,
+      [item.watch_id, item.airwall_id, item.user_id],
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          return res.status(500).send("Internal Server Error!");
+        }
       }
-    });
+    );
   });
 
   // 모든 업데이트가 성공적으로 완료된 후 응답
@@ -542,10 +571,12 @@ api.put("/confirms/reject/:userId", (req, res) => {
 
 api.get("/airwalldata/:env", (req, res) => {
   const validEnvs = {
-    finedust: "pm10 AS finedust",
+    pm10: "pm10",
     tvoc: "tvoc",
     co2: "co2",
     temperature: "temperature",
+    humid: "humid",
+    pm2_5: "pm2_5",
   };
 
   const rawEnv = req.params.env;

@@ -139,6 +139,7 @@
 
 .signup .gender-birth {
   display: flex;
+  width: 90%;
 }
 
 .signup .gender-birth select {

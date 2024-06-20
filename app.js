@@ -6,6 +6,7 @@ var factoryApi = require("./routes/factoryApi");
 var labelingApi = require("./routes/labelingApi");
 var longinApi = require("./routes/loginApi");
 var userApi = require("./routes/userApi");
+// var modelApi = require("./routes/modelApi");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 var app = express();
@@ -52,6 +53,7 @@ app.get("/iitp", (req, res) => {
 app.use("/api2", factoryApi);
 app.use("/api/labeling", labelingApi);
 app.use("/login", longinApi);
+// app.use("/api2/model", modelApi);
 app.use("/api2/user", userApi);
 // app.get("/factorymanagement/*", (req, res) => {
 //   res.sendFile(path.join(__dirname, "frontend_bs/build/index.html"));

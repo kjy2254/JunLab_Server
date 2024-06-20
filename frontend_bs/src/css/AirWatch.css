@@ -79,7 +79,7 @@
   margin-right: 1rem;
 }
 
-.options {
+.airwatch-wrapper .options {
   display: flex;
   align-items: center;
 }

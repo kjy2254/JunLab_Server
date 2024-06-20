@@ -19,7 +19,7 @@ import Signup from "./component/Authentication/Signup";
 import AirWall from "./component/Factorys/AirWall";
 import AirWatch from "./component/Factorys/AirWatch";
 import Confirm from "./component/Factorys/Confirm";
-import Dashboard from "./component/Factorys/Dashboard";
+import Dashboard from "./component/Factorys/Dashboard/Dashboard";
 import Header from "./component/Header";
 import Settings from "./component/Settings/Settings";
 import Sidebar from "./component/Sidebar";
@@ -101,6 +101,11 @@ function App() {
         "rgb(230, 233, 236)"
       );
       document.documentElement.style.setProperty("--drag-over-color", "#ccc");
+      document.documentElement.style.setProperty("--dot-color", "white");
+
+      document.documentElement.style.setProperty("--radar-red", "#d65959");
+      document.documentElement.style.setProperty("--radar-yellow", "#e0e050");
+      document.documentElement.style.setProperty("--radar-green", "#50eb50");
     }
   }, []);
 
@@ -383,7 +388,7 @@ function App() {
                       closeSmallSidebar={closeSmallSidebar}
                     />
                   }
-                  isAllow={authData.isLogin && authData.authority >= 2}
+                  isAllow={authData.isLogin}
                   loginUserId={authData.userId}
                 />
               }

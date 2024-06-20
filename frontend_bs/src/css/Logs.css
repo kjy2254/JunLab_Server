@@ -80,7 +80,7 @@
   margin-right: 1rem;
 }
 
-.options {
+.logs-wrapper .options {
   display: flex;
   align-items: center;
 }
@@ -229,7 +229,7 @@
     margin-left: 0.5rem;
   }
 
-  .options {
+  .logs-wrapper .options {
     flex-wrap: wrap;
     width: 100%;
     justify-content: center;

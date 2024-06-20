@@ -11,10 +11,14 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Nav } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
+import { Tooltip as ReactTooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 import "../css/Sidebar.css";
+
 function Sidebar(props) {
   const [toggleLog, setToggleLog] = useState(true);
   const [factoryName, setFactoryName] = useState("");
+  const [factoryCode, setFactoryCode] = useState("");
   const { factoryId } = useParams();
 
   useEffect(() => {
@@ -23,11 +27,26 @@ function Sidebar(props) {
       .then((response) => {
         const data = response.data;
         setFactoryName(data.factory_name);
+        setFactoryCode(data.code);
       })
       .catch((error) => {
         console.error("API 요청 실패:", error);
       });
   }, []);
+
+  const handleTooltipClick = async () => {
+    const textArea = document.createElement("textarea");
+    textArea.value = factoryCode;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand("copy");
+      alert("코드가 클립보드에 복사되었습니다!");
+    } catch (err) {
+      console.error("텍스트를 클립보드에 복사할 수 없습니다: ", err);
+    }
+    document.body.removeChild(textArea);
+  };
 
   return (
     <div
@@ -39,7 +58,24 @@ function Sidebar(props) {
     >
       <Nav className="item-wrapper">
         <div>
-          <div className="header">{factoryName}</div>
+          <div className="header">
+            <span>{factoryName}</span>
+            <div>
+              <span
+                data-tooltip-id="code-tooltip"
+                data-tooltip-content={`Code: ${factoryCode}`}
+                onClick={handleTooltipClick}
+              >
+                &nbsp;ⓘ
+              </span>
+              <ReactTooltip
+                id="code-tooltip"
+                place="left"
+                effect="solid"
+                clickable
+              />
+            </div>
+          </div>
           <ul className="item">
             <Link
               className="link-unstyled"
