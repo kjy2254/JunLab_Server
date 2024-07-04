@@ -1,94 +1,16 @@
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Button, Nav, Navbar } from "react-bootstrap";
 import "../css/Header.css";
+import { authcheck, setDarkTheme, setLightTheme } from "../util";
 
 export function toggleTheme(darkMode, setDarkMode) {
   if (darkMode) {
-    // 토글 전에 다크 모드일 경우 라이트 모드로 변경
-    // 라이트 모드 색상
-    document.documentElement.style.setProperty(
-      "--layer1-bg-color",
-      "rgb(244, 246, 249)"
-    );
-    document.documentElement.style.setProperty(
-      "--layer2-bg-color",
-      "rgb(255, 255, 255)"
-    );
-    document.documentElement.style.setProperty(
-      "--layerSB-bg-color",
-      "rgb(36, 42, 51)"
-    );
-    document.documentElement.style.setProperty(
-      "--layerHD-bg-color",
-      "rgb(255, 255, 255)"
-    );
-    document.documentElement.style.setProperty(
-      "--layerModal-bg-color",
-      "rgb(244, 246, 249)"
-    );
-    document.documentElement.style.setProperty(
-      "--border-color",
-      "rgb(228, 231, 234)"
-    );
-    document.documentElement.style.setProperty("--select-color", "#ececec");
-    document.documentElement.style.setProperty("--text-color", "black");
-    document.documentElement.style.setProperty(
-      "--spinner-color",
-      "rgb(228, 231, 234)"
-    );
-    document.documentElement.style.setProperty("--spinner-top-color", "gray");
-    document.documentElement.style.setProperty("--graph-lable-color", "black");
-    document.documentElement.style.setProperty("--drag-over-color", "#555");
-    document.documentElement.style.setProperty("--dot-color", "black");
-
-    document.documentElement.style.setProperty("--radar-red", "#ff9a9a");
-    document.documentElement.style.setProperty("--radar-yellow", "#f8f88a");
-    document.documentElement.style.setProperty("--radar-green", "#a2ffa2");
+    setLightTheme();
   } else {
-    // 다크 모드 색상
-    document.documentElement.style.setProperty(
-      "--layer1-bg-color",
-      "rgb(48, 58, 69)"
-    );
-    document.documentElement.style.setProperty(
-      "--layer2-bg-color",
-      "rgb(25, 36, 48)"
-    );
-    document.documentElement.style.setProperty(
-      "--layerSB-bg-color",
-      "rgb(25, 36, 48)"
-    );
-    document.documentElement.style.setProperty(
-      "--layerHD-bg-color",
-      "rgb(25, 36, 48)"
-    );
-    document.documentElement.style.setProperty(
-      "--layerModal-bg-color",
-      "rgb(48, 58, 69)"
-    );
-    document.documentElement.style.setProperty(
-      "--border-color",
-      "rgba(255, 255, 255, 0.2)"
-    );
-    document.documentElement.style.setProperty("--select-color", "#303a45");
-    document.documentElement.style.setProperty("--text-color", "white");
-    document.documentElement.style.setProperty(
-      "--spinner-color",
-      "rgba(255, 255, 255, 0.3)"
-    );
-    document.documentElement.style.setProperty("--spinner-top-color", "white");
-    document.documentElement.style.setProperty(
-      "--graph-lable-color",
-      "rgb(230, 233, 236)"
-    );
-    document.documentElement.style.setProperty("--drag-over-color", "#ccc");
-    document.documentElement.style.setProperty("--dot-color", "white");
-
-    document.documentElement.style.setProperty("--radar-red", "#d65959");
-    document.documentElement.style.setProperty("--radar-yellow", "#e0e050");
-    document.documentElement.style.setProperty("--radar-green", "#50eb50");
+    setDarkTheme();
   }
   localStorage.setItem("darkMode", darkMode ? "false" : "true");
   setDarkMode((prev) => !prev);
@@ -109,7 +31,85 @@ function ThemeToggleButton({ setDarkMode, darkMode }) {
   );
 }
 
+function ProfileDropDown({ profile }) {
+  return (
+    <div className="header-dropdown layer1">
+      <div className="profile-card">
+        <img
+          src={`http://junlab.postech.ac.kr:880/api2/image/${profile.profile_image_path}`}
+          alt=""
+        />
+        <div className="profile-text">
+          <span className="name">{profile.name}</span>
+          <span className="mail">{profile.email || "-"}</span>
+        </div>
+      </div>
+      <div
+        className="profile-box"
+        onClick={() =>
+          (window.location.href = `/factorymanagement/user/${profile.user_id}/mypage`)
+        }
+      >
+        내 정보
+      </div>
+      <div
+        className="profile-box"
+        onClick={() =>
+          (window.location.href = `/factorymanagement/user/${profile.user_id}/password`)
+        }
+      >
+        비밀번호 변경
+      </div>
+      <div
+        className="profile-box"
+        onClick={() =>
+          (window.location.href = `http://junlab.postech.ac.kr:880/login/logout2`)
+        }
+      >
+        로그아웃
+      </div>
+    </div>
+  );
+}
+
 function Header(props) {
+  const [show, setShow] = useState(false);
+  const [img, setImg] = useState();
+  const [profile, setProfile] = useState({});
+  const [authData, setAuthData] = useState({});
+
+  useEffect(() => {
+    const fetchAuthData = async () => {
+      const authData = await authcheck();
+      setAuthData({
+        isLogin: authData.isLogin,
+        name: authData.name,
+        userId: authData.userId,
+        authority: authData.authority,
+        manageOf: authData.manageOf,
+      });
+    };
+
+    fetchAuthData();
+  }, []);
+
+  useEffect(() => {
+    if (authData.userId) {
+      axios
+        .get(
+          `http://junlab.postech.ac.kr:880/api2/user/${authData.userId}/profile`
+        )
+        .then((response) => {
+          setProfile(response.data);
+          setImg(response.data.profile_image_path);
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error("API 요청 실패:", error);
+        });
+    }
+  }, [authData]);
+
   return (
     <Navbar className="custom-navbar layerHD" expand={true}>
       <Navbar.Brand href="/factorymanagement/" className="logo layerHD">
@@ -136,13 +136,14 @@ function Header(props) {
             setDarkMode={props.setDarkMode}
             darkMode={props.darkMode}
           />
-          <Button
-            variant="outline-secondary"
-            className="login-btn"
-            href="http://junlab.postech.ac.kr:880/login/logout2"
-          >
-            {props.isLogin ? "로그아웃" : "로그인"}
-          </Button>
+          <div className="header-profile">
+            <img
+              src={`http://junlab.postech.ac.kr:880/api2/image/${img}`}
+              alt=""
+              onClick={() => setShow((prev) => !prev)}
+            />
+          </div>
+          {show && <ProfileDropDown profile={profile} />}
         </Nav>
       </Navbar.Collapse>
     </Navbar>

@@ -8,7 +8,13 @@ import tvoc from "../../../image/tvoc.svg";
 import ultrafinedust from "../../../image/ultrafinedust.svg";
 import EnvCard from "./EnvCard";
 
-function EnvList({ data, setSelectedEnvCard, setEnvModalOpen, setImg }) {
+function EnvList({
+  data,
+  setSelectedEnvCard,
+  setEnvModalOpen,
+  setImg,
+  isOnline,
+}) {
   return (
     <div className="envList">
       <div className="row">

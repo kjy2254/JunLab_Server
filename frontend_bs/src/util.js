@@ -93,3 +93,120 @@ export function initHorizontalScroll() {
     });
   });
 }
+
+export function setLightTheme() {
+  document.documentElement.style.setProperty(
+    "--layer1-bg-color",
+    "rgb(244, 246, 249)"
+  );
+  document.documentElement.style.setProperty(
+    "--layer2-bg-color",
+    "rgb(255, 255, 255)"
+  );
+  document.documentElement.style.setProperty(
+    "--layer2-gradient1-color",
+    "rgba(255, 255, 255, 0)"
+  );
+  document.documentElement.style.setProperty(
+    "--layer2-gradient2-color",
+    "rgba(255, 255, 255, 0.75)"
+  );
+  document.documentElement.style.setProperty(
+    "--layer2-gradient3-color",
+    "rgba(255, 255, 255, 1)"
+  );
+  document.documentElement.style.setProperty(
+    "--layerSB-bg-color",
+    "rgb(36, 42, 51)"
+  );
+  document.documentElement.style.setProperty(
+    "--layerHD-bg-color",
+    "rgb(255, 255, 255)"
+  );
+  document.documentElement.style.setProperty(
+    "--layerModal-bg-color",
+    "rgb(244, 246, 249)"
+  );
+  document.documentElement.style.setProperty(
+    "--border-color",
+    "rgb(228, 231, 234)"
+  );
+  document.documentElement.style.setProperty("--select-color", "#ececec");
+  document.documentElement.style.setProperty(
+    "--text-color",
+    "rgb(103, 117, 124)"
+  );
+  document.documentElement.style.setProperty(
+    "--spinner-color",
+    "rgb(228, 231, 234)"
+  );
+  document.documentElement.style.setProperty("--spinner-top-color", "gray");
+  document.documentElement.style.setProperty("--graph-label-color", "black");
+  document.documentElement.style.setProperty("--drag-over-color", "#555");
+  document.documentElement.style.setProperty("--dot-color", "black");
+
+  document.documentElement.style.setProperty("--radar-red", "#ff9a9a");
+  document.documentElement.style.setProperty("--radar-yellow", "#f8f88a");
+  document.documentElement.style.setProperty("--radar-green", "#a2ffa2");
+}
+
+export function setDarkTheme() {
+  document.documentElement.style.setProperty(
+    "--layer1-bg-color",
+    "rgb(48, 58, 69)"
+  );
+  document.documentElement.style.setProperty(
+    "--layer2-bg-color",
+    "rgb(25, 36, 48)"
+  );
+
+  document.documentElement.style.setProperty(
+    "--layer2-gradient1-color",
+    "rgba(25, 36, 48, 0)"
+  );
+  document.documentElement.style.setProperty(
+    "--layer2-gradient2-color",
+    "rgba(25, 36, 48, 0.75)"
+  );
+  document.documentElement.style.setProperty(
+    "--layer2-gradient3-color",
+    "rgba(25, 36, 48, 1)"
+  );
+
+  document.documentElement.style.setProperty(
+    "--layerSB-bg-color",
+    "rgb(25, 36, 48)"
+  );
+  document.documentElement.style.setProperty(
+    "--layerHD-bg-color",
+    "rgb(25, 36, 48)"
+  );
+  document.documentElement.style.setProperty(
+    "--layerModal-bg-color",
+    "rgb(48, 58, 69)"
+  );
+  document.documentElement.style.setProperty(
+    "--border-color",
+    "rgba(255, 255, 255, 0.2)"
+  );
+  document.documentElement.style.setProperty("--select-color", "#303a45");
+  document.documentElement.style.setProperty(
+    "--text-color",
+    "rgb(230, 233, 236)"
+  );
+  document.documentElement.style.setProperty(
+    "--spinner-color",
+    "rgba(255, 255, 255, 0.3)"
+  );
+  document.documentElement.style.setProperty("--spinner-top-color", "white");
+  document.documentElement.style.setProperty(
+    "--graph-label-color",
+    "rgb(230, 233, 236)"
+  );
+  document.documentElement.style.setProperty("--drag-over-color", "#ccc");
+  document.documentElement.style.setProperty("--dot-color", "white");
+
+  document.documentElement.style.setProperty("--radar-red", "#d65959");
+  document.documentElement.style.setProperty("--radar-yellow", "#e0e050");
+  document.documentElement.style.setProperty("--radar-green", "#50eb50");
+}

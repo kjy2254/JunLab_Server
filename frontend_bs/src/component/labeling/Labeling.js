@@ -41,7 +41,7 @@ function Labeling({ darkMode, setDarkMode }) {
       margin: 30,
       align: "left",
       style: {
-        color: "var(--graph-lable-color)",
+        color: "var(--graph-label-color)",
       },
     },
     yAxis: {
@@ -50,7 +50,7 @@ function Labeling({ darkMode, setDarkMode }) {
       },
       labels: {
         style: {
-          color: "var(--graph-lable-color)",
+          color: "var(--graph-label-color)",
         },
       },
       gridLineColor: "var(--border-color)",
@@ -62,7 +62,7 @@ function Labeling({ darkMode, setDarkMode }) {
       type: "datetime",
       labels: {
         style: {
-          color: "var(--graph-lable-color)",
+          color: "var(--graph-label-color)",
         },
         // formatter: function () {
         //   return Highcharts.dateFormat("%Y-%m-%d %H:%M:%S", this.value); // 원하는 날짜 포맷으로 설정
@@ -75,8 +75,8 @@ function Labeling({ darkMode, setDarkMode }) {
           value: 2020, // 마지막 데이터 포인트의 X 위치 값
         },
       ],
-      lineColor: "var(--graph-lable-color)",
-      tickColor: "var(--graph-lable-color)",
+      lineColor: "var(--graph-label-color)",
+      tickColor: "var(--graph-label-color)",
     },
     credits: {
       enabled: false, // 워터마크 제거

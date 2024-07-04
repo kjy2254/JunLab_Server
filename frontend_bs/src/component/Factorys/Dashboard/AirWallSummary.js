@@ -175,7 +175,7 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
         lineWidth: 0,
         labels: {
           style: {
-            color: "var(--graph-lable-color)",
+            color: "var(--graph-label-color)",
             fontWeight: "light",
             fontFamily: "SUITE-Regular",
           },
@@ -184,7 +184,7 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
       legend: {
         itemStyle: {
           fontFamily: "SUITE-Regular",
-          color: "var(--graph-lable-color)",
+          color: "var(--graph-label-color)",
         },
         enabled: false,
       },
@@ -197,7 +197,7 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
         labels: {
           enabled: false,
           style: {
-            color: "var(--graph-lable-color)",
+            color: "var(--graph-label-color)",
             fontWeight: "light",
             fontFamily: "SUITE-Regular",
           },
@@ -270,6 +270,7 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
           setSelectedEnvCard={setSelectedEnvCard}
           setEnvModalOpen={setEnvModalOpen}
           setImg={setImg}
+          isOnline={envData[moduleIndex]?.isOnline}
         />
       </div>
       <div className="module-list">

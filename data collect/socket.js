@@ -182,8 +182,13 @@ socketServer.on("connection", (socket) => {
     }
 
     // 센서 데이터일 경우
-    if (sensorData.length === 21) {
-      save(rawData);
+    if (sensorData.length === 21 || sensorData.length === 20) {
+      if (sensorData[0].charAt(0) === "T") {
+        //2024/06/20: 새로운 버전 소프트웨어
+        save2(rawData);
+      } else {
+        save(rawData);
+      }
       if (parseInt(sensorData[0]) > 2000 || parseInt(sensorData[0]) < 1000) {
         saveAirWallData(rawData); // 2000번대 -> 고정식 데이터 (0번대도 같이 존재 중)
       } else if (parseInt(sensorData[0]) > 1000) {
@@ -238,7 +243,7 @@ function save(rawData) {
   let values = rawData.toString().replaceAll(" ", "").split(",");
 
   if (values.length !== 21) {
-    console.log("not sensor data");
+    // console.log("not sensor data");
     return false;
   } else {
     const dict = keys.reduce((acc, curr, idx) => {
@@ -255,6 +260,67 @@ function save(rawData) {
 
     connection.query("INSERT INTO raw_data SET ?", data, (er) => {
       return !er;
+    });
+  }
+  return true;
+}
+
+function save2(rawData) {
+  let keys = [
+    "ID",
+    "BATT",
+    "TEMP",
+    "HUM",
+    "PRESS",
+    "ALT",
+    "AQI",
+    "TVOC",
+    "CO2",
+    "CO",
+    "H2S",
+    "CH4",
+    "O2",
+    "PM25",
+    "GYROx",
+    "GYROy",
+    "GYROz",
+    "ACCx",
+    "ACCy",
+    "ACCz",
+  ];
+
+  // 메시지 끝의 \r\n 제거 후 공백 제거
+  let cleanData = rawData.toString().trim().replaceAll(" ", "");
+
+  // 쉼표로 데이터 분리
+  let values = cleanData.split(",");
+  // console.log("test:", values);
+
+  if (values.length !== 21) {
+    // console.log("not sensor data");
+    return false;
+  } else {
+    const dict = keys.reduce((acc, curr, idx) => {
+      return { ...acc, [curr]: values[idx] };
+    }, new Object());
+
+    let data = { ...dict, created_at: new Date(Date.now()) };
+
+    // console.log("Data to be inserted:", data);
+
+    // if (isNaN(parseInt(data.ID))) {
+    //   console.log("Invalid ID format");
+    //   return false;
+    // }
+
+    connection.query("INSERT INTO raw_data_new SET ?", data, (err) => {
+      if (err) {
+        console.error("Error inserting data:", err);
+        return false;
+      } else {
+        // console.log("Data successfully inserted");
+        return true;
+      }
     });
   }
   return true;

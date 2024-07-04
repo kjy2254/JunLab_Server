@@ -20,14 +20,16 @@ import AirWall from "./component/Factorys/AirWall";
 import AirWatch from "./component/Factorys/AirWatch";
 import Confirm from "./component/Factorys/Confirm";
 import Dashboard from "./component/Factorys/Dashboard/Dashboard";
+import Statistic from "./component/Factorys/Statistics/Statistic";
 import Header from "./component/Header";
 import Settings from "./component/Settings/Settings";
 import Sidebar from "./component/Sidebar";
+import ChangePW from "./component/Users/ChangePW";
 import UserInit from "./component/Users/MyPage";
 import SidebarUser from "./component/Users/SidebarUser";
 import Vital from "./component/Users/Vital";
 import Labeling from "./component/labeling/Labeling";
-import { authcheck } from "./util";
+import { authcheck, setDarkTheme } from "./util";
 
 function App() {
   const [toggleSide, setToggleSide] = useState(true);
@@ -61,58 +63,14 @@ function App() {
 
   useEffect(() => {
     if (darkMode) {
-      // 다크모드에서의 색상
-      document.documentElement.style.setProperty(
-        "--layer1-bg-color",
-        "rgb(48, 58, 69)"
-      );
-      document.documentElement.style.setProperty(
-        "--layer2-bg-color",
-        "rgb(25, 36, 48)"
-      );
-      document.documentElement.style.setProperty(
-        "--layerSB-bg-color",
-        "rgb(25, 36, 48)"
-      );
-      document.documentElement.style.setProperty(
-        "--layerHD-bg-color",
-        "rgb(25, 36, 48)"
-      );
-      document.documentElement.style.setProperty(
-        "--layerModal-bg-color",
-        "rgb(48, 58, 69)"
-      );
-      document.documentElement.style.setProperty(
-        "--border-color",
-        "rgba(255, 255, 255, 0.2)"
-      );
-      document.documentElement.style.setProperty("--select-color", "#303a45");
-      document.documentElement.style.setProperty("--text-color", "white");
-      document.documentElement.style.setProperty(
-        "--spinner-color",
-        "rgba(255, 255, 255, 0.3)"
-      );
-      document.documentElement.style.setProperty(
-        "--spinner-top-color",
-        "white"
-      );
-      document.documentElement.style.setProperty(
-        "--graph-lable-color",
-        "rgb(230, 233, 236)"
-      );
-      document.documentElement.style.setProperty("--drag-over-color", "#ccc");
-      document.documentElement.style.setProperty("--dot-color", "white");
-
-      document.documentElement.style.setProperty("--radar-red", "#d65959");
-      document.documentElement.style.setProperty("--radar-yellow", "#e0e050");
-      document.documentElement.style.setProperty("--radar-green", "#50eb50");
+      setDarkTheme();
     }
   }, []);
 
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const debug = 1;
+  const debug = 10;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,7 +88,7 @@ function App() {
       setAuthData({
         isLogin: true,
         name: "JunLab",
-        userId: 10,
+        userId: 1,
         authority: 4,
         manageOf: -1,
       });
@@ -140,7 +98,7 @@ function App() {
       setAuthData({
         isLogin: true,
         name: "JunLab",
-        userId: 41,
+        userId: 1,
         authority: 1,
       });
       setIsLoading(false);
@@ -292,6 +250,23 @@ function App() {
               }
             />
             <Route
+              path="/factorymanagement/factory/:factoryId/dashboardV2"
+              element={
+                <RestrictRoute
+                  element={
+                    <CustomComponent
+                      Component={Statistic}
+                      toggleSide={toggleSide}
+                      setHeaderText={setHeaderText}
+                      closeSmallSidebar={closeSmallSidebar}
+                    />
+                  }
+                  isAllow={authData.isLogin && authData.authority >= 3}
+                  manageOf={authData.manageOf}
+                />
+              }
+            />
+            <Route
               path="/factorymanagement/factory/:factoryId/airwall"
               element={
                 <RestrictRoute
@@ -394,6 +369,23 @@ function App() {
               }
             />
             <Route
+              path="/factorymanagement/user/:userId/password"
+              element={
+                <RestrictRoute
+                  element={
+                    <CustomComponent
+                      Component={ChangePW}
+                      toggleSide={toggleSide}
+                      setHeaderText={setHeaderText}
+                      closeSmallSidebar={closeSmallSidebar}
+                    />
+                  }
+                  isAllow={authData.isLogin}
+                  loginUserId={authData.userId}
+                />
+              }
+            />
+            <Route
               path="/factorymanagement/*"
               element={<HomeRedirector authData={authData} />}
             />
@@ -416,7 +408,7 @@ function RestrictRoute({ element, isAllow, manageOf, loginUserId }) {
     isAllowed = isAllow && (manageOf == factoryId || manageOf < 0);
   } else if (loginUserId) {
     isAllowed = isAllow && userId == loginUserId;
-    console.log(isAllow, isAllowed);
+    // console.log(isAllow, isAllowed);
   } else {
     isAllowed = isAllow;
   }

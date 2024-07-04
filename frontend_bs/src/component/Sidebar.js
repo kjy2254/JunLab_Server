@@ -135,18 +135,18 @@ function Sidebar(props) {
             </ul>
             <Link
               className="link-unstyled"
-              to={`/factorymanagement/factory/${factoryId}/confirm`}
+              to={`/factorymanagement/factory/${factoryId}/dashboardV2`}
             >
               <li>
                 <div className="wrapper">
                   <div className="menu-icon">
                     <FontAwesomeIcon
-                      icon={faCheckDouble}
+                      icon={faHouse}
                       style={{ width: "100%", height: "100%" }}
                     />
                   </div>
                   <div className={`menu-text ${props.show ? "" : "d-none"}`}>
-                    가입 승인
+                    실험실
                   </div>
                 </div>
               </li>
@@ -154,6 +154,24 @@ function Sidebar(props) {
           </ul>
         </div>
         <ul className="bottom-item">
+          <Link
+            className="link-unstyled"
+            to={`/factorymanagement/factory/${factoryId}/confirm`}
+          >
+            <li>
+              <div className="wrapper">
+                <div className="menu-icon">
+                  <FontAwesomeIcon
+                    icon={faCheckDouble}
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                </div>
+                <div className={`menu-text ${props.show ? "" : "d-none"}`}>
+                  가입 승인
+                </div>
+              </div>
+            </li>
+          </Link>
           <Link
             className="link-unstyled"
             to={`/factorymanagement/factory/${factoryId}/settings`}

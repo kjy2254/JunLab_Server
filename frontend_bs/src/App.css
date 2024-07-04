@@ -76,14 +76,22 @@ button {
   /* 기본 라이트 모드에서의 배경색상 */
   --layer1-bg-color: rgb(244, 246, 249);
   --layer2-bg-color: rgb(255, 255, 255);
+
+  --layer2-gradient1-color: rgba(255, 255, 255, 0);
+  --layer2-gradient2-color: rgba(255, 255, 255, 0.75);
+  --layer2-gradient3-color: rgba(255, 255, 255, 1);
+
+  /* --layer3-bg-color: #4b5b6b; */
+  --layer3-bg-color: rgb(230, 233, 238);
   --layerSB-bg-color: rgb(36, 42, 51);
   --layerHD-bg-color: rgb(255, 255, 255);
   --layerModal-bg-color: rgb(244, 246, 249);
   --border-color: rgb(228, 231, 234);
   --select-color: #ececec;
+  --shadow-color: gray;
 
   /* 기본 라이트 모드에서의 글씨색상 */
-  --text-color: black;
+  --text-color: rgb(103, 117, 124);
 
   /* 기본 라이트 모드에서의 스피너색상 */
   --spinner-color: rgb(228, 231, 234);
@@ -96,6 +104,7 @@ button {
   --drag-over-color: #555;
 
   --dot-color: black;
+  /* --dropdown-hover-color: #f8f9fa; */
 
   --radar-red: #ff9a9a;
   --radar-yellow: #f8f88a;
@@ -113,6 +122,11 @@ button {
 
 .layer2 {
   background-color: var(--layer2-bg-color);
+  color: var(--text-color);
+}
+
+.layer3 {
+  background-color: var(--layer3-bg-color);
   color: var(--text-color);
 }
 
@@ -168,7 +182,21 @@ select {
 .bar {
   position: absolute;
   top: 1.5rem;
+  left: 0;
   background: rgb(57, 139, 247);
   width: 2px;
   height: 30px;
+}
+
+hr {
+  border-color: var(--border-color);
+  opacity: 1;
+  width: 100%;
+  margin: 0;
+}
+
+hr.vertical {
+  height: 100%;
+  border-left: 1px var(--border-color) solid;
+  width: 0;
 }

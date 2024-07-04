@@ -63,11 +63,11 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
             }
           },
           style: {
-            color: "var(--graph-lable-color)",
+            color: "var(--graph-label-color)",
           },
         },
-        lineColor: "var(--graph-lable-color)",
-        tickColor: "var(--graph-lable-color)",
+        lineColor: "var(--graph-label-color)",
+        tickColor: "var(--graph-label-color)",
       },
       yAxis: {
         title: {
@@ -78,7 +78,7 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
             return this.value.toFixed(1); // 소수점 첫째 자리까지 표시
           },
           style: {
-            color: "var(--graph-lable-color)",
+            color: "var(--graph-label-color)",
           },
         },
         ...(endpoint === "oxygen" && {

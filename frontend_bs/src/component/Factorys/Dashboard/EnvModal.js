@@ -142,11 +142,11 @@ function EnvGraphCard({ header, img, endpoint, title }) {
             }
           },
           style: {
-            color: "var(--graph-lable-color)",
+            color: "var(--graph-label-color)",
           },
         },
-        lineColor: "var(--graph-lable-color)",
-        tickColor: "var(--graph-lable-color)",
+        lineColor: "var(--graph-label-color)",
+        tickColor: "var(--graph-label-color)",
       },
       yAxis: {
         title: {
@@ -154,7 +154,7 @@ function EnvGraphCard({ header, img, endpoint, title }) {
         },
         labels: {
           style: {
-            color: "var(--graph-lable-color)",
+            color: "var(--graph-label-color)",
           },
         },
         gridLineColor: "var(--border-color)",
@@ -162,10 +162,10 @@ function EnvGraphCard({ header, img, endpoint, title }) {
       legend: {
         enabled: true,
         itemStyle: {
-          color: "var(--graph-lable-color)",
+          color: "var(--graph-label-color)",
         },
         itemHoverStyle: {
-          color: "var(--graph-lable-color)",
+          color: "var(--graph-label-color)",
         },
       },
       credits: {
