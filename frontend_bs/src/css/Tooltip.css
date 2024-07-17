@@ -7,16 +7,37 @@
 
 .tooltip-box {
   position: absolute;
-  top: 30px; /* 툴팁의 위치를 조정할 수 있습니다 */
-  transform: translateX(-99%);
+
   background-color: #333;
   color: #fff;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+
   padding: 1rem;
   border-radius: 0.7rem;
-  white-space: nowrap;
+  /* white-space: nowrap; */
   z-index: 1000;
   opacity: 0.85;
-  max-width: 22rem;
+  min-width: 20rem;
+}
+
+.tooltip-box.topleft {
+  transform: translate(calc(-100%), calc(-100% - 1.3rem));
+}
+
+.tooltip-box.topright {
+  transform: translate(1.3rem, calc(-100% - 1.3rem));
+}
+
+.tooltip-box.bottomleft {
+  transform: translate(calc(-100%), 0);
+}
+
+.tooltip-box.bottomright {
+  transform: translate(1.3rem, 0);
 }
 
 @media (max-width: 360px) {

@@ -21,9 +21,11 @@ const upload = multer({ storage: storage });
 api.get("/:userId/info", (req, res) => {
   const userId = parseInt(req.params.userId);
 
+  if (!userId) return res.status(400).send("Unknown UserId!");
+
   const query = `
     SELECT
-      u.user_id, u.name, a.module_name AS airwall_name, u.watch_id, w.last_sync, w.level
+      u.user_id, u.name, a.module_name AS airwall_name, u.watch_id, w.last_sync, w.level, u.last_workload AS workload, w.last_health_index AS health_index
     FROM
     users u
     LEFT JOIN
@@ -331,6 +333,25 @@ api.put("/:userId/profile", upload.single("image"), (req, res) => {
         return res.status(204).send("Profile updated successfully.");
       }
     );
+  });
+});
+
+api.put("/:userId/airwall", (req, res) => {
+  const userId = parseInt(req.params.userId);
+
+  let id = req.query.id;
+  if (id == "null") {
+    id = null;
+  }
+
+  let query = `UPDATE users SET airwall_id = ? WHERE user_id = ?;`;
+
+  connection.query(query, [id, userId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json(result);
   });
 });
 

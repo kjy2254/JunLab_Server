@@ -256,6 +256,8 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
               "환경 점수는 측정된 환경 값들을 복합적으로 고려한 수치입니다.",
               "- 1을 초과하는 경우 인체에 영향이 있을 수 있습니다.",
             ]}
+            directionX="left"
+            directionY="bottom"
           >
             <FontAwesomeIcon icon={faCircleQuestion} />
           </Tooltip>

@@ -28,17 +28,15 @@ import ChangePW from "./component/Users/ChangePW";
 import UserInit from "./component/Users/MyPage";
 import SidebarUser from "./component/Users/SidebarUser";
 import Vital from "./component/Users/Vital";
-import Labeling from "./component/labeling/Labeling";
-import { authcheck, setDarkTheme } from "./util";
+import { setTheme1, setTheme2, setTheme3, setTheme4 } from "./toggletheme";
+import { authcheck } from "./util";
 
 function App() {
   const [toggleSide, setToggleSide] = useState(true);
   const [toggleSmallSide, setToggleSmallSide] = useState(false);
   const [smallView, setSmallView] = useState(window.innerWidth < 800);
   const [headerText, setHeaderText] = useState("");
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("darkMode") === "true"
-  );
+  const [theme, setTheme] = useState(localStorage.getItem("theme"));
 
   const toggleSidebar = () => {
     setToggleSide(!toggleSide);
@@ -62,8 +60,14 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (darkMode) {
-      setDarkTheme();
+    if (theme == 1) {
+      setTheme1();
+    } else if (theme == 2) {
+      setTheme2();
+    } else if (theme == 3) {
+      setTheme3();
+    } else if (theme == 4) {
+      setTheme4();
     }
   }, []);
 
@@ -130,8 +134,8 @@ function App() {
                 toggleSmallSidebar={toggleSmallSidebar}
                 headerText={headerText}
                 isLogin={authData.isLogin}
-                darkMode={darkMode}
-                setDarkMode={setDarkMode}
+                // darkMode={theme}
+                // setDarkMode={setTheme}
               />
             }
           />
@@ -185,17 +189,15 @@ function App() {
                 />
               }
             />
-            <Route
+            {/* <Route
               path="/labeling"
               element={
                 <RestrictRoute
-                  element={
-                    <Labeling darkMode={darkMode} setDarkMode={setDarkMode} />
-                  }
+                  element={<Labeling darkMode={theme} setDarkMode={setTheme} />}
                   isAllow={true}
                 />
               }
-            />
+            /> */}
             <Route
               path="/factorymanagement/admin/factory"
               element={
@@ -238,7 +240,8 @@ function App() {
                 <RestrictRoute
                   element={
                     <CustomComponent
-                      Component={Dashboard}
+                      // Component={Dashboard}
+                      Component={Statistic}
                       toggleSide={toggleSide}
                       setHeaderText={setHeaderText}
                       closeSmallSidebar={closeSmallSidebar}
@@ -250,12 +253,13 @@ function App() {
               }
             />
             <Route
-              path="/factorymanagement/factory/:factoryId/dashboardV2"
+              path="/factorymanagement/factory/:factoryId/dashboardLegacy"
               element={
                 <RestrictRoute
                   element={
                     <CustomComponent
-                      Component={Statistic}
+                      Component={Dashboard}
+                      // Component={Statistic}
                       toggleSide={toggleSide}
                       setHeaderText={setHeaderText}
                       closeSmallSidebar={closeSmallSidebar}

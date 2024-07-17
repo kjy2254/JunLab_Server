@@ -11,6 +11,7 @@
 .custom-navbar .logo {
   margin-left: 1rem;
   color: var(--text-color);
+  background: none;
 }
 
 .custom-navbar .login-btn {
@@ -171,4 +172,63 @@
 
 .header-dropdown .profile-box:hover {
   background: var(--layer2-bg-color);
+}
+
+.header-dropdown .theme-box {
+  padding: 1rem;
+  padding-left: 2rem;
+  text-align: left;
+  /* cursor: pointer; */
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.header-dropdown .theme-box .theme {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 100%;
+  cursor: pointer;
+}
+
+.header-dropdown .theme-box .theme1 {
+  border: 2px solid rgb(25, 36, 48);
+  background: linear-gradient(
+    to right,
+    rgb(48, 58, 69) 50%,
+    rgb(25, 36, 48) 50%
+  );
+  opacity: 0.8;
+}
+
+.header-dropdown .theme-box .theme2 {
+  border: 2px solid rgb(255, 255, 255);
+  background: linear-gradient(
+    to right,
+    rgb(244, 246, 249) 50%,
+    rgb(255, 255, 255) 50%
+  );
+  opacity: 0.8;
+}
+
+.header-dropdown .theme-box .theme3 {
+  background: linear-gradient(
+    35deg,
+    #2b1055 0%,
+    #2b1055 20%,
+    #7597de 40%,
+    #882588 60%,
+    #e45a84 80%,
+    #8e37d7 100%
+  );
+}
+
+.header-dropdown .theme-box .theme4 {
+  background: linear-gradient(
+    61.99758591135935deg,
+    rgba(52, 46, 46, 1) -3.6118507385253906%,
+    rgba(64, 46, 66, 1) 33.288566271464035%,
+    rgba(112, 41, 67, 1) 67.41611957550049%,
+    rgba(157, 34, 43, 1) 98.77080917358397%
+  );
+  color: rgba(19, 18, 18, 0.801);
 }

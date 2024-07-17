@@ -1,39 +1,41 @@
-import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Nav, Navbar } from "react-bootstrap";
 import "../css/Header.css";
-import { authcheck, setDarkTheme, setLightTheme } from "../util";
+import { setTheme1, setTheme2, setTheme3, setTheme4 } from "../toggletheme";
+import { authcheck } from "../util";
 
-export function toggleTheme(darkMode, setDarkMode) {
-  if (darkMode) {
-    setLightTheme();
-  } else {
-    setDarkTheme();
+function toggleTheme(theme) {
+  if (theme == 1) {
+    setTheme1();
+  } else if (theme == 2) {
+    setTheme2();
+  } else if (theme == 3) {
+    setTheme3();
+  } else if (theme == 4) {
+    setTheme4();
   }
-  localStorage.setItem("darkMode", darkMode ? "false" : "true");
-  setDarkMode((prev) => !prev);
+  localStorage.setItem("theme", theme);
 }
 
-function ThemeToggleButton({ setDarkMode, darkMode }) {
-  return (
-    <div
-      className="theme-toggle-button"
-      onClick={() => toggleTheme(darkMode, setDarkMode)}
-    >
-      <div className={`toggle-switch ${darkMode ? "active" : ""}`}>
-        <FontAwesomeIcon icon={faMoon} className="icon moon-icon" />
-        <FontAwesomeIcon icon={faSun} className="icon sun-icon" />
-        <div className="toggle-handle"></div>
-      </div>
-    </div>
-  );
-}
+// function ThemeToggleButton({ setDarkMode, darkMode }) {
+//   return (
+//     <div
+//       className="theme-toggle-button"
+//       onClick={() => toggleTheme(darkMode, setDarkMode)}
+//     >
+//       <div className={`toggle-switch ${darkMode ? "active" : ""}`}>
+//         <FontAwesomeIcon icon={faMoon} className="icon moon-icon" />
+//         <FontAwesomeIcon icon={faSun} className="icon sun-icon" />
+//         <div className="toggle-handle"></div>
+//       </div>
+//     </div>
+//   );
+// }
 
 function ProfileDropDown({ profile }) {
   return (
-    <div className="header-dropdown layer1">
+    <div className="header-dropdown layer4">
       <div className="profile-card">
         <img
           src={`http://junlab.postech.ac.kr:880/api2/image/${profile.profile_image_path}`}
@@ -67,6 +69,12 @@ function ProfileDropDown({ profile }) {
         }
       >
         로그아웃
+      </div>
+      <div className="theme-box">
+        <div className="theme theme1" onClick={() => toggleTheme(1)} />
+        <div className="theme theme2" onClick={() => toggleTheme(2)} />
+        <div className="theme theme3" onClick={() => toggleTheme(3)} />
+        <div className="theme theme4" onClick={() => toggleTheme(4)} />
       </div>
     </div>
   );
@@ -132,10 +140,11 @@ function Header(props) {
           <span className="header-text">{props.headerText}</span>
         </div>
         <Nav className="buttons">
-          <ThemeToggleButton
+          {/* <ThemeToggleButton 
             setDarkMode={props.setDarkMode}
             darkMode={props.darkMode}
-          />
+          /> */}
+          {/* <ZoomControl /> */}
           <div className="header-profile">
             <img
               src={`http://junlab.postech.ac.kr:880/api2/image/${img}`}

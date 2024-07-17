@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "./Statistic.module.css";
 
 function Log() {
   const [logs, setLogs] = useState([]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newLog = generateLog();
-      setLogs((prevLogs) => [newLog, ...prevLogs]);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     const newLog = generateLog();
+  //     setLogs((prevLogs) => [newLog, ...prevLogs]);
+  //   }, 5000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const generateLog = () => {
     const severityLevels = ["INFO", "WARN", "DANGER", "CRITICAL"];

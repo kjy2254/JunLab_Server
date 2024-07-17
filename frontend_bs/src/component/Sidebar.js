@@ -77,6 +77,24 @@ function Sidebar(props) {
             </div>
           </div>
           <ul className="item">
+            {/* <Link
+              className="link-unstyled"
+              to={`/factorymanagement/factory/${factoryId}/dashboard`}
+            >
+              <li>
+                <div className="wrapper">
+                  <div className="menu-icon">
+                    <FontAwesomeIcon
+                      icon={faHouse}
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                  </div>
+                  <div className={`menu-text ${props.show ? "" : "d-none"}`}>
+                    통합상황판
+                  </div>
+                </div>
+              </li>
+            </Link> */}
             <Link
               className="link-unstyled"
               to={`/factorymanagement/factory/${factoryId}/dashboard`}
@@ -121,7 +139,7 @@ function Sidebar(props) {
                 to={`/factorymanagement/factory/${factoryId}/airwall`}
               >
                 <li className={`menu-text ${props.show ? "" : "d-none"}`}>
-                  고정식
+                  공기질
                 </li>
               </Link>
               <Link
@@ -129,13 +147,13 @@ function Sidebar(props) {
                 to={`/factorymanagement/factory/${factoryId}/airwatch`}
               >
                 <li className={`menu-text ${props.show ? "" : "d-none"}`}>
-                  이동식
+                  워치
                 </li>
               </Link>
             </ul>
             <Link
               className="link-unstyled"
-              to={`/factorymanagement/factory/${factoryId}/dashboardV2`}
+              to={`/factorymanagement/factory/${factoryId}/dashboardLegacy`}
             >
               <li>
                 <div className="wrapper">
@@ -146,7 +164,7 @@ function Sidebar(props) {
                     />
                   </div>
                   <div className={`menu-text ${props.show ? "" : "d-none"}`}>
-                    실험실
+                    Legacy
                   </div>
                 </div>
               </li>

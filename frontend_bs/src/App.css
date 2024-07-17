@@ -82,9 +82,12 @@ button {
   --layer2-gradient3-color: rgba(255, 255, 255, 1);
 
   /* --layer3-bg-color: #4b5b6b; */
-  --layer3-bg-color: rgb(230, 233, 238);
+  --layer3-bg-color: rgb(244, 246, 249);
   --layerSB-bg-color: rgb(36, 42, 51);
   --layerHD-bg-color: rgb(255, 255, 255);
+
+  --layer4-bg-color: rgb(237, 237, 237);
+
   --layerModal-bg-color: rgb(244, 246, 249);
   --border-color: rgb(228, 231, 234);
   --select-color: #ececec;
@@ -116,32 +119,50 @@ button {
 }
 
 .layer1 {
-  background-color: var(--layer1-bg-color);
+  background: var(--layer1-bg-color);
   color: var(--text-color);
 }
 
 .layer2 {
-  background-color: var(--layer2-bg-color);
+  background: var(--layer2-bg-color);
   color: var(--text-color);
+  backdrop-filter: blur(var(--layer2-blur));
+  -webkit-backdrop-filter: blur(var(--layer2-blur));
+  /* border-radius: 1.5rem !important; */
 }
 
 .layer3 {
-  background-color: var(--layer3-bg-color);
+  background: var(--layer3-bg-color);
+  color: var(--text-color);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.layer3 {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0.08) 25%,
+    /* rgba(255, 255, 255, 0.02) 70%, */ rgba(255, 255, 255, 0.02) 100%
+  );
+}
+
+.layer4 {
+  background: var(--layer4-bg-color);
   color: var(--text-color);
 }
 
 .layerSB {
-  background-color: var(--layerSB-bg-color);
+  background: var(--layerSB-bg-color);
   color: var(--text-color);
 }
 
 .layerHD {
-  background-color: var(--layerHD-bg-color);
+  background: var(--layerHD-bg-color);
   color: var(--text-color);
 }
 
 .layerModal {
-  background-color: var(--layerModal-bg-color);
+  background: var(--layerModal-bg-color);
   color: var(--text-color);
 }
 
@@ -158,14 +179,19 @@ input[type="date"] {
   line-height: 1.5;
   appearance: none;
   border: 1px solid var(--border-color);
-  background-color: var(--layer2-bg-color);
+  background: transparent;
   color: inherit;
   border-radius: 0.3rem;
 }
 
 select {
-  background-color: var(--select-color);
+  background: var(--select-color);
   color: inherit;
+}
+
+option {
+  opacity: 2 !important;
+  color: var(--select-text-color);
 }
 
 #spinner {

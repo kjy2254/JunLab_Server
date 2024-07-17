@@ -15,8 +15,8 @@ function Settings(props) {
       <div className="settings-wrapper layer2">
         <Tabs>
           <TabList>
-            <Tab>고정식 센서</Tab>
-            <Tab>작업자</Tab>
+            <Tab>공기질 측정기</Tab>
+            {/* <Tab>작업자</Tab> */}
           </TabList>
           <TabPanel>
             <AirWallSetting />

@@ -1,7 +1,4 @@
-import Highcharts from "highcharts";
-import HighchartsMore from "highcharts/highcharts-more";
-import SolidGauge from "highcharts/modules/solid-gauge";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AirQuality from "./AirQuality";
 import Alert from "./Alert";
 import Log from "./Log";
@@ -10,13 +7,12 @@ import Weather from "./Weather";
 import WorkerSummary from "./WorkerSummary";
 import WorkshopStatistic from "./WorkshopStatistic";
 
-HighchartsMore(Highcharts);
-SolidGauge(Highcharts);
-
 function Statistic(props) {
   useEffect(() => {
     props.setHeaderText("통계");
   }, []);
+
+  const [update, setUpdate] = useState(true);
 
   return (
     <div className={styles.statistic}>
@@ -25,12 +21,12 @@ function Statistic(props) {
           <Alert />
         </div>
         <div className={`${styles["second-row"]}`}>
-          <WorkerSummary />
+          <WorkerSummary update={update} setUpdate={setUpdate} />
           <Weather />
         </div>
 
         <div className={`${styles["third-row"]}`}>
-          <WorkshopStatistic />
+          <WorkshopStatistic update={update} />
           <AirQuality />
         </div>
       </div>

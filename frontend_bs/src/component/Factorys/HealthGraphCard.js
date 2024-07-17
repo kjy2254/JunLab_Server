@@ -27,7 +27,7 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
     const newOptions = {
       chart: {
         type: "line",
-        backgroundColor: "var(--layer2-bg-color)",
+        backgroundColor: "transparent",
         zoomType: "x", // x축 방향으로 줌 기능 활성화
         resetZoomButton: {
           theme: {

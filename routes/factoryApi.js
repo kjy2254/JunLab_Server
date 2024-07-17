@@ -125,23 +125,28 @@ api.get("/factory/:factoryId/name", (req, res) => {
 api.get("/factory/:factoryId/airwalls", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
 
-  const query = `SELECT module_id,
-                         module_name,
-                         last_update,
-                         last_tvoc as tvoc,
-                         last_co2 as co2,
-                         last_temperature as temperature,
-                         last_pm10 as pm10,
-                         last_pm2_5 as pm2_5,
-                         last_humid as humid,
-                         module_description,
-                         type,
+  const query = `SELECT aw.module_id,
+                         aw.module_name,
+                         aw.last_update,
+                         aw.last_tvoc as tvoc,
+                         aw.last_co2 as co2,
+                         aw.last_temperature as temperature,
+                         aw.last_pm10 as pm10,
+                         aw.last_pm2_5 as pm2_5,
+                         aw.last_humid as humid,
+                         aw.last_env_index as env_index,
+                         aw.module_description,
+                         aw.type,
                          CASE 
-                           WHEN last_update >= DATE_SUB(NOW(), INTERVAL 3 MINUTE) THEN true
+                           WHEN aw.last_update >= DATE_SUB(NOW(), INTERVAL 3 MINUTE) THEN true
                            ELSE false
-                         END as isOnline
-                  FROM airwall 
-                  WHERE factory_id = ? AND enable = 1`;
+                         END as isOnline,
+                         (SELECT COUNT(*) 
+                          FROM users u 
+                          WHERE u.airwall_id = aw.module_id) as num_of_workers
+                  FROM airwall aw
+                  WHERE aw.factory_id = ? AND aw.enable = 1
+                  ORDER BY aw.module_name`;
 
   connection.query(query, [factoryId], (error, results) => {
     if (error) {
@@ -161,7 +166,9 @@ api.get("/factory/:factoryId/workers", async (req, res) => {
       u.name, u.user_id,
       u.watch_id, 
       u.profile_image_path,
-      aw.module_name AS airwall_id,
+      u.gender,
+      aw.module_name AS airwall_name,
+      u.airwall_id,
       w.last_sync,
       w.last_heart_rate,
       w.last_body_temperature,
@@ -171,6 +178,7 @@ api.get("/factory/:factoryId/workers", async (req, res) => {
       w.last_co2,
       w.last_sync,
       u.last_workload AS workload,
+      w.last_health_index AS health_index,
       w.last_wear
     FROM
        users u

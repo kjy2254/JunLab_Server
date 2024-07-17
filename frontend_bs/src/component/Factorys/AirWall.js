@@ -14,7 +14,7 @@ import { notify } from "../../util";
 function AirWall(props) {
   const [data, setData] = useState([]);
   useEffect(() => {
-    props.setHeaderText("로그 / 고정식");
+    props.setHeaderText("로그 / 공기질");
   }, []);
 
   const columns = useMemo(
@@ -62,7 +62,7 @@ function AirWall(props) {
       <div className="airwall-wrapper layer2">
         <span className="bar" />
         <div className="header">
-          <span>고정식 로그 검색</span>
+          <span>공기질 로그 검색</span>
         </div>
         <DateAndTimeForm
           setData={setData}
