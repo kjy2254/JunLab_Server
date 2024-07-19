@@ -143,7 +143,13 @@ api.get("/factory/:factoryId/airwalls", (req, res) => {
                          END as isOnline,
                          (SELECT COUNT(*) 
                           FROM users u 
-                          WHERE u.airwall_id = aw.module_id) as num_of_workers
+                          WHERE u.airwall_id = aw.module_id) as num_of_workers,
+                          (SELECT COUNT(*) 
+                          FROM users u 
+                          LEFT JOIN airwatch awat ON awat.watch_id = u.watch_id
+                          WHERE u.airwall_id = aw.module_id
+                          AND awat.last_wear = 1
+                          AND awat.last_sync >= DATE_SUB(NOW(), INTERVAL 30 SECOND)) as num_of_online_workers
                   FROM airwall aw
                   WHERE aw.factory_id = ? AND aw.enable = 1
                   ORDER BY aw.module_name`;
@@ -605,13 +611,13 @@ api.get("/airwalldata/:env", (req, res) => {
     query = `SELECT ${env}, timestamp, a.module_name
                FROM airwall_data d
                JOIN airwall a ON a.module_id = d.sensor_module_id
-               WHERE DATE(timestamp) = ? AND d.factory_id = ?`;
+               WHERE DATE(timestamp) = ? AND d.factory_id = ? AND a.enable = 1`;
     queryParams.push(date);
   } else {
     query = `SELECT ${env}, timestamp, a.module_name
                FROM airwall_data d
                JOIN airwall a ON a.module_id = d.sensor_module_id
-               WHERE timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND d.factory_id = ?`;
+               WHERE timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND d.factory_id = ? AND a.enable = 1`;
     queryParams.push(timeSlot);
   }
   queryParams.push(factory_id);
@@ -621,6 +627,77 @@ api.get("/airwalldata/:env", (req, res) => {
       console.log(error);
       return res.status(500).send("Internal Server Error!");
     }
+    return res.status(200).json(result);
+  });
+});
+
+api.get("/index/env/:moduleId", (req, res) => {
+  const moduleId = req.params.moduleId;
+  const minute = parseInt(req.query.minute) || 300;
+  const slot = parseInt(req.query.slot) || 20;
+
+  const currentTime = new Date();
+
+  // minute 단위로 계산하여 시작 시간 구하기
+  const startTime = new Date(
+    currentTime.getTime() - minute * 60 * 1000 + 9 * 60 * 60 * 1000
+  );
+  const formattedStartTime = startTime
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
+
+  let query = `
+    SELECT 
+      DATE_FORMAT(timestamp, '%Y-%m-%d %H:') AS time_slot,
+      FLOOR(MINUTE(timestamp) / ?) AS slot,
+      AVG(value) AS avg_value
+    FROM Index_env
+    WHERE module_id = ? AND timestamp >= ?
+    GROUP BY time_slot, slot
+    ORDER BY time_slot, slot
+  `;
+
+  connection.query(
+    query,
+    [slot, moduleId, formattedStartTime],
+    (error, result) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error!");
+      }
+
+      const formattedResult = result.map((row) => {
+        const hourMinute =
+          row.time_slot + (row.slot * slot).toString().padStart(2, "0");
+        return { x: hourMinute, y: row.avg_value };
+      });
+
+      return res.status(200).json(formattedResult);
+    }
+  );
+});
+
+api.get("/:moduleId/workers", (req, res) => {
+  const moduleId = req.params.moduleId;
+
+  let query = `
+    SELECT name, last_workload, a.last_heart_rate, a.last_body_temperature, a.last_oxygen_saturation, a.last_health_index, profile_image_path,
+      CASE 
+        WHEN TIMESTAMPDIFF(MINUTE, a.last_sync, NOW()) <= 1 THEN true 
+        ELSE false 
+      END AS isOnline
+    FROM users u 
+    LEFT JOIN airwatch a ON u.watch_id = a.watch_id
+    WHERE u.airwall_id = ?
+  `;
+
+  connection.query(query, [moduleId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+
     return res.status(200).json(result);
   });
 });

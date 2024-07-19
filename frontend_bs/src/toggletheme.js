@@ -209,7 +209,7 @@ export function setTheme3() {
 export function setTheme4() {
   document.documentElement.style.setProperty(
     "--layer1-bg-color",
-    `linear-gradient(61.99758591135935deg, rgba(52, 46, 46,1) -3.6118507385253906%,rgba(64, 46, 66,1) 33.288566271464035%,rgba(112, 41, 67,1) 67.41611957550049%,rgba(157, 34, 43,1) 98.77080917358397%)`
+    `linear-gradient(13deg, rgba(29,27,27,1) -10%, rgba(64,46,66,1) 38%, rgba(112,41,67,1) 85%, rgba(157,34,43,1) 100%)`
   );
   document.documentElement.style.setProperty(
     "--layer2-bg-color",

@@ -13,7 +13,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.5",
     "bootstrap": "^5.3.2",
-    "highcharts": "^11.3.0",
+    "highcharts": "^11.2.0",
     "highcharts-react-official": "^3.2.1",
     "react": "^18.2.0",
     "react-animated-numbers": "^0.17.1",
@@ -36,8 +36,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start --host 0.0.0.0 ",
-    "build": "react-scripts build",
+    "start": "cross-env REACT_APP_ENV=development react-scripts start --host 0.0.0.0 ",
+    "build": "cross-env REACT_APP_ENV=production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -58,5 +58,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }

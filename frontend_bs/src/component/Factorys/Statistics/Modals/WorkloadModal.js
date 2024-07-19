@@ -29,7 +29,7 @@ const customModalStyles = {
   },
 };
 
-function WorkerStatisticModal({
+function WorkloadModal({
   modalOpen,
   setModalOpen,
   data,
@@ -177,4 +177,4 @@ function WorkerStatisticModal({
   );
 }
 
-export default WorkerStatisticModal;
+export default WorkloadModal;

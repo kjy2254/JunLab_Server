@@ -140,9 +140,9 @@ button {
 .layer3 {
   background: linear-gradient(
     145deg,
-    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0.25) 0%,
     rgba(255, 255, 255, 0.08) 25%,
-    /* rgba(255, 255, 255, 0.02) 70%, */ rgba(255, 255, 255, 0.02) 100%
+    rgba(255, 255, 255, 0.04) 100%
   );
 }
 
@@ -179,9 +179,9 @@ input[type="date"] {
   line-height: 1.5;
   appearance: none;
   border: 1px solid var(--border-color);
-  background: transparent;
+  background: none;
   color: inherit;
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
 }
 
 select {

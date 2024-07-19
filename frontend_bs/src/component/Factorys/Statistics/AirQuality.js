@@ -266,8 +266,13 @@ function AirQuality() {
         </div>
       </div>
       <hr />
-      <span className={`${styles["air-index"]} ${styles.level_default} layer3`}>
-        공기질 지수:{" "}
+      <span
+        className={`${styles["air-index"]} ${styles.level_default} layer3`}
+        title={`Index: ${
+          envData.find((e) => e.id === selectedModule)?.env_index
+        }`}
+      >
+        공기질 상태:&nbsp;
         {EnvIndexToText(
           envData.find((e) => e.id === selectedModule)?.env_index
         )}

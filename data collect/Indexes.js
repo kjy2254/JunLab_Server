@@ -6,11 +6,26 @@ const queryAsync = promisify(connection.query).bind(connection);
 
 function fetchRecentDataForModule(moduleId) {
   return new Promise((resolve, reject) => {
+    if (moduleId === null) {
+      resolve({
+        type: "env",
+        tvoc: Array(30).fill(null),
+        co2: Array(30).fill(null),
+        pm2_5: Array(30).fill(null),
+        temperature: Array(30).fill(null),
+        humid: Array(30).fill(null),
+      });
+      return;
+    }
+
     const dataQuery = `
       SELECT
         DATE_FORMAT(timestamp, '%Y-%m-%d %H:%i') as minute,
         AVG(tvoc) as avg_tvoc,
-        AVG(co2) as avg_co2
+        AVG(co2) as avg_co2,
+        AVG(pm2_5) as avg_pm2_5,
+        AVG(temperature) as avg_temperature,
+        AVG(humid) as avg_humid
       FROM airwall_data
       WHERE sensor_module_id = ?
         AND timestamp >= NOW() - INTERVAL 30 MINUTE
@@ -26,6 +41,9 @@ function fetchRecentDataForModule(moduleId) {
 
       const tvocData = Array(30).fill(null);
       const co2Data = Array(30).fill(null);
+      const pmData = Array(30).fill(null);
+      const tempData = Array(30).fill(null);
+      const humidData = Array(30).fill(null);
       const thirtyMinutesAgo = new Date(new Date().getTime() - 30 * 60 * 1000);
 
       dataResult.forEach((row) => {
@@ -35,8 +53,14 @@ function fetchRecentDataForModule(moduleId) {
         if (minuteIndex >= 0 && minuteIndex < 30) {
           const avgTvoc = parseFloat(row.avg_tvoc);
           const avgCo2 = parseFloat(row.avg_co2);
+          const avgPm = parseFloat(row.avg_pm2_5);
+          const avgTemp = parseFloat(row.avg_temperature);
+          const avgHumid = parseFloat(row.avg_humid);
           tvocData[minuteIndex] = isNaN(avgTvoc) ? null : avgTvoc;
           co2Data[minuteIndex] = isNaN(avgCo2) ? null : avgCo2;
+          pmData[minuteIndex] = isNaN(avgPm) ? null : avgPm;
+          tempData[minuteIndex] = isNaN(avgTemp) ? null : avgTemp;
+          humidData[minuteIndex] = isNaN(avgHumid) ? null : avgHumid;
         }
       });
 
@@ -44,6 +68,9 @@ function fetchRecentDataForModule(moduleId) {
         type: "env",
         tvoc: tvocData,
         co2: co2Data,
+        pm2_5: pmData,
+        temperature: tempData,
+        humid: humidData,
       });
     });
   });
@@ -92,7 +119,7 @@ function fetchRecentHealthDataForWatch(watchId) {
       resolve({
         type: "hc",
         heart_rate: heartRateData,
-        Temperature: temperatureData,
+        body_temperature: temperatureData,
       });
     });
   });
@@ -106,9 +133,12 @@ function fetchRecentDataForUser(user) {
     return {
       type: "level",
       heart_rate: watchResult.heart_rate,
-      Temperature: watchResult.Temperature,
+      body_temperature: watchResult.body_temperature,
       tvoc: moduleResult.tvoc,
       co2: moduleResult.co2,
+      pm2_5: moduleResult.pm2_5,
+      temperature: moduleResult.temperature,
+      humid: moduleResult.humid,
     };
   });
 }

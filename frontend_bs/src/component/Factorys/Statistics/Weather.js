@@ -50,17 +50,16 @@ function Weather() {
   };
 
   const getWeatherIcon = (skyCondition) => {
-    switch (skyCondition) {
-      case "맑음":
-        return faSun;
-      case "구름많음":
-        return faCloud;
-      case "흐림":
-        return faCloudSun;
-      case "비":
-        return faUmbrella;
-      default:
-        return faSun;
+    if (skyCondition.includes("맑음")) {
+      return faSun;
+    } else if (skyCondition.includes("구름")) {
+      return faCloud;
+    } else if (skyCondition.includes("흐림")) {
+      return faCloudSun;
+    } else if (skyCondition.includes("비")) {
+      return faUmbrella;
+    } else {
+      return faSun;
     }
   };
 

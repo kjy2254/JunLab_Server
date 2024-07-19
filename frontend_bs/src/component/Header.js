@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Nav, Navbar } from "react-bootstrap";
 import "../css/Header.css";
 import { setTheme1, setTheme2, setTheme3, setTheme4 } from "../toggletheme";
@@ -85,6 +85,7 @@ function Header(props) {
   const [img, setImg] = useState();
   const [profile, setProfile] = useState({});
   const [authData, setAuthData] = useState({});
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const fetchAuthData = async () => {
@@ -100,6 +101,27 @@ function Header(props) {
 
     fetchAuthData();
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShow(false);
+      }
+    }
+
+    function handleEscKey(event) {
+      if (event.key === "Escape") {
+        setShow(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscKey);
+    };
+  }, [dropdownRef]);
 
   useEffect(() => {
     if (authData.userId) {
@@ -152,7 +174,11 @@ function Header(props) {
               onClick={() => setShow((prev) => !prev)}
             />
           </div>
-          {show && <ProfileDropDown profile={profile} />}
+          {show && (
+            <div ref={dropdownRef}>
+              <ProfileDropDown profile={profile} />
+            </div>
+          )}
         </Nav>
       </Navbar.Collapse>
     </Navbar>

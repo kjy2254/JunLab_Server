@@ -74,7 +74,14 @@ function App() {
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const debug = 10;
+  let debug = false;
+
+  if (process.env.REACT_APP_ENV === "development") {
+    console.log("Development mode: This code runs only during npm start");
+    debug = true;
+  }
+
+  // const debug = 10;
 
   useEffect(() => {
     const fetchData = async () => {

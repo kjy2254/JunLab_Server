@@ -13,16 +13,6 @@ CORS(app)  # 모든 도메인에 대해 CORS 허용
 # 공통 변수 설정
 service_key = 'gMd0YK8U3nHitfme0jM/329mJIWWC+iT6ef9ZFOE3uKbEqaxUoX1pHYfydANX461W006heWvEj9SpPyC1QEKiA=='
 
-# 현재 시간 정각으로 맞추기 및 한 시간 전 시간으로 설정하는 함수
-def get_current_times():
-    now = datetime.now()
-    base_date = now.strftime('%Y%m%d')
-    base_time = now.strftime('%H') + '00'
-    previous_hour = now - timedelta(hours=1)
-    base_date_prev = previous_hour.strftime('%Y%m%d')
-    base_time_prev = previous_hour.strftime('%H') + '00'
-    return base_date, base_time, base_date_prev, base_time_prev
-
 # 날짜 및 시간 형식 변환 함수
 def format_datetime(base_date, base_time):
     dt_str = base_date + base_time
@@ -58,8 +48,7 @@ def rn1_to_category(rn1):
         return '50.0mm 이상'
 
 # 초단기 실황 데이터 가져오기 함수
-def get_ncst_data(nx, ny, service_key):
-    base_date, base_time, _, _ = get_current_times()
+def get_ncst_data(base_date, base_time, nx, ny, service_key):
     url_ncst = 'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst'
     params_ncst = {
         'serviceKey': service_key,
@@ -72,14 +61,13 @@ def get_ncst_data(nx, ny, service_key):
         'ny': ny
     }
     data_ncst = get_weather_data(url_ncst, params_ncst)
-    items_ncst = data_ncst.get('response', {}).get('body', {}).get('items', {}).get('item', [])
+    items_ncst = data_ncst['response']['body']['items']['item']
     weather_info = {item['category']: item['obsrValue'] for item in items_ncst}
     formatted_datetime = format_datetime(items_ncst[0]['baseDate'], items_ncst[0]['baseTime'])
     return formatted_datetime, weather_info
 
 # 초단기 예보 데이터 가져오기 함수
-def get_fcst_data(nx, ny, service_key):
-    base_date, base_time, base_date_prev, base_time_prev = get_current_times()
+def get_fcst_data(base_date, base_time, base_date_prev, base_time_prev, nx, ny, service_key):
     url_fcst = 'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst'
     params_fcst = {
         'serviceKey': service_key,
@@ -92,13 +80,13 @@ def get_fcst_data(nx, ny, service_key):
         'ny': ny
     }
     data_fcst = get_weather_data(url_fcst, params_fcst)
-    if data_fcst.get('response', {}).get('header', {}).get('resultCode') == '03':
+    if data_fcst['response']['header']['resultCode'] == '03':
         params_fcst['base_date'], params_fcst['base_time'] = base_date_prev, base_time_prev
         data_fcst = get_weather_data(url_fcst, params_fcst)
-        if data_fcst.get('response', {}).get('header', {}).get('resultCode') == '03':
+        if data_fcst['response']['header']['resultCode'] == '03':
             raise KeyError('NO_DATA')
     
-    items_fcst = data_fcst.get('response', {}).get('body', {}).get('items', {}).get('item', [])
+    items_fcst = data_fcst['response']['body']['items']['item']
     forecast = {item['fcstTime']: item['fcstValue'] for item in items_fcst if item['category'] == 'SKY'}
     sorted_times = sorted(forecast.keys())
     if sorted_times:
@@ -131,9 +119,19 @@ def get_factory_coordinates(factory_id):
 # 날씨 정보 가져오기 함수
 def get_weather_info(factory_id):
     try:
+        # 현재 시간 정각으로 맞추기
+        now = datetime.now()
+        base_date = now.strftime('%Y%m%d')
+        base_time = now.strftime('%H') + '00'
+
+        # 한 시간 전 시간으로 설정
+        previous_hour = now - timedelta(hours=1)
+        base_date_prev = previous_hour.strftime('%Y%m%d')
+        base_time_prev = previous_hour.strftime('%H') + '00'
+
         nx, ny, location = get_factory_coordinates(factory_id)
-        ncst_datetime, weather_info = get_ncst_data(nx, ny, service_key)
-        fcst_datetime, first_sky = get_fcst_data(nx, ny, service_key)
+        ncst_datetime, weather_info = get_ncst_data(base_date, base_time, nx, ny, service_key)
+        fcst_datetime, first_sky = get_fcst_data(base_date, base_time, base_date_prev, base_time_prev, nx, ny, service_key)
         
         # 강수량 범주 확인
         rn1_category = rn1_to_category(weather_info.get('RN1', '정보 없음'))
@@ -163,8 +161,6 @@ def get_weather_info(factory_id):
 @app.route('/weather', methods=['GET'])
 def weather():
     try:
-        # data = request.get_json()
-        # factory_id = data.get('factory_id')
         factory_id = request.args.get('factory_id')
         if factory_id is None: 
             return jsonify({"오류": "factory_id가 제공되지 않았습니다."}), 400

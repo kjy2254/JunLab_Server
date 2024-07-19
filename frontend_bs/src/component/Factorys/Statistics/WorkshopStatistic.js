@@ -2,11 +2,14 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { EnvIndexToText } from "../../../util";
+import WorkShopModal from "./Modals/WorkShopModal";
 import styles from "./Statistic.module.css";
 
 function WorkshopStatistic({ update }) {
   const { factoryId } = useParams();
   const [envData, setEnvData] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedModule, setSelectedModule] = useState();
 
   useEffect(() => {
     const fetchData = () => {
@@ -39,23 +42,34 @@ function WorkshopStatistic({ update }) {
           <div
             className={`${styles.card} ${styles.level_default} layer3`}
             key={index}
+            onClick={() => {
+              setModalOpen(true);
+              setSelectedModule(e.module_id);
+            }}
           >
             <div className={styles.title}>{e.module_name}</div>
             <hr />
             <div className={styles.text}>
               <div className={styles.aq} title={`Index: ${e.env_index}`}>
-                <span className={styles.head}>&gt; 공기질 지수</span>
+                <span className={styles.head}>&gt; 공기질 상태</span>
                 <span>{EnvIndexToText(e.env_index)}</span>
               </div>
               <hr className="vertical" />
               <div className={styles.worker}>
                 <span className={styles.head}>&gt; 작업자</span>
-                <span>{e.num_of_workers}명</span>
+                <span>
+                  {e.num_of_online_workers} / {e.num_of_workers}명
+                </span>
               </div>
             </div>
           </div>
         ))}
       </div>
+      <WorkShopModal
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        data={envData.find((e) => e.module_id == selectedModule)}
+      />
     </div>
   );
 }

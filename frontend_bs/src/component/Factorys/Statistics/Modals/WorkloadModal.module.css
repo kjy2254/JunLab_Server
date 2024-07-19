@@ -12,7 +12,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
   overflow: auto;
   border: none;
 }
@@ -46,7 +46,7 @@
 .workermodal .body {
   width: 100%;
   height: 100%;
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
   margin-top: 1rem;
   overflow-y: scroll;
 }
@@ -70,7 +70,7 @@
   /* height: 25rem; */
   margin: 1rem 0 0 1rem;
   /* background: var(--layer3-bg-color); */
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
   display: flex;
   flex-direction: column;
   padding: 1rem;
@@ -197,26 +197,18 @@
   width: 0;
 }
 
-/* @media (max-width: 1350px) {
-  .workermodal .card {
-    width: calc(100% / 4 - 1rem);
-  }
-}
-
-@media (max-width: 1150px) {
-  .workermodal .card {
-    width: calc(100% / 3 - 1rem);
-  }
-}
-
-@media (max-width: 950px) {
+@media (max-width: 1450px) {
   .workermodal .card {
     width: calc(100% / 2 - 1rem);
   }
 }
-
-@media (max-width: 650px) {
+@media (max-width: 1070px) {
   .workermodal .card {
     width: calc(100% / 1 - 1rem);
   }
-} */
+}
+@media (max-width: 580px) {
+  .workermodal .card .cardbody {
+    flex-direction: column;
+  }
+}

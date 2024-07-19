@@ -21,7 +21,7 @@ const customModalStyles = {
   },
 };
 
-function WorkerStatisticModal({
+function HealthIndexModal({
   modalOpen,
   setModalOpen,
   data,
@@ -112,4 +112,4 @@ function WorkerStatisticModal({
   );
 }
 
-export default WorkerStatisticModal;
+export default HealthIndexModal;

@@ -151,24 +151,26 @@ function Sidebar(props) {
                 </li>
               </Link>
             </ul>
-            <Link
-              className="link-unstyled"
-              to={`/factorymanagement/factory/${factoryId}/dashboardLegacy`}
-            >
-              <li>
-                <div className="wrapper">
-                  <div className="menu-icon">
-                    <FontAwesomeIcon
-                      icon={faHouse}
-                      style={{ width: "100%", height: "100%" }}
-                    />
+            {process.env.REACT_APP_ENV === "development" && (
+              <Link
+                className="link-unstyled"
+                to={`/factorymanagement/factory/${factoryId}/dashboardLegacy`}
+              >
+                <li>
+                  <div className="wrapper">
+                    <div className="menu-icon">
+                      <FontAwesomeIcon
+                        icon={faHouse}
+                        style={{ width: "100%", height: "100%" }}
+                      />
+                    </div>
+                    <div className={`menu-text ${props.show ? "" : "d-none"}`}>
+                      Legacy
+                    </div>
                   </div>
-                  <div className={`menu-text ${props.show ? "" : "d-none"}`}>
-                    Legacy
-                  </div>
-                </div>
-              </li>
-            </Link>
+                </li>
+              </Link>
+            )}
           </ul>
         </div>
         <ul className="bottom-item">

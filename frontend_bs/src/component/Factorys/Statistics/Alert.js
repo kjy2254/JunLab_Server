@@ -10,7 +10,7 @@ function Alert() {
     if (textRef.current) {
       const textWidth = textRef.current.offsetWidth;
       const containerWidth = textRef.current.parentElement.offsetWidth;
-      const duration = textWidth / 50; // 속도를 조절하는 계산식
+      const duration = textWidth / 25; // 속도를 조절하는 계산식
 
       textRef.current.style.animationDuration = `${duration}s`;
       textRef.current.style.transform = `translateX(${containerWidth}px)`;
@@ -47,6 +47,7 @@ function Alert() {
       });
     }
   }, []);
+
   return (
     <div className={`${styles.alert} ${styles.layer} layer2`}>
       <span className={styles.bar} />

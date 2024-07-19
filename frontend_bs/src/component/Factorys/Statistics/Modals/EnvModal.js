@@ -35,7 +35,7 @@ function EnvModal({ modalOpen, modalClose, selectedEnvCard, img }) {
       isOpen={modalOpen}
       style={customModalStyles}
       className="envmodal layerModal"
-      shouldCloseOnOverlayClick={false}
+      onRequestClose={modalClose}
       appElement={document.getElementById("root")}
     >
       <div className="header">
