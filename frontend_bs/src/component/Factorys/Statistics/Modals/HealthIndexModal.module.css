@@ -149,6 +149,12 @@
   text-wrap: nowrap;
 }
 
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
 @media (max-width: 680px) {
   .workermodal {
     width: calc(100% - 7rem);

@@ -1,0 +1,285 @@
+.air-quality {
+  width: 100%;
+  /* max-width: 42rem; */
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden;
+  /* min-height: 45rem; */
+}
+
+.air-quality .body {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  /* align-items: center; */
+}
+
+.air-quality .body .h2 {
+  margin: 0.8rem 0 0 1rem;
+  font-size: large;
+  position: absolute;
+}
+
+.air-quality .body .left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.air-quality .body .right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.air-quality .graph-wrapper {
+  display: flex;
+  flex-direction: row;
+  padding: 1rem;
+  width: 100%;
+  /* height: 100%; */
+  height: 24rem;
+  /* background: #000; */
+}
+
+.air-quality .graph-aq {
+  margin-left: 1rem;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  flex-grow: 1;
+}
+
+.air-quality .graph-radar {
+  border-radius: 0.5rem;
+  padding: 1rem;
+
+  width: 25rem;
+  height: 100%;
+}
+
+.air-quality .body .workshop-card-wrapper {
+  margin-top: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 15rem;
+  overflow-y: scroll;
+  padding: 0 1rem;
+  max-height: 28rem;
+}
+
+.air-quality .body .workshop-card-wrapper .card {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.air-quality .body .workshop-card-wrapper .card .text {
+  justify-content: space-between;
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.air-quality .body .info-card-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  padding-right: 1rem;
+  /* margin-bottom: 1rem; */
+  margin-top: 3.5rem;
+}
+
+.air-quality .body .info-card-wrapper .card {
+  font-size: large;
+  padding: 0.7rem;
+  border-radius: 0.5rem;
+  width: calc(100% / 5 - 1rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 1rem;
+  overflow: hidden;
+}
+
+.air-quality .info-card-wrapper .card svg {
+  border-radius: 100%;
+  width: 13px;
+  height: 13px;
+  padding: 0.2rem;
+  font-size: small;
+  margin-right: 0.3rem;
+}
+
+.air-quality .info-card-wrapper .card .key {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: small;
+  font-weight: bold;
+}
+
+.air-quality .info-card-wrapper .card .value {
+  font-size: large;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.air-quality .env-card-wrapper {
+  display: flex;
+  padding-right: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.air-quality .env-card-wrapper .card {
+  display: flex;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  width: calc(100% / 6 - 1rem);
+  margin-bottom: 1rem;
+  cursor: pointer;
+
+  margin: 1rem 0 0 1rem;
+}
+
+.air-quality .env-card-wrapper .card .icon {
+  width: 2rem;
+  margin-right: 0.5rem;
+}
+
+.air-quality .env-card-wrapper .card .text {
+  /* padding-left: 1rem; */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-size: large;
+  text-wrap: nowrap;
+  overflow: hidden;
+}
+
+.air-quality .env-card-wrapper .card .text .key {
+  text-align: left;
+  font-weight: bold;
+}
+
+.air-quality .env-card-wrapper .card .text .value {
+  text-align: right;
+  font-size: large;
+}
+
+.air-quality .body .workshop-card-wrapper .card:hover .progress-bar {
+  animation-play-state: paused;
+}
+
+.progress-bar {
+  height: 2px;
+}
+.progress-bar.selected {
+  background-color: #76c7c0;
+  animation: progress-animation 10s linear;
+}
+
+@keyframes progress-animation {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/*-----------------------------------------------------------------*/
+
+.layer {
+  border-radius: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.header {
+  font-size: larger;
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  /* padding-bottom: 0; */
+  text-align: left;
+  text-wrap: nowrap;
+  font-weight: bold;
+}
+
+.bar {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  background: rgb(57, 139, 247);
+  width: 2px;
+  height: 30px;
+}
+
+.vertical {
+  height: 100%;
+  border-left: 1px var(--border-color) solid;
+  width: 0;
+}
+
+.level_default {
+  /* border-bottom: 2px solid gray;
+  border-top: 2px solid gray; */
+  border-left: 4px solid gray;
+}
+
+.level5 {
+  /* border-bottom: 2px solid rgb(250, 0, 25);
+  border-top: 2px solid rgb(250, 0, 25); */
+  border-left: 4px solid rgb(250, 0, 25);
+}
+
+.level4 {
+  /* border-bottom: 2px solid rgb(253, 188, 58);
+  border-top: 2px solid rgb(253, 188, 58); */
+  border-left: 4px solid rgb(253, 188, 58);
+}
+
+.level3 {
+  /* border-bottom: 2px solid rgb(255, 252, 75);
+  border-top: 2px solid rgb(255, 252, 75); */
+  border-left: 4px solid rgb(255, 252, 75);
+}
+
+.level2 {
+  /* border-bottom: 2px solid rgb(150, 208, 96);
+  border-top: 2px solid rgb(150, 208, 96); */
+  border-left: 4px solid rgb(150, 208, 96);
+}
+
+.level1 {
+  /* border-bottom: 2px solid rgb(34, 180, 237);
+  border-top: 2px solid rgb(34, 180, 237); */
+  border-left: 4px solid rgb(34, 180, 237);
+}
+
+.level5 .value {
+  color: rgb(250, 0, 25);
+}
+
+.level4 .value {
+  color: rgb(253, 188, 58);
+}
+
+.level3 .value {
+  color: rgb(255, 252, 75);
+}
+
+.level2 .value {
+  color: rgb(150, 208, 96);
+}
+
+.level1 .value {
+  color: rgb(34, 180, 237);
+}

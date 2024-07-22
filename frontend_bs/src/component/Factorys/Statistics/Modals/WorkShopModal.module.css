@@ -78,6 +78,7 @@
   border-radius: 0.5rem;
   width: calc(100% / 3 - 1rem);
   margin-bottom: 1rem;
+  cursor: pointer;
 
   margin: 1rem 0 0 1rem;
 }
@@ -176,6 +177,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .workshopmodal .workers .worker-card .status {

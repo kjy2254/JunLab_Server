@@ -21,32 +21,33 @@ const customModalStyles = {
   },
 };
 
-function WorkerModal({ modalOpen, setModalOpen, selectedWorker, back }) {
-  const [data, setData] = useState({});
+function WorkerModal({ modalOpen, setModalOpen, data, previousModal }) {
+  const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
     axios
-      .get(`http://junlab.postech.ac.kr:880/api2/user/${selectedWorker}/info`)
+      .get(
+        `http://junlab.postech.ac.kr:880/api2/user/${data?.selectedWorker}/info`
+      )
       .then((response) => {
         const data = response.data;
-        // console.log(data);
-        setData(data);
+        setUserInfo(data);
       })
       .catch((error) => {
         console.error("API 요청 실패:", error);
       });
-  }, [selectedWorker]);
+  }, [data]);
 
   return (
     <Modal
-      isOpen={modalOpen == 3}
+      isOpen={modalOpen}
       style={customModalStyles}
       className="workermodal layerModal"
       shouldCloseOnOverlayClick={false}
       appElement={document.getElementById("root")}
       onRequestClose={() => setModalOpen(0)}
     >
-      <span className="back" onClick={() => setModalOpen(back)}>
+      <span className="back" onClick={() => setModalOpen(previousModal)}>
         <FontAwesomeIcon icon={faArrowLeft} />
         &nbsp;뒤로
       </span>
@@ -57,15 +58,16 @@ function WorkerModal({ modalOpen, setModalOpen, selectedWorker, back }) {
       />
       <div className="header">
         <div className="user-info">
-          <span className="name">{data?.name}</span>
-          <span className="watch">작업장: {data?.airwall_name || "-"}</span>
-          <span className="watch">워치: {data?.watch_id}</span>
+          <span className="name">{userInfo?.name}</span>
+          <span className="watch">작업장: {userInfo?.airwall_name || "-"}</span>
+          <span className="watch">워치: {userInfo?.watch_id}</span>
         </div>
         <div className="right">
           <div className="score">
-            <span title={`Index: ${data?.health_index}`}>
-              건강 상태: {healthIndexToText(data?.health_index)} &nbsp;
+            <span title={`Index: ${userInfo?.health_index}`}>
+              건강 상태: {healthIndexToText(userInfo?.health_index)} &nbsp;
             </span>
+
             <Tooltip
               content={[
                 "건강 점수는 바이오 측정치들을 복합적으로 고려한 수치입니다.",
@@ -79,25 +81,25 @@ function WorkerModal({ modalOpen, setModalOpen, selectedWorker, back }) {
           </div>
           <div className="score">
             <div>작업강도:</div>
-            <div className={`workload lv${data.workload}`}>
-              {data?.workload}단계
+            <div className={`workload lv${userInfo.workload}`}>
+              {userInfo?.workload}단계
             </div>
           </div>
         </div>
       </div>
       <HealthGraphCard
         header={"심박수(bpm)"}
-        selectedWorker={selectedWorker}
+        selectedWorker={data?.selectedWorker}
         endpoint={"heartrate"}
       />
       <HealthGraphCard
         header={"체온(°C)"}
-        selectedWorker={selectedWorker}
+        selectedWorker={data?.selectedWorker}
         endpoint={"temperature"}
       />
       <HealthGraphCard
         header={"산소포화도(%)"}
-        selectedWorker={selectedWorker}
+        selectedWorker={data?.selectedWorker}
         endpoint={"oxygen"}
       />
     </Modal>

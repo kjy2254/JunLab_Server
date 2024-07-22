@@ -33,18 +33,14 @@ function WorkloadModal({
   modalOpen,
   setModalOpen,
   data,
-  headerText,
-  setSelectedWorker,
-  filter,
   setPreviousModal,
-  setUpdate,
+  setWorkerModalData,
 }) {
-  const filteredData = data?.filter(filter);
   const { factoryId } = useParams();
   const [modules, setModules] = useState([]);
+  const [workers, setWorkers] = useState([]);
 
   const fetchModules = () => {
-    // console.log("filater", filteredData);
     axios
       .get(`http://junlab.postech.ac.kr:880/api2/factory/${factoryId}/airwalls`)
       .then((response) => {
@@ -52,13 +48,42 @@ function WorkloadModal({
       });
   };
 
+  const fetchWorkers = () => {
+    axios
+      .get(`http://junlab.postech.ac.kr:880/api2/factory/${factoryId}/workers`)
+      .then((response) => {
+        const filteredData = response.data.filter((d) => {
+          switch (data.filter) {
+            case "All":
+              return true;
+            case "Wearing":
+              return d.last_wear && d.online;
+            case "Not worn":
+              return !d.last_wear || !d.online;
+            case 5:
+              return d.online && d.last_wear === 1 && d.workload === 5;
+            case 4:
+              return d.online && d.last_wear === 1 && d.workload == 4;
+            case 3:
+              return d.online && d.last_wear === 1 && d.workload == 3;
+            case 2:
+              return d.online && d.last_wear === 1 && d.workload == 2;
+            case 1:
+              return d.online && d.last_wear === 1 && d.workload == 1;
+          }
+        });
+        setWorkers(filteredData);
+      });
+  };
+
   useEffect(() => {
     fetchModules();
+    fetchWorkers();
   }, [modalOpen, data]);
 
   return (
     <Modal
-      isOpen={modalOpen == 2}
+      isOpen={modalOpen}
       style={customModalStyles}
       className={`${styles.workermodal} layerModal`}
       appElement={document.getElementById("root")}
@@ -69,13 +94,13 @@ function WorkloadModal({
         icon={faClose}
         onClick={() => setModalOpen(0)}
       />
-      <div className={styles.header}>
+      {/* <div className={styles.header}>
         <div className={`${styles["title"]}`}>{headerText}</div>
-      </div>
+      </div> */}
       <div className={`${styles.body} layer2`}>
         <div className={`${styles["card-wrapper"]}`}>
-          {filteredData.length > 0 ? (
-            filteredData?.map((e, index) => (
+          {workers.length > 0 ? (
+            workers?.map((e, index) => (
               <div className={`${styles.card} layer3`} key={index}>
                 <div className={styles.status}>
                   <FontAwesomeIcon
@@ -101,9 +126,9 @@ function WorkloadModal({
                       width={120}
                       height={120}
                       onClick={() => {
-                        setSelectedWorker(e.user_id);
                         setModalOpen(3);
-                        setPreviousModal(2);
+                        setPreviousModal(1);
+                        setWorkerModalData({ selectedWorker: e.user_id });
                       }}
                     />
                     <div className={styles.name}>
@@ -122,13 +147,13 @@ function WorkloadModal({
                     <div className={styles.text}>
                       <span>작업장:</span>
                       <select
-                        onChange={(s) => {
-                          axios
-                            .put(
-                              `http://junlab.postech.ac.kr:880/api2/user/${e.user_id}/airwall?id=${s.target.value}`
-                            )
-                            .then(() => setUpdate((prev) => !prev));
-                        }}
+                      // onChange={(s) => {
+                      //   axios
+                      //     .put(
+                      //       `http://junlab.postech.ac.kr:880/api2/user/${e.user_id}/airwall?id=${s.target.value}`
+                      //     )
+                      //     .then(() => setUpdate((prev) => !prev));
+                      // }}
                       >
                         <option value={"null"}>선택</option>
                         {modules?.map((m) => (

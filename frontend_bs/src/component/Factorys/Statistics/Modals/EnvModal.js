@@ -1,4 +1,4 @@
-import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import Highcharts from "highcharts";
@@ -20,7 +20,7 @@ const customModalStyles = {
   },
 };
 
-function EnvModal({ modalOpen, modalClose, selectedEnvCard, img }) {
+function EnvModal({ modalOpen, setModalOpen, data, previousModal }) {
   const header = {
     tvoc: "총휘발성유기화합물(ppb)",
     co2: "이산화탄소(ppm)",
@@ -35,18 +35,22 @@ function EnvModal({ modalOpen, modalClose, selectedEnvCard, img }) {
       isOpen={modalOpen}
       style={customModalStyles}
       className="envmodal layerModal"
-      onRequestClose={modalClose}
+      onRequestClose={() => setModalOpen(0)}
       appElement={document.getElementById("root")}
     >
       <div className="header">
+        <div className="left" onClick={() => setModalOpen(previousModal)}>
+          <FontAwesomeIcon icon={faArrowLeft} />
+          &nbsp;뒤로
+        </div>
         <div className="right">
-          <FontAwesomeIcon icon={faClose} onClick={modalClose} />
+          <FontAwesomeIcon icon={faClose} onClick={() => setModalOpen(0)} />
         </div>
       </div>
       <EnvGraphCard
-        header={header[selectedEnvCard]}
-        img={img}
-        endpoint={selectedEnvCard}
+        header={header[data.env]}
+        img={data.img}
+        endpoint={data.env}
       />
     </Modal>
   );

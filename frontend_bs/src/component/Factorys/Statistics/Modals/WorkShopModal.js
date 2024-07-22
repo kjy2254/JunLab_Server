@@ -35,30 +35,41 @@ const customModalStyles = {
   },
 };
 
-function WorkShopModal({ modalOpen, setModalOpen, data }) {
+function WorkShopModal({
+  modalOpen,
+  setModalOpen,
+  data,
+  setPreviousModal,
+  setWorkerModalData,
+  setEnvModalData,
+}) {
   const [options, setOptions] = useState({});
   const [chartData, setChartData] = useState([]);
   const [workers, setWorkers] = useState([]);
 
+  const fetchChartData = () => {
+    axios
+      .get(
+        `http://junlab.postech.ac.kr:880/api2/index/env/${data?.module_id}?minute=300&slot=20`
+      )
+      .then((response) => {
+        const formattedData = response.data.map((item) => ({
+          x: item.x,
+          y: item.y,
+        }));
+        setChartData(formattedData);
+        console.log("res", response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
+
   useEffect(() => {
     if (data?.module_id) {
-      axios
-        .get(
-          `http://junlab.postech.ac.kr:880/api2/index/env/${data?.module_id}?minute=300&slot=20`
-        )
-        .then((response) => {
-          const formattedData = response.data.map((item) => ({
-            x: item.x,
-            y: item.y,
-          }));
-          setChartData(formattedData);
-          console.log("res", response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-        });
+      fetchChartData();
     }
-  }, [data?.module_id]);
+  }, [data]);
 
   useEffect(() => {
     const newOptions = {
@@ -256,7 +267,9 @@ function WorkShopModal({ modalOpen, setModalOpen, data }) {
                 <FontAwesomeIcon icon={faIndustry} />
                 작업장
               </span>
-              <span className={`${styles["value"]}`}>{data?.module_name}</span>
+              <span className={`${styles["value"]}`} title={data?.module_name}>
+                {data?.module_name}
+              </span>
             </div>
             <div className={`${styles["info-card"]} layer3`}>
               <span className={`${styles["key"]}`}>
@@ -269,7 +282,10 @@ function WorkShopModal({ modalOpen, setModalOpen, data }) {
                 />
                 상태
               </span>
-              <span className={`${styles["value"]}`}>
+              <span
+                className={`${styles["value"]}`}
+                title={data?.isOnline ? "온라인" : "오프라인"}
+              >
                 {data?.isOnline ? "온라인" : "오프라인"}
               </span>
             </div>
@@ -278,7 +294,10 @@ function WorkShopModal({ modalOpen, setModalOpen, data }) {
                 <FontAwesomeIcon icon={faWind} />
                 공기질 상태
               </span>
-              <span className={`${styles["value"]}`}>
+              <span
+                className={`${styles["value"]}`}
+                title={EnvIndexToText(data?.env_index)}
+              >
                 {EnvIndexToText(data?.env_index)}
               </span>
             </div>
@@ -287,7 +306,10 @@ function WorkShopModal({ modalOpen, setModalOpen, data }) {
                 <FontAwesomeIcon icon={faClock} />
                 측정시간
               </span>
-              <span className={`${styles["value"]}`}>
+              <span
+                className={`${styles["value"]}`}
+                title={new Date(data?.last_update).toLocaleTimeString()}
+              >
                 {new Date(data?.last_update).toLocaleTimeString()}
               </span>
             </div>
@@ -296,21 +318,33 @@ function WorkShopModal({ modalOpen, setModalOpen, data }) {
                 <FontAwesomeIcon icon={faIdCard} />
                 측정기 ID
               </span>
-              <span className={`${styles["value"]}`}>{data?.module_id}</span>
+              <span className={`${styles["value"]}`} title={data?.module_id}>
+                {data?.module_id}
+              </span>
             </div>
             <div className={`${styles["info-card"]} layer3`}>
               <span className={`${styles["key"]}`}>
                 <FontAwesomeIcon icon={faReceipt} />
                 설명
               </span>
-              <span className={`${styles["value"]}`}>
+              <span
+                className={`${styles["value"]}`}
+                title={data?.module_description || "-"}
+              >
                 {data?.module_description || "-"}
               </span>
             </div>
           </div>
 
           <div className={`${styles["env-cards"]}`}>
-            <div className={`${styles["env-card"]} layer3`}>
+            <div
+              className={`${styles["env-card"]} layer3`}
+              onClick={() => {
+                setEnvModalData({ img: tvoc, env: "tvoc" });
+                setModalOpen(5);
+                setPreviousModal(4);
+              }}
+            >
               <img className={styles.icon} src={tvoc} />
               <div className={styles.text}>
                 <span className={styles.key}>TVOC</span>
@@ -319,7 +353,14 @@ function WorkShopModal({ modalOpen, setModalOpen, data }) {
                 </span>
               </div>
             </div>
-            <div className={`${styles["env-card"]} layer3`}>
+            <div
+              className={`${styles["env-card"]} layer3`}
+              onClick={() => {
+                setEnvModalData({ img: co2, env: "co2" });
+                setModalOpen(5);
+                setPreviousModal(4);
+              }}
+            >
               <img className={styles.icon} src={co2} />
               <div className={styles.text}>
                 <span className={styles.key}>CO2</span>
@@ -328,7 +369,14 @@ function WorkShopModal({ modalOpen, setModalOpen, data }) {
                 </span>
               </div>
             </div>
-            <div className={`${styles["env-card"]} layer3`}>
+            <div
+              className={`${styles["env-card"]} layer3`}
+              onClick={() => {
+                setEnvModalData({ img: tvoc, env: "tvoc" });
+                setModalOpen(5);
+                setPreviousModal(4);
+              }}
+            >
               <img className={styles.icon} src={finedust} />
               <div className={styles.text}>
                 <span className={styles.key}>미세먼지(PM10)</span>
@@ -385,7 +433,15 @@ function WorkShopModal({ modalOpen, setModalOpen, data }) {
             {workers
               ?.filter((w) => w.isOnline == 1)
               .map((e) => (
-                <div className={`${styles["worker-card"]} layer3`}>
+                <div
+                  className={`${styles["worker-card"]} layer3`}
+                  onClick={() => {
+                    setModalOpen(3);
+                    setPreviousModal(4);
+                    console.log(e);
+                    setWorkerModalData({ selectedWorker: e.user_id });
+                  }}
+                >
                   <div className={`${styles["status"]}`}>
                     <img
                       src={`http://junlab.postech.ac.kr:880/api2/image/${e.profile_image_path}`}
@@ -425,7 +481,15 @@ function WorkShopModal({ modalOpen, setModalOpen, data }) {
             {workers
               ?.filter((w) => w.isOnline == 0)
               .map((e) => (
-                <div className={`${styles["worker-card"]} layer3`}>
+                <div
+                  className={`${styles["worker-card"]} layer3`}
+                  onClick={() => {
+                    setModalOpen(3);
+                    setPreviousModal(4);
+                    console.log(e);
+                    setWorkerModalData({ selectedWorker: e.user_id });
+                  }}
+                >
                   <div className={`${styles["status"]}`}>
                     <img
                       src={`http://junlab.postech.ac.kr:880/api2/image/${e.profile_image_path}`}

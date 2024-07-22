@@ -12,10 +12,9 @@ import temperature from "../../../image/temperature2.svg";
 import tvoc from "../../../image/tvoc2.svg";
 import ultrafinedust from "../../../image/ultrafinedust2.svg";
 import { EnvIndexToText } from "../../../util";
-import EnvModal from "./Modals/EnvModal";
 import styles from "./Statistic.module.css";
 
-function AirQuality() {
+function AirQuality({ setEnvModalData, setModalOpen }) {
   const [envData, setEnvData] = useState([]);
   const [selectedModule, setSelectedModule] = useState("");
   const [pause, setPause] = useState(false);
@@ -56,14 +55,13 @@ function AirQuality() {
                 parseFloat(module.temperature) || 0,
                 parseFloat(module.humid) || 0,
               ],
-              last_update: module.isOnline
-                ? new Date(module.last_update).toLocaleTimeString()
-                : new Date(module.last_update).toLocaleTimeString(),
+              last_update: new Date(module.last_update).toLocaleTimeString(),
               last_update_long: new Date(module.last_update).toLocaleString(),
               marker: {
                 symbol: "diamond",
                 radius: 4,
               },
+              isOnline: module.isOnline,
             };
             return newData;
           });
@@ -236,7 +234,7 @@ function AirQuality() {
     <div className={`${styles["air-quality"]} ${styles.layer} layer2`}>
       <span className={styles.bar} />
       <div className={styles.header}>
-        <span>공기질 현황</span>
+        <span>실시간 공기질 현황</span>
         <div className={styles.select}>
           <FontAwesomeIcon
             onClick={() => setPause((prev) => !prev)}
@@ -293,9 +291,10 @@ function AirQuality() {
         <div className={`${styles["air-cards"]}`}>
           <div
             className={`${styles["card"]} ${styles.level_default} layer3`}
-            onClick={() =>
-              setModal({ ...modal, open: true, img: tvoc, env: "tvoc" })
-            }
+            onClick={() => {
+              setEnvModalData({ img: tvoc, env: "tvoc" });
+              setModalOpen(5);
+            }}
           >
             <img className={styles.icon} src={tvoc} />
             <div className={styles.body}>
@@ -308,9 +307,10 @@ function AirQuality() {
           </div>
           <div
             className={`${styles["card"]} ${styles.level_default} layer3`}
-            onClick={() =>
-              setModal({ ...modal, open: true, img: co2, env: "co2" })
-            }
+            onClick={() => {
+              setEnvModalData({ img: co2, env: "co2" });
+              setModalOpen(5);
+            }}
           >
             <img className={styles.icon} src={co2} />
             <div className={styles.body}>
@@ -323,9 +323,10 @@ function AirQuality() {
           </div>
           <div
             className={`${styles["card"]} ${styles.level_default} layer3`}
-            onClick={() =>
-              setModal({ ...modal, open: true, img: finedust, env: "pm10" })
-            }
+            onClick={() => {
+              setEnvModalData({ img: finedust, env: "pm10" });
+              setModalOpen(5);
+            }}
           >
             <img className={styles.icon} src={finedust} />
             <div className={styles.body}>
@@ -338,14 +339,10 @@ function AirQuality() {
           </div>
           <div
             className={`${styles["card"]} ${styles.level_default} layer3`}
-            onClick={() =>
-              setModal({
-                ...modal,
-                open: true,
-                img: ultrafinedust,
-                env: "pm2_5",
-              })
-            }
+            onClick={() => {
+              setEnvModalData({ img: ultrafinedust, env: "pm2_5" });
+              setModalOpen(5);
+            }}
           >
             <img className={styles.icon} src={ultrafinedust} />
             <div className={styles.body}>
@@ -358,14 +355,10 @@ function AirQuality() {
           </div>
           <div
             className={`${styles["card"]} ${styles.level_default} layer3`}
-            onClick={() =>
-              setModal({
-                ...modal,
-                open: true,
-                img: temperature,
-                env: "temperature",
-              })
-            }
+            onClick={() => {
+              setEnvModalData({ img: temperature, env: "temperature" });
+              setModalOpen(5);
+            }}
           >
             <img className={styles.icon} src={temperature} />
             <div className={styles.body}>
@@ -377,14 +370,10 @@ function AirQuality() {
           </div>
           <div
             className={`${styles["card"]} ${styles.level_default} layer3`}
-            onClick={() =>
-              setModal({
-                ...modal,
-                open: true,
-                img: humid,
-                env: "humid",
-              })
-            }
+            onClick={() => {
+              setEnvModalData({ img: humid, env: "humid" });
+              setModalOpen(5);
+            }}
           >
             <img className={styles.icon} src={humid} />
             <div className={styles.body}>
@@ -399,14 +388,6 @@ function AirQuality() {
       <span className={`${styles["timestamp"]}`}>
         Update: {envData.find((e) => e.id === selectedModule)?.last_update_long}
       </span>
-      <EnvModal
-        modalOpen={modal.open}
-        modalClose={() => {
-          setModal({ ...modal, open: false });
-        }}
-        selectedEnvCard={modal.env}
-        img={modal.img}
-      />
     </div>
   );
 }

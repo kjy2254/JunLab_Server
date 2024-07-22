@@ -17,13 +17,6 @@
   min-width: 25rem;
 }
 
-.second-row {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin-bottom: 1rem;
-}
-
 .first-row {
   display: flex;
   justify-content: center;
@@ -32,10 +25,16 @@
   margin-bottom: 1rem;
 }
 
+.second-row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
 .third-row {
   display: flex;
   justify-content: center;
-  /* height: 36rem; */
   width: 100%;
 }
 
@@ -72,6 +71,7 @@
 
 .worker-summary .body .h2 {
   margin: 0.8rem 0 0 1rem;
+  font-size: large;
 }
 
 .worker-summary .substat {
@@ -222,6 +222,7 @@
   flex-grow: 1;
   overflow: hidden;
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2; /* 표시할 줄 수 */
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
@@ -532,7 +533,8 @@
 }
 
 .count {
-  padding: 1rem;
+  /* padding: 1rem; */
+  padding: 0.4rem 0.7rem 0.4rem 0.7rem;
   border-radius: 0 0.5rem 0.5rem 0;
   display: flex;
   flex-direction: column;

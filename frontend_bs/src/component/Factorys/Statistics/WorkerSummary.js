@@ -5,18 +5,15 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../../../css/Dashboard2.css";
 import Tooltip from "../../Tooltip";
-import HealthIndexModal from "./Modals/HealthIndexModal";
-import WorkerModal from "./Modals/WorkerModal";
-import WorkloadModal from "./Modals/WorkloadModal";
 import styles from "./Statistic.module.css";
 
-function WorkerSummary({ update, setUpdate }) {
-  const [workerModalOpen, setWorkerModalOpen] = useState(0);
-  const [previousModal, setPreviousModal] = useState(0);
-  const [selectedWorker, setSelectedWorker] = useState();
+function WorkerSummary({
+  setWorkloadModalData,
+  setHealthIndexModalData,
+  setWorkerModalData,
+  setModalOpen,
+}) {
   const [data, setData] = useState([]);
-  const [filter, setFilter] = useState(() => (d) => true);
-  const [headerText, setHeaderText] = useState("");
 
   const { factoryId } = useParams();
 
@@ -53,28 +50,23 @@ function WorkerSummary({ update, setUpdate }) {
     fetchData();
     const interval = setInterval(fetchData, 7000);
     return () => clearInterval(interval);
-  }, [factoryId, update]);
-
-  const openModal = (filterCondition, headerText) => {
-    setFilter(() => filterCondition);
-    setHeaderText(headerText);
-  };
+  }, [factoryId]);
 
   return (
     <div className={`${styles["worker-summary"]} ${styles.layer} layer2`}>
       <span className={styles.bar} />
-      <div className={styles.header}>작업자 통계</div>
+      <div className={styles.header}>작업자 안전 현황</div>
       <hr />
       <div className={styles.body}>
         <div className={styles.stat}>
           <div className={styles.watch}>
-            <span className={styles.h2}> &gt; 워치 착용현황</span>
+            <span className={styles.h2}> &gt; 작업 인원 현황</span>
             <div className={styles.cards}>
               <div
                 className={`${styles.count} ${styles.typeA} ${styles.level_default} layer3`}
                 onClick={() => {
-                  setWorkerModalOpen(2);
-                  openModal((d) => true, `작업자 총원: ${data.length}명`);
+                  setModalOpen(1);
+                  setWorkloadModalData({ filter: "All" });
                 }}
               >
                 <span className={styles.key}>총원</span>
@@ -83,13 +75,8 @@ function WorkerSummary({ update, setUpdate }) {
               <div
                 className={`${styles.count} ${styles.typeA} ${styles.level_default} layer3`}
                 onClick={() => {
-                  setWorkerModalOpen(2);
-                  openModal(
-                    (d) => d.online && d.last_wear,
-                    `착용중: ${
-                      data.filter((d) => d.online && d.last_wear).length
-                    }명`
-                  );
+                  setModalOpen(1);
+                  setWorkloadModalData({ filter: "Wearing" });
                 }}
               >
                 <span className={styles.key}>착용중</span>
@@ -100,14 +87,8 @@ function WorkerSummary({ update, setUpdate }) {
               <div
                 className={`${styles.count} ${styles.typeA} ${styles.level_default} layer3`}
                 onClick={() => {
-                  setWorkerModalOpen(2);
-                  openModal(
-                    (d) => !d.online || !d.last_wear,
-                    `미착용: ${
-                      data.length -
-                      data.filter((d) => d.online && d.last_wear).length
-                    }명`
-                  );
+                  setModalOpen(1);
+                  setWorkloadModalData({ filter: "Not worn" });
                 }}
               >
                 <span className={styles.key}>미착용</span>
@@ -123,7 +104,7 @@ function WorkerSummary({ update, setUpdate }) {
           <div className={styles.level}>
             <div className={styles.substat}>
               <span className={styles.h2}>
-                &gt; 작업 강도 현황&nbsp;
+                &gt; 작업 강도&nbsp;
                 <Tooltip
                   content={[
                     "작업 강도란?",
@@ -139,16 +120,8 @@ function WorkerSummary({ update, setUpdate }) {
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level5} layer3`}
                   onClick={() => {
-                    setWorkerModalOpen(2);
-                    openModal(
-                      (d) => d.online && d.last_wear === 1 && d.workload === 5,
-                      `작업강도 5단계: ${
-                        data.filter(
-                          (d) =>
-                            d.online && d.last_wear === 1 && d.workload === 5
-                        ).length
-                      }명`
-                    );
+                    setModalOpen(1);
+                    setWorkloadModalData({ filter: 5 });
                   }}
                 >
                   <span className={styles.key}>5단계</span>
@@ -164,16 +137,8 @@ function WorkerSummary({ update, setUpdate }) {
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level4} layer3`}
                   onClick={() => {
-                    setWorkerModalOpen(2);
-                    openModal(
-                      (d) => d.online && d.last_wear === 1 && d.workload === 4,
-                      `작업강도 4단계: ${
-                        data.filter(
-                          (d) =>
-                            d.online && d.last_wear === 1 && d.workload === 4
-                        ).length
-                      }명`
-                    );
+                    setModalOpen(1);
+                    setWorkloadModalData({ filter: 4 });
                   }}
                 >
                   <span className={styles.key}>4단계</span>
@@ -189,16 +154,8 @@ function WorkerSummary({ update, setUpdate }) {
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level3} layer3`}
                   onClick={() => {
-                    setWorkerModalOpen(2);
-                    openModal(
-                      (d) => d.online && d.last_wear === 1 && d.workload === 3,
-                      `작업강도 3단계: ${
-                        data.filter(
-                          (d) =>
-                            d.online && d.last_wear === 1 && d.workload === 3
-                        ).length
-                      }명`
-                    );
+                    setModalOpen(1);
+                    setWorkloadModalData({ filter: 3 });
                   }}
                 >
                   <span className={styles.key}>3단계</span>
@@ -214,16 +171,8 @@ function WorkerSummary({ update, setUpdate }) {
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level2} layer3`}
                   onClick={() => {
-                    setWorkerModalOpen(2);
-                    openModal(
-                      (d) => d.online && d.last_wear === 1 && d.workload === 2,
-                      `작업강도 2단계: ${
-                        data.filter(
-                          (d) =>
-                            d.online && d.last_wear === 1 && d.workload === 2
-                        ).length
-                      }명`
-                    );
+                    setModalOpen(1);
+                    setWorkloadModalData({ filter: 2 });
                   }}
                 >
                   <span className={styles.key}>2단계</span>
@@ -239,16 +188,8 @@ function WorkerSummary({ update, setUpdate }) {
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level1} layer3`}
                   onClick={() => {
-                    setWorkerModalOpen(2);
-                    openModal(
-                      (d) => d.online && d.last_wear === 1 && d.workload === 1,
-                      `작업강도 1단계: ${
-                        data.filter(
-                          (d) =>
-                            d.online && d.last_wear === 1 && d.workload === 1
-                        ).length
-                      }명`
-                    );
+                    setModalOpen(1);
+                    setWorkloadModalData({ filter: 1 });
                   }}
                 >
                   <span className={styles.key}>1단계</span>
@@ -266,7 +207,7 @@ function WorkerSummary({ update, setUpdate }) {
             <hr />
             <div className={styles.substat}>
               <span className={styles.h2}>
-                &gt; 작업자 건강상태 현황&nbsp;
+                &gt; 작업자 건강&nbsp;
                 <Tooltip
                   content={[
                     "건강 지수란?",
@@ -282,14 +223,8 @@ function WorkerSummary({ update, setUpdate }) {
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level5} layer3`}
                   onClick={() => {
-                    setWorkerModalOpen(1);
-                    openModal(
-                      (d) =>
-                        d.online && d.last_wear === 1 && d.health_index >= 0.9,
-                      `건강상태 매우 나쁨: ${
-                        data.filter((d) => d.health_index >= 0.9).length
-                      }명`
-                    );
+                    setModalOpen(2);
+                    setHealthIndexModalData({ filter: "매우 나쁨" });
                   }}
                 >
                   <span className={styles.key}>매우 나쁨</span>
@@ -306,23 +241,8 @@ function WorkerSummary({ update, setUpdate }) {
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level4} layer3`}
                   onClick={() => {
-                    setWorkerModalOpen(1);
-                    openModal(
-                      (d) =>
-                        d.online &&
-                        d.last_wear === 1 &&
-                        d.health_index < 0.9 &&
-                        d.health_index >= 0.6,
-                      `건강상태 나쁨: ${
-                        data.filter(
-                          (d) =>
-                            d.online &&
-                            d.last_wear === 1 &&
-                            d.health_index < 0.9 &&
-                            d.health_index >= 0.6
-                        ).length
-                      }명`
-                    );
+                    setModalOpen(2);
+                    setHealthIndexModalData({ filter: "나쁨" });
                   }}
                 >
                   <span className={styles.key}>나쁨</span>
@@ -342,23 +262,8 @@ function WorkerSummary({ update, setUpdate }) {
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level3} layer3`}
                   onClick={() => {
-                    setWorkerModalOpen(1);
-                    openModal(
-                      (d) =>
-                        d.online &&
-                        d.last_wear === 1 &&
-                        d.health_index < 0.6 &&
-                        d.health_index >= 0.3,
-                      `건강상태 보통: ${
-                        data.filter(
-                          (d) =>
-                            d.online &&
-                            d.last_wear === 1 &&
-                            d.health_index < 0.6 &&
-                            d.health_index >= 0.3
-                        ).length
-                      }명`
-                    );
+                    setModalOpen(2);
+                    setHealthIndexModalData({ filter: "보통" });
                   }}
                 >
                   <span className={styles.key}>보통</span>
@@ -378,23 +283,8 @@ function WorkerSummary({ update, setUpdate }) {
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level2} layer3`}
                   onClick={() => {
-                    setWorkerModalOpen(1);
-                    openModal(
-                      (d) =>
-                        d.online &&
-                        d.last_wear === 1 &&
-                        d.health_index < 0.3 &&
-                        d.health_index >= 0.1,
-                      `건강상태 좋음: ${
-                        data.filter(
-                          (d) =>
-                            d.online &&
-                            d.last_wear === 1 &&
-                            d.health_index < 0.3 &&
-                            d.health_index >= 0.1
-                        ).length
-                      }명`
-                    );
+                    setModalOpen(2);
+                    setHealthIndexModalData({ filter: "좋음" });
                   }}
                 >
                   <span className={styles.key}>좋음</span>
@@ -414,19 +304,8 @@ function WorkerSummary({ update, setUpdate }) {
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level1} layer3`}
                   onClick={() => {
-                    setWorkerModalOpen(1);
-                    openModal(
-                      (d) =>
-                        d.online && d.last_wear === 1 && d.health_index < 0.1,
-                      `건강상태 매우 좋음: ${
-                        data.filter(
-                          (d) =>
-                            d.online &&
-                            d.last_wear === 1 &&
-                            d.health_index < 0.1
-                        ).length
-                      }명`
-                    );
+                    setModalOpen(2);
+                    setHealthIndexModalData({ filter: "매우 좋음" });
                   }}
                 >
                   <span className={styles.key}>매우 좋음</span>
@@ -445,31 +324,6 @@ function WorkerSummary({ update, setUpdate }) {
           </div>
         </div>
       </div>
-      <WorkloadModal
-        modalOpen={workerModalOpen}
-        setModalOpen={setWorkerModalOpen}
-        data={data}
-        filter={filter}
-        headerText={headerText}
-        setSelectedWorker={setSelectedWorker}
-        setPreviousModal={setPreviousModal}
-        setUpdate={setUpdate}
-      />
-      <HealthIndexModal
-        modalOpen={workerModalOpen}
-        setModalOpen={setWorkerModalOpen}
-        data={data}
-        filter={filter}
-        headerText={headerText}
-        setSelectedWorker={setSelectedWorker}
-        setPreviousModal={setPreviousModal}
-      />
-      <WorkerModal
-        modalOpen={workerModalOpen}
-        setModalOpen={setWorkerModalOpen}
-        selectedWorker={selectedWorker}
-        back={previousModal}
-      />
     </div>
   );
 }

@@ -2,14 +2,11 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { EnvIndexToText } from "../../../util";
-import WorkShopModal from "./Modals/WorkShopModal";
 import styles from "./Statistic.module.css";
 
-function WorkshopStatistic({ update }) {
+function WorkshopStatistic({ setWorkShopModalData, setModalOpen }) {
   const { factoryId } = useParams();
   const [envData, setEnvData] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedModule, setSelectedModule] = useState();
 
   useEffect(() => {
     const fetchData = () => {
@@ -28,13 +25,13 @@ function WorkshopStatistic({ update }) {
     fetchData();
     const interval = setInterval(fetchData, 10000);
     return () => clearInterval(interval);
-  }, [update]);
+  }, []);
 
   return (
     <div className={`${styles["workshop-statistic"]} ${styles.layer} layer2`}>
       <span className={styles.bar} />
       <div className={styles.header}>
-        <span>작업장 통계</span>
+        <span>작업장 공기질 현황</span>
       </div>
       <hr />
       <div className={styles.body}>
@@ -43,8 +40,8 @@ function WorkshopStatistic({ update }) {
             className={`${styles.card} ${styles.level_default} layer3`}
             key={index}
             onClick={() => {
-              setModalOpen(true);
-              setSelectedModule(e.module_id);
+              setModalOpen(4);
+              setWorkShopModalData(e);
             }}
           >
             <div className={styles.title}>{e.module_name}</div>
@@ -65,11 +62,6 @@ function WorkshopStatistic({ update }) {
           </div>
         ))}
       </div>
-      <WorkShopModal
-        modalOpen={modalOpen}
-        setModalOpen={setModalOpen}
-        data={envData.find((e) => e.module_id == selectedModule)}
-      />
     </div>
   );
 }

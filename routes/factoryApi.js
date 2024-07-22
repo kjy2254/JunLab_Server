@@ -682,7 +682,7 @@ api.get("/:moduleId/workers", (req, res) => {
   const moduleId = req.params.moduleId;
 
   let query = `
-    SELECT name, last_workload, a.last_heart_rate, a.last_body_temperature, a.last_oxygen_saturation, a.last_health_index, profile_image_path,
+    SELECT user_id, name, last_workload, a.last_heart_rate, a.last_body_temperature, a.last_oxygen_saturation, a.last_health_index, profile_image_path,
       CASE 
         WHEN TIMESTAMPDIFF(MINUTE, a.last_sync, NOW()) <= 1 THEN true 
         ELSE false 

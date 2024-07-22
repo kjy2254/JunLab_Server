@@ -48,7 +48,8 @@
   cursor: pointer;
 }
 
-.envmodal .header svg:hover {
+.envmodal .header .left:hover,
+.envmodal .header .right:hover {
   opacity: 0.85;
 }
 
@@ -146,10 +147,13 @@
 }
 
 .envmodal .header .right {
-  display: flex;
-  width: 100%;
-  justify-content: flex-end;
-  /* margin-bottom: auto; */
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.envmodal .header .left {
+  margin-right: auto;
+  cursor: pointer;
 }
 
 .envmodal .level {
