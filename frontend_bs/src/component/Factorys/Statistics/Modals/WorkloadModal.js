@@ -142,6 +142,18 @@ function WorkloadModal({
     }
   }, [modalOpen, data, update]);
 
+  const actionRule = (healthLevel, envLevel) => {
+    if (healthLevel === 1 && envLevel === 1) {
+      return "관리가 잘 되고 있습니다. 별도의 조치가 필요하지 않습니다.";
+    } else if (healthLevel >= 3 || envLevel >= 3) {
+      return "일부 주의가 필요합니다. 적절한 조치를 취하세요.";
+    } else if (healthLevel >= 5 || envLevel >= 5) {
+      return "상태가 좋지 않습니다. 즉시 조치가 필요합니다.";
+    } else {
+      return "";
+    }
+  };
+
   return (
     <Modal
       isOpen={modalOpen}
@@ -340,7 +352,11 @@ function WorkloadModal({
                   <div className={styles.footer}>
                     <span className={styles.key}>조치사항</span>
                     <span className={styles.value}>
-                      관리가 잘 되고 있습니다. 별도의 조치가 필요하지 않습니다.
+                      {actionRule(
+                        e.health_level,
+                        modules?.find((m) => m.module_name == e.airwall_name)
+                          ?.env_level
+                      )}
                     </span>
                   </div>
                 </div>

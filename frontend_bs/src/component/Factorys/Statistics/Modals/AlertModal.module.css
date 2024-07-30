@@ -97,10 +97,12 @@
   align-items: center;
 
   margin-right: 1rem;
+  min-width: 5rem;
 }
 
 .alertmodal .body .alert-wrapper .card .log {
   font-size: medium;
+  margin-right: 1rem;
 }
 
 .alertmodal .body .read {

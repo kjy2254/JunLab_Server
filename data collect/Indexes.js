@@ -144,22 +144,35 @@ function fetchRecentDataForUser(user) {
 }
 
 async function Enviroment() {
-  const query = `SELECT module_id FROM airwall;`;
+  const query = `SELECT module_id, 
+                  CASE 
+                    WHEN TIMESTAMPDIFF(MINUTE, last_update, NOW()) <= 30 THEN TRUE
+                    ELSE FALSE
+                  END AS online
+                FROM airwall;`;
 
   try {
     const result = await queryAsync(query);
-    const moduleIds = result.map((row) => row.module_id);
+    const modules = result;
 
     await Promise.all(
-      moduleIds.map(async (moduleId) => {
+      modules.map(async (module) => {
+        const { module_id, online } = module;
+
+        // online 상태가 false인 경우 작업을 건너뛴다
+        if (!online) {
+          console.log(`Skipping module_id ${module_id} due to being offline.`);
+          return;
+        }
+
         try {
-          const finalResult = await fetchRecentDataForModule(moduleId);
+          const finalResult = await fetchRecentDataForModule(module_id);
           const response = await axios.post(
             "http://127.0.0.1:9900/predict",
             finalResult
           );
           console.log(
-            `Result for module_id ${moduleId}:`,
+            `Result for module_id ${module_id}:`,
             JSON.stringify(response.data)
           );
 
@@ -174,7 +187,7 @@ async function Enviroment() {
 
           await queryAsync(insertQuery, [
             envIndex,
-            moduleId,
+            module_id,
             modelVersion,
             envLevel,
           ]);
@@ -185,10 +198,10 @@ async function Enviroment() {
             WHERE module_id = ?;
           `;
 
-          await queryAsync(updateQuery, [envIndex, envLevel, moduleId]);
+          await queryAsync(updateQuery, [envIndex, envLevel, module_id]);
         } catch (error) {
           console.error(
-            `Error processing data for module_id ${moduleId}:`,
+            `Error processing data for module_id ${module_id}:`,
             error
           );
         }
@@ -200,14 +213,35 @@ async function Enviroment() {
 }
 
 async function Health() {
-  const query = `SELECT watch_id FROM airwatch;`;
+  const query = `SELECT watch_id, last_wear, 
+                  CASE 
+                    WHEN TIMESTAMPDIFF(MINUTE, last_sync, NOW()) <= 30 THEN TRUE
+                    ELSE FALSE
+                  END AS online 
+                FROM airwatch;`;
 
   try {
     const result = await queryAsync(query);
-    const watchIds = result.map((row) => row.watch_id);
 
     await Promise.all(
-      watchIds.map(async (watchId) => {
+      result.map(async (row) => {
+        const watchId = row.watch_id;
+        const lastWear = row.last_wear;
+        const online = row.online;
+
+        if (!online) {
+          console.log(`Skipping Health watch_id ${watchId} due to offline.`);
+          return;
+        }
+
+        // last_wear가 false인 경우 작업을 건너뛴다
+        if (!lastWear) {
+          console.log(
+            `Skipping Health watch_id ${watchId} due to last_wear being false.`
+          );
+          return;
+        }
+
         try {
           const finalResult = await fetchRecentHealthDataForWatch(watchId);
           const response = await axios.post(
@@ -256,7 +290,22 @@ async function Health() {
 }
 
 async function Workload() {
-  const query = `SELECT user_id, watch_id, airwall_id FROM users;`;
+  const query = `SELECT 
+                  u.user_id, 
+                  u.watch_id, 
+                  u.airwall_id, 
+                  w.last_wear, 
+                  w.last_sync,
+                  CASE 
+                    WHEN TIMESTAMPDIFF(MINUTE, w.last_sync, NOW()) <= 30 THEN TRUE
+                    ELSE FALSE
+                  END AS online
+                FROM 
+                  users u
+                LEFT JOIN 
+                  airwatch w
+                ON 
+                  u.watch_id = w.watch_id;`;
 
   try {
     const result = await queryAsync(query);
@@ -264,6 +313,21 @@ async function Workload() {
 
     await Promise.all(
       users.map(async (user) => {
+        const { user_id, watch_id, airwall_id, last_wear, online } = user;
+
+        if (!online) {
+          console.log(`Skipping Workload user_id ${user_id} due to offline.`);
+          return;
+        }
+
+        // last_wear가 false인 경우 작업을 건너뛴다
+        if (!last_wear) {
+          console.log(
+            `Skipping Workload user_id ${user_id} due to last_wear being false.`
+          );
+          return;
+        }
+
         try {
           const finalResult = await fetchRecentDataForUser(user);
           const response = await axios.post(
@@ -271,7 +335,7 @@ async function Workload() {
             finalResult
           );
           console.log(
-            `Result for user_id ${user.user_id}:`,
+            `Result for user_id ${user_id}:`,
             JSON.stringify(response.data)
           );
 
@@ -286,7 +350,7 @@ async function Workload() {
 
           await queryAsync(insertQuery, [
             workloadIndex,
-            user.user_id,
+            user_id,
             modelEnvVersion,
             modelHealthVersion,
           ]);
@@ -297,12 +361,9 @@ async function Workload() {
             WHERE user_id = ?;
           `;
 
-          await queryAsync(updateQuery, [workloadIndex, user.user_id]);
+          await queryAsync(updateQuery, [workloadIndex, user_id]);
         } catch (error) {
-          console.error(
-            `Error processing data for user_id ${user.user_id}:`,
-            error
-          );
+          console.error(`Error processing data for user_id ${user_id}:`, error);
         }
       })
     );

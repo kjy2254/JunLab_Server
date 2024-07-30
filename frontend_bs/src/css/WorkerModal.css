@@ -46,11 +46,11 @@
 }
 
 .lv1 {
-  background: var(--level5-color);
+  background: var(--level1-color);
   color: white;
 }
 .lv2 {
-  background: var(--level4-color);
+  background: var(--level2-color);
   color: white;
 }
 .lv3 {
@@ -58,11 +58,11 @@
   color: #9f781a;
 }
 .lv4 {
-  background: var(--level2-color);
+  background: var(--level4-color);
   color: white;
 }
 .lv5 {
-  background: var(--level1-color);
+  background: var(--level5-color);
   color: white;
 }
 

@@ -73,7 +73,10 @@ function AlertModal({ modalOpen, setModalOpen, data, doUpdate }) {
               <select
                 id="worker"
                 value={selectedWorker}
-                onChange={(e) => setSelectedWorker(e.target.value)}
+                onChange={(e) => {
+                  setSelectedWorker(e.target.value);
+                  setSelectedWorkshop("");
+                }}
               >
                 <option value="" selected>
                   선택
@@ -90,7 +93,10 @@ function AlertModal({ modalOpen, setModalOpen, data, doUpdate }) {
               <select
                 id="workshop"
                 value={selectedWorkshop}
-                onChange={(e) => setSelectedWorkshop(e.target.value)}
+                onChange={(e) => {
+                  setSelectedWorkshop(e.target.value);
+                  setSelectedWorker("");
+                }}
               >
                 <option value="" selected>
                   선택
