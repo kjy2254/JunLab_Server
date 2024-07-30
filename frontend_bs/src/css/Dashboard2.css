@@ -407,19 +407,19 @@
   border-radius: 1rem;
 }
 .lv1 {
-  background: rgb(34, 180, 237);
+  background: var(--level1-color);
 }
 .lv2 {
-  background: rgb(150, 208, 96);
+  background: var(--level2-color);
 }
 .lv3 {
-  background: rgb(255, 252, 75);
+  background: var(--level3-color);
 }
 .lv4 {
-  background: rgb(253, 188, 58);
+  background: var(--level4-color);
 }
 .lv5 {
-  background: rgb(250, 0, 25);
+  background: var(--level5-color);
 }
 
 .box .level,

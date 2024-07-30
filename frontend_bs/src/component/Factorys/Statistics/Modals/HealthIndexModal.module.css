@@ -94,22 +94,22 @@
 }
 
 .workermodal .card img.level5 {
-  border: 0.5rem solid rgb(250, 0, 25);
+  border: 0.5rem solid var(--level5-color);
 }
 
 .workermodal .card img.level4 {
-  border: 0.5rem solid rgb(253, 188, 58);
+  border: 0.5rem solid var(--level4-color);
 }
 
 .workermodal .card img.level3 {
-  border: 0.5rem solid rgb(255, 252, 75);
+  border: 0.5rem solid var(--level3-color);
 }
 .workermodal .card img.level2 {
-  border: 0.5rem solid rgb(150, 208, 96);
+  border: 0.5rem solid var(--level2-color);
 }
 
 .workermodal .card img.level1 {
-  border: 0.5rem solid rgb(34, 180, 237);
+  border: 0.5rem solid var(--level1-color);
 }
 
 .workermodal .card img.offline {
@@ -125,6 +125,9 @@
 .workermodal .card .name {
   text-align: center;
   font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .workermodal .card .text {
@@ -153,6 +156,68 @@
   position: absolute;
   top: 50%;
   left: 50%;
+}
+
+.workermodal .card .index {
+  display: flex;
+  flex-direction: column;
+}
+
+.workermodal .card .index .header {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.workermodal .card .index .header .value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  /* width: 3.5rem; */
+  text-align: right;
+  margin-right: 0.7rem;
+  margin-left: 0.7rem;
+}
+
+.workermodal .card .index .header .text {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.workermodal .card .index .header .text .t1 {
+  font-weight: bold;
+}
+
+.workermodal .card .index .header .text .t2 {
+  font-weight: bold;
+  color: rgb(138, 138, 138);
+}
+
+.workermodal .card .index .gauge {
+  height: 0.3rem;
+  border-radius: 0.3rem;
+  background: linear-gradient(
+    90deg,
+    #4d6ad6 0%,
+    #4d6ad6 10%,
+    #89d538 25%,
+    #efc03e 45%,
+    #d93030 80%,
+    #d93030 100%
+  );
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.workermodal .card .index .gauge .circle {
+  position: absolute;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 100%;
+  border: white 2px solid;
+  background: none;
 }
 
 @media (max-width: 680px) {

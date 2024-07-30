@@ -46,19 +46,24 @@
 }
 
 .lv1 {
-  background: rgb(34, 180, 237);
+  background: var(--level5-color);
+  color: white;
 }
 .lv2 {
-  background: rgb(150, 208, 96);
+  background: var(--level4-color);
+  color: white;
 }
 .lv3 {
-  background: rgb(255, 252, 75);
+  background: var(--level3-color);
+  color: #9f781a;
 }
 .lv4 {
-  background: rgb(253, 188, 58);
+  background: var(--level2-color);
+  color: white;
 }
 .lv5 {
-  background: rgb(250, 0, 25);
+  background: var(--level1-color);
+  color: white;
 }
 
 .workermodal .close:hover,

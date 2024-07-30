@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { EnvIndexToText } from "../../../util";
+import { levelToText } from "../../../util";
 import styles from "./Statistic.module.css";
 
 function WorkshopStatistic({ setWorkShopModalData, setModalOpen }) {
@@ -49,7 +49,7 @@ function WorkshopStatistic({ setWorkShopModalData, setModalOpen }) {
             <div className={styles.text}>
               <div className={styles.aq} title={`Index: ${e.env_index}`}>
                 <span className={styles.head}>&gt; 공기질 상태</span>
-                <span>{EnvIndexToText(e.env_index)}</span>
+                <span>{levelToText(e.env_level)}</span>
               </div>
               <hr className="vertical" />
               <div className={styles.worker}>

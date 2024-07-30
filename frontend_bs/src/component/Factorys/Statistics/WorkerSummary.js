@@ -10,8 +10,8 @@ import styles from "./Statistic.module.css";
 function WorkerSummary({
   setWorkloadModalData,
   setHealthIndexModalData,
-  setWorkerModalData,
   setModalOpen,
+  update,
 }) {
   const [data, setData] = useState([]);
 
@@ -48,9 +48,9 @@ function WorkerSummary({
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 7000);
-    return () => clearInterval(interval);
-  }, [factoryId]);
+    // const interval = setInterval(fetchData, 7000);
+    // return () => clearInterval(interval);
+  }, [factoryId, update]);
 
   return (
     <div className={`${styles["worker-summary"]} ${styles.layer} layer2`}>
@@ -60,7 +60,7 @@ function WorkerSummary({
       <div className={styles.body}>
         <div className={styles.stat}>
           <div className={styles.watch}>
-            <span className={styles.h2}> &gt; 작업 인원 현황</span>
+            {/* <span className={styles.h2}> &gt; 착용 및 작업 투입 인원</span> */}
             <div className={styles.cards}>
               <div
                 className={`${styles.count} ${styles.typeA} ${styles.level_default} layer3`}
@@ -223,8 +223,8 @@ function WorkerSummary({
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level5} layer3`}
                   onClick={() => {
-                    setModalOpen(2);
-                    setHealthIndexModalData({ filter: "매우 나쁨" });
+                    setModalOpen(1);
+                    setWorkloadModalData({ filter: "매우 나쁨" });
                   }}
                 >
                   <span className={styles.key}>매우 나쁨</span>
@@ -241,8 +241,8 @@ function WorkerSummary({
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level4} layer3`}
                   onClick={() => {
-                    setModalOpen(2);
-                    setHealthIndexModalData({ filter: "나쁨" });
+                    setModalOpen(1);
+                    setWorkloadModalData({ filter: "나쁨" });
                   }}
                 >
                   <span className={styles.key}>나쁨</span>
@@ -262,8 +262,8 @@ function WorkerSummary({
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level3} layer3`}
                   onClick={() => {
-                    setModalOpen(2);
-                    setHealthIndexModalData({ filter: "보통" });
+                    setModalOpen(1);
+                    setWorkloadModalData({ filter: "보통" });
                   }}
                 >
                   <span className={styles.key}>보통</span>
@@ -283,8 +283,8 @@ function WorkerSummary({
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level2} layer3`}
                   onClick={() => {
-                    setModalOpen(2);
-                    setHealthIndexModalData({ filter: "좋음" });
+                    setModalOpen(1);
+                    setWorkloadModalData({ filter: "좋음" });
                   }}
                 >
                   <span className={styles.key}>좋음</span>
@@ -304,8 +304,8 @@ function WorkerSummary({
                 <div
                   className={`${styles.count} ${styles.typeB} ${styles.level1} layer3`}
                   onClick={() => {
-                    setModalOpen(2);
-                    setHealthIndexModalData({ filter: "매우 좋음" });
+                    setModalOpen(1);
+                    setWorkloadModalData({ filter: "매우 좋음" });
                   }}
                 >
                   <span className={styles.key}>매우 좋음</span>

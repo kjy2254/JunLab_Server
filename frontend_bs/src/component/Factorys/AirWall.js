@@ -48,6 +48,10 @@ function AirWall(props) {
         accessor: "pm10",
       },
       {
+        Header: "습도",
+        accessor: "humid",
+      },
+      {
         Header: "TimeStamp",
         accessor: "timestamp",
       },

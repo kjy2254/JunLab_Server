@@ -4,7 +4,10 @@ import {
   faPlugCircleCheck,
   faPlugCircleXmark,
   faReceipt,
+  faThumbTack,
+  faThumbTackSlash,
   faWind,
+  faWindowRestore,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
@@ -18,18 +21,30 @@ import humid from "../../../image/humid2.svg";
 import temperature from "../../../image/temperature2.svg";
 import tvoc from "../../../image/tvoc2.svg";
 import ultrafinedust from "../../../image/ultrafinedust2.svg";
-import { EnvIndexToText } from "../../../util";
+import { initHorizontalScroll, levelToText } from "../../../util";
 import styles from "./AirQualitySummary.module.css";
 
-function AirQualitySummary({ setEnvModalData, setModalOpen }) {
+function AirQualitySummary({
+  setEnvModalData,
+  setModalOpen,
+  setWorkloadModalData,
+  update,
+  setPreviousModal,
+}) {
   const [envData, setEnvData] = useState([]);
   const [aqData, setAqData] = useState([]);
+
   const [selectedModule, setSelectedModule] = useState();
   const [hoverModule, setHoverModule] = useState();
+  const [hoverPin, setHoverPin] = useState(false);
+
   const [reflow, setReflow] = useState(false);
+  const [pause, setPause] = useState(false);
 
   const progressBarRef = useRef(null);
   const { factoryId } = useParams();
+
+  initHorizontalScroll();
 
   const scale = {
     tvoc: 2500,
@@ -71,7 +86,7 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
       .then((response) => {
         const formattedData = response.data.map((item) => ({
           x: item.x,
-          y: item.y,
+          y: Math.max(item.y, 0),
         }));
         setAqData(formattedData);
       })
@@ -99,6 +114,7 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
               module_description: module.module_description,
               id: module.module_id,
               env_index: module.env_index,
+              env_level: module.env_level,
               data: [
                 scaleValue(module.tvoc, scale.tvoc),
                 scaleValue(module.co2, scale.co2),
@@ -137,9 +153,9 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 10000);
-    return () => clearInterval(interval);
-  }, []);
+    // const interval = setInterval(fetchData, 10000);
+    // return () => clearInterval(interval);
+  }, [update]);
 
   // 초기 값 설정
   useEffect(() => {
@@ -155,7 +171,7 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
   useEffect(() => {
     if (envData.length > 0) {
       const interval = setInterval(() => {
-        if (hoverModule == selectedModule) return;
+        if (hoverModule == selectedModule || pause) return;
         setSelectedModule((prevModule) => {
           const currentIndex = envData.findIndex((e) => e.id === prevModule);
           const nextIndex = (currentIndex + 1) % envData.length;
@@ -164,7 +180,7 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
       }, 10000);
       return () => clearInterval(interval);
     }
-  }, [envData.length, selectedModule, reflow]);
+  }, [envData.length, selectedModule, reflow, pause]);
 
   const defaultSeries = [
     {
@@ -247,6 +263,7 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
         },
       },
       tooltip: {
+        shared: true,
         formatter: function () {
           const categories = [
             "총휘발성유기화합물",
@@ -308,8 +325,8 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
             color: "var(--graph-label-color)",
           },
           formatter: function () {
-            if (this.isFirst) {
-              return ""; // 첫 번째 값 비워두기
+            if (this.pos === -2 || this.pos === -1) {
+              return ""; // 첫 번째 및 두 번째 값 비워두기
             }
             // x 값을 "HH시 mm분" 형식으로 표시
             const date = new Date(this.value);
@@ -322,7 +339,7 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
         tickColor: "var(--graph-label-color)",
         startOnTick: true,
         endOnTick: true,
-        min: -1,
+        min: -2,
       },
       yAxis: {
         title: {
@@ -416,9 +433,31 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
           borderRadius: 15,
           pointPadding: 0.1, // 막대 간의 간격 설정
           groupPadding: 0.1, // 그룹 간의 간격 설정
+          zones: [
+            {
+              value: 1,
+              color: "var(--level1-color)", // level1 색상
+            },
+            {
+              value: 3,
+              color: "var(--level2-color)", // level2 색상
+            },
+            {
+              value: 6,
+              color: "var(--level3-color)", // level3 색상
+            },
+            {
+              value: 10,
+              color: "var(--level4-color)", // level4 색상
+            },
+            {
+              color: "var(--level5-color)", // level5 색상
+            },
+          ],
         },
       },
       tooltip: {
+        shared: true,
         formatter: function () {
           let quality;
           if (this.y < 1) {
@@ -456,40 +495,106 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
       <hr />
       <div className={styles.body}>
         <div className={styles.left}>
-          <div className={`${styles["h2"]}`}>&gt; 작업장 인원</div>
-          <div className={`${styles["workshop-card-wrapper"]}`}>
+          <div className={`${styles["h2"]}`}>&gt; 작업장별 상주인원</div>
+          <div
+            className={`${styles["workshop-card-wrapper"]} js-horizontal-scroll`}
+          >
             {envData.map((e) => (
               <div
-                className={`${styles["card"]} layer3`}
+                className={`${styles["card"]} layer3 ${
+                  selectedModule == e.id ? styles["selected"] : ""
+                }`}
                 key={e.id}
-                title={`ID: ${e.id}\nDescription: ${e.module_description}`}
+                // title={`ID: ${e.id}\nDescription: ${e.module_description}`}
                 onClick={() => {
                   setSelectedModule(e.id);
                 }}
                 onMouseEnter={() => handleMouseEnter(e.id)}
                 onMouseLeave={handleMouseLeave}
               >
-                <div className={`${styles["text"]}`}>
-                  <div className={`${styles["name"]}`}>{e.name}</div>
-                  <div className={`${styles["name"]}`}>
-                    {e.num_of_online_workers}/{e.num_of_workers} 명
+                <FontAwesomeIcon
+                  icon={faWindowRestore}
+                  onClick={() => {
+                    setModalOpen(1);
+                    setPreviousModal(0);
+                    setWorkloadModalData({ filter: "Workshop", id: e.id });
+                  }}
+                  style={{
+                    width: "14px",
+                    height: "14px",
+                    bottom: "0.4rem",
+                    right: "0.5rem",
+                  }}
+                />
+                <FontAwesomeIcon
+                  icon={
+                    pause && hoverPin && selectedModule == hoverModule
+                      ? faThumbTackSlash
+                      : faThumbTack
+                  }
+                  style={{
+                    top: "0.5rem",
+                    left: "0.4rem",
+                    width: "14px",
+                    height: "14px",
+                    display:
+                      hoverModule == e.id || (pause && selectedModule == e.id)
+                        ? ""
+                        : "none",
+                  }}
+                  onClick={() => {
+                    // pause가 없는 상태에서는 pause 설정
+                    if (!pause) {
+                      setPause(true);
+                    } else {
+                      // 이미 pause된 상태에서는 고정된 핀을 누르면 고정 해제, 다른 카드의 핀을 누르면 고정
+                      if (selectedModule == e.id) {
+                        setPause(false);
+                      }
+                    }
+                  }}
+                  onMouseEnter={() => setHoverPin(true)}
+                  onMouseLeave={() => setHoverPin(false)}
+                  className={`${styles["pin"]}`}
+                />
+                <div className={`${styles["text"]} ${styles["t1"]}`}>
+                  <div className={`${styles["caption"]}`}>작업장</div>
+                  <div className={`${styles["value"]}`}>{e.name}</div>
+                </div>
+                <div className={`${styles["text"]} ${styles["t2"]}`}>
+                  <div className={`${styles["caption"]}`}>작업중</div>
+                  <div className={`${styles["value"]}`}>
+                    {e.num_of_online_workers}
                   </div>
+                </div>
+                <hr className={`vertical`} />
+                <div className={`${styles["text"]} ${styles["t3"]}`}>
+                  <div className={`${styles["caption"]}`}>배치</div>
+                  <div className={`${styles["value"]}`}>{e.num_of_workers}</div>
                 </div>
 
                 <div
                   ref={hoverModule === e.id ? progressBarRef : null}
                   className={`${styles["progress-bar"]} ${
-                    selectedModule == e.id ? styles["selected"] : ""
+                    selectedModule == e.id && !pause ? styles["selected"] : ""
                   }`}
                 />
               </div>
             ))}
+            {/* <div className={`${styles["card"]} layer3`}>
+              <div className={`${styles["text"]}`}>
+                <FontAwesomeIcon icon={faWindowRestore} />
+                <div>e.name</div>
+                <div className={`${styles["count"]}`}>명 </div>
+              </div>
+            </div> */}
           </div>
         </div>
-        <hr className="vertical" />
+        <hr className={styles.vertical} />
         <div className={styles.right}>
           <div className={`${styles["h2"]}`}>
-            &gt; 실시간 작업장 공기질 상태
+            &gt; [ {envData.find((e) => e.id === selectedModule)?.name} ] 실시간
+            작업장 공기질 상태
           </div>
           <div className={`${styles["info-card-wrapper"]}`}>
             <div className={`${styles["card"]} layer3`}>
@@ -527,9 +632,19 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
                 &nbsp;공기질 상태
               </span>
               <span className={`${styles["value"]}`}>
-                {EnvIndexToText(
-                  envData.find((e) => e.id === selectedModule)?.env_index
-                )}
+                {envData.find((e) => e.id === selectedModule)?.isOnline
+                  ? levelToText(
+                      envData.find((e) => e.id === selectedModule)?.env_level
+                    )
+                  : "-"}
+                (
+                {envData.find((e) => e.id === selectedModule)?.isOnline
+                  ? Math.round(
+                      envData.find((e) => e.id === selectedModule)?.env_index *
+                        100
+                    ) / 100
+                  : "-"}
+                )
               </span>
             </div>
             <div
@@ -546,12 +661,7 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
                 {envData.find((e) => e.id === selectedModule)?.last_update_long}
               </span>
             </div>
-            <div
-              className={`${styles["card"]} layer3`}
-              title={`Index: ${
-                envData.find((e) => e.id === selectedModule)?.env_index
-              }`}
-            >
+            <div className={`${styles["card"]} layer3`}>
               <span className={`${styles["key"]}`}>
                 <FontAwesomeIcon icon={faIdCard} />
                 &nbsp;측정기 ID
@@ -562,9 +672,10 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
             </div>
             <div
               className={`${styles["card"]} layer3`}
-              title={`Index: ${
-                envData.find((e) => e.id === selectedModule)?.env_index
-              }`}
+              title={
+                envData.find((e) => e.id === selectedModule)
+                  ?.module_description || "-"
+              }
             >
               <span className={`${styles["key"]}`}>
                 <FontAwesomeIcon icon={faReceipt} />
@@ -581,6 +692,7 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
               className={`${styles["card"]} layer3`}
               onClick={() => {
                 setEnvModalData({ img: tvoc, env: "tvoc" });
+                setPreviousModal(0);
                 setModalOpen(5);
               }}
             >
@@ -599,6 +711,7 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
               className={`${styles["card"]} layer3`}
               onClick={() => {
                 setEnvModalData({ img: co2, env: "co2" });
+                setPreviousModal(0);
                 setModalOpen(5);
               }}
             >
@@ -617,6 +730,7 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
               className={`${styles["card"]} layer3`}
               onClick={() => {
                 setEnvModalData({ img: finedust, env: "pm10" });
+                setPreviousModal(0);
                 setModalOpen(5);
               }}
             >
@@ -635,6 +749,7 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
               className={`${styles["card"]} layer3`}
               onClick={() => {
                 setEnvModalData({ img: ultrafinedust, env: "pm2_5" });
+                setPreviousModal(0);
                 setModalOpen(5);
               }}
             >
@@ -653,6 +768,7 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
               className={`${styles["card"]} layer3`}
               onClick={() => {
                 setEnvModalData({ img: temperature, env: "temperature" });
+                setPreviousModal(0);
                 setModalOpen(5);
               }}
             >
@@ -671,6 +787,7 @@ function AirQualitySummary({ setEnvModalData, setModalOpen }) {
               className={`${styles["card"]} layer3`}
               onClick={() => {
                 setEnvModalData({ img: humid, env: "humid" });
+                setPreviousModal(0);
                 setModalOpen(5);
               }}
             >

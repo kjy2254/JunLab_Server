@@ -11,7 +11,7 @@ import humid from "../../../image/humid2.svg";
 import temperature from "../../../image/temperature2.svg";
 import tvoc from "../../../image/tvoc2.svg";
 import ultrafinedust from "../../../image/ultrafinedust2.svg";
-import { EnvIndexToText } from "../../../util";
+import { levelToText } from "../../../util";
 import styles from "./Statistic.module.css";
 
 function AirQuality({ setEnvModalData, setModalOpen }) {
@@ -39,6 +39,7 @@ function AirQuality({ setEnvModalData, setModalOpen }) {
               module_description: module.module_description,
               id: module.module_id,
               env_index: module.env_index,
+              env_level: module.env_level,
               data: [
                 scaleValue(module.tvoc, scale.tvoc),
                 scaleValue(module.co2, scale.co2),
@@ -271,9 +272,7 @@ function AirQuality({ setEnvModalData, setModalOpen }) {
         }`}
       >
         공기질 상태:&nbsp;
-        {EnvIndexToText(
-          envData.find((e) => e.id === selectedModule)?.env_index
-        )}
+        {levelToText(envData.find((e) => e.id === selectedModule)?.env_level)}
       </span>
       <div className={styles.body}>
         <div className={styles.radar}>

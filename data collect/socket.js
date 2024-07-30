@@ -1,20 +1,15 @@
 var net = require("net");
 const connection = require("../database/mysql");
 // const connection = require("./database/apiConnection");
-var ws = require("ws");
 
 var socketServer = net.createServer();
 var commandServer = net.createServer();
-const wsServer = new ws.WebSocketServer({ port: 881 });
 
 var sockets = {};
 var commandSocket = [];
 var last_command = {};
 
 var sensorTime = "7000";
-const wsIntervalMap = new Map(); // WebSocket 인터벌 맵
-
-const sleep = (second) => new Promise((resolve) => setTimeout(resolve, second));
 
 function getKeyByValue(object, value) {
   return Object.keys(object).find((key) => object[key] === value);
@@ -30,6 +25,14 @@ setInterval(() => {
     });
   }
 }, parseInt(sensorTime) * 2);
+
+// socketServer.listen(4322, () => {
+//   console.log("Socket server listening on 4322 ...");
+// });
+
+// commandServer.listen(4323, () => {
+//   console.log("Command server listening on 4323 ...");
+// });
 
 socketServer.listen(4322, () => {
   console.log("Socket server listening on 4322 ...");
@@ -182,16 +185,9 @@ socketServer.on("connection", (socket) => {
     }
 
     // 센서 데이터일 경우
-    if (sensorData.length === 21 || sensorData.length === 20) {
-      if (sensorData[0].charAt(0) === "T") {
-        //2024/06/20: 새로운 버전 소프트웨어
-        save2(rawData);
-      } else {
-        save(rawData);
-      }
-      if (parseInt(sensorData[0]) > 2000 || parseInt(sensorData[0]) < 1000) {
-        saveAirWallData(rawData); // 2000번대 -> 고정식 데이터 (0번대도 같이 존재 중)
-      } else if (parseInt(sensorData[0]) > 1000) {
+    if (sensorData.length >= 21) {
+      save(rawData);
+      if (parseInt(sensorData[0]) > 1000 && parseInt(sensorData[0]) < 2000) {
         saveWatchData(rawData); // 1000번대 -> 시계 데이터
       }
       count++;
@@ -217,21 +213,23 @@ socketServer.on("connection", (socket) => {
 });
 
 function save(rawData) {
-  let keys = [
+  // console.log("Received raw data:", rawData);
+
+  let keys_v1 = [
     "ID",
     "BATT",
     "MAGx",
     "MAGy",
     "MAGz",
-    "ZYROx",
-    "ZYROy",
-    "ZYROz",
+    "GYROx",
+    "GYROy",
+    "GYROz",
     "ACCx",
     "ACCy",
     "ACCz",
     "AQI",
     "TVOC",
-    "EC2",
+    "CO2",
     "PM10",
     "PM25",
     "PM100",
@@ -240,39 +238,12 @@ function save(rawData) {
     "ECG",
     "TEMP",
   ];
-  let values = rawData.toString().replaceAll(" ", "").split(",");
 
-  if (values.length !== 21) {
-    // console.log("not sensor data");
-    return false;
-  } else {
-    const dict = keys.reduce((acc, curr, idx) => {
-      return { ...acc, [curr]: values[idx] };
-    }, new Object());
-
-    let data = { ...dict, created_at: new Date(Date.now()) };
-
-    // console.log(data);
-
-    if (isNaN(parseInt(data.ID))) {
-      return false;
-    }
-
-    connection.query("INSERT INTO raw_data SET ?", data, (er) => {
-      return !er;
-    });
-  }
-  return true;
-}
-
-function save2(rawData) {
-  let keys = [
+  let keys_v2_base = [
     "ID",
     "BATT",
     "TEMP",
-    "HUM",
-    "PRESS",
-    "ALT",
+    "HUMID",
     "AQI",
     "TVOC",
     "CO2",
@@ -280,123 +251,148 @@ function save2(rawData) {
     "H2S",
     "CH4",
     "O2",
+    "PM10",
     "PM25",
+    "PM100",
     "GYROx",
     "GYROy",
     "GYROz",
     "ACCx",
     "ACCy",
     "ACCz",
+    "LatitudeNS",
+    "LongitudeEW",
   ];
 
-  // 메시지 끝의 \r\n 제거 후 공백 제거
-  let cleanData = rawData.toString().trim().replaceAll(" ", "");
+  let keys_v2_full = [...keys_v2_base, "Speed", "Angle"];
 
-  // 쉼표로 데이터 분리
-  let values = cleanData.split(",");
-  // console.log("test:", values);
+  let values = rawData.toString().replaceAll(" ", "").split(",");
+  // console.log("Parsed values:", values);
 
-  if (values.length !== 21) {
-    // console.log("not sensor data");
-    return false;
+  let keys;
+  if (values.length === 21) {
+    keys = keys_v1;
+    // console.log("Using version 1 keys");
+  } else if (values.length === 23) {
+    keys = keys_v2_base;
+    // console.log("Using version 2 keys (base)");
+  } else if (values.length === 25) {
+    keys = keys_v2_full;
+    // console.log("Using version 2 keys (full)");
   } else {
-    const dict = keys.reduce((acc, curr, idx) => {
-      return { ...acc, [curr]: values[idx] };
-    }, new Object());
-
-    let data = { ...dict, created_at: new Date(Date.now()) };
-
-    // console.log("Data to be inserted:", data);
-
-    // if (isNaN(parseInt(data.ID))) {
-    //   console.log("Invalid ID format");
-    //   return false;
-    // }
-
-    connection.query("INSERT INTO raw_data_new SET ?", data, (err) => {
-      if (err) {
-        console.error("Error inserting data:", err);
-        return false;
-      } else {
-        // console.log("Data successfully inserted");
-        return true;
-      }
-    });
+    // console.log("Invalid data length:", values.length);
+    return false;
   }
+
+  const dict = keys.reduce((acc, curr, idx) => {
+    return { ...acc, [curr]: values[idx] };
+  }, {});
+
+  saveAirWallData(dict);
+
+  // console.log("Data to be inserted:", dict);
+
+  connection.query("INSERT INTO raw_data SET ?", dict, (er) => {
+    if (er) {
+      // console.log("Database insertion error:", er);
+      return false;
+    } else {
+      // console.log("Data successfully inserted");
+      return true;
+    }
+  });
+
   return true;
 }
 
-function saveAirWallData(rawData) {
-  let values = rawData.toString().replaceAll(" ", "").split(",");
+function saveAirWallData(dict) {
+  const airwallData = {
+    sensor_module_id: dict.ID,
+    factory_id: null, // 추후 factory_id를 가져올 필요가 있음
+    temperature: parseFloat(dict.TEMP) || null,
+    tvoc: parseFloat(dict.TVOC) || null,
+    co2: parseFloat(dict.CO2) || null,
+    pm1_0: parseFloat(dict.PM10) || null,
+    pm2_5: parseFloat(dict.PM25) || null,
+    pm10: parseFloat(dict.PM100) || null,
+    humid: parseFloat(dict.HUMID) || null,
+    CO: parseFloat(dict.CO) || null,
+    H2S: parseFloat(dict.H2S) || null,
+    CH4: parseFloat(dict.CH4) || null,
+    O2: parseFloat(dict.O2) || null,
+  };
 
-  if (values.length !== 21) {
-    return false;
-  } else {
-    if (isNaN(parseInt(values[0]))) {
-      return false;
+  connection.query(
+    "SELECT factory_id FROM airwall WHERE module_id = ?",
+    [dict.ID],
+    (error, result) => {
+      if (error) {
+        console.log(error);
+      }
+      if (result.length === 0) {
+        console.log(dict.ID + ": not registered airwall\n");
+        return false;
+      }
+
+      airwallData.factory_id = result[0].factory_id;
+
+      const insert_query = `INSERT INTO airwall_data (sensor_module_id,
+                                factory_id,
+                                temperature,
+                                tvoc,
+                                co2,
+                                pm1_0,
+                                pm2_5,
+                                pm10,
+                                humid,
+                                CO,
+                                H2S,
+                                CH4,
+                                O2) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+
+      const insert_values = [
+        airwallData.sensor_module_id,
+        airwallData.factory_id,
+        airwallData.temperature,
+        airwallData.tvoc,
+        airwallData.co2,
+        airwallData.pm1_0,
+        airwallData.pm2_5,
+        airwallData.pm10,
+        airwallData.humid,
+        airwallData.CO,
+        airwallData.H2S,
+        airwallData.CH4,
+        airwallData.O2,
+      ];
+
+      connection.query(insert_query, insert_values, (error, result) => {
+        if (error) {
+          console.log(error);
+        }
+      });
     }
+  );
 
-    connection.query(
-      "SELECT factory_id FROM airwall WHERE module_id = ?",
-      parseInt(values[0]),
-      (error, result) => {
-        if (error) {
-          console.log(error);
-        }
-        // console.log("factoryID:", result[0].factory_id);
-        if (result.length === 0) {
-          console.log(values[0] + ": not registered airwall\n");
-          return false;
-        }
-        const insert_query = `INSERT INTO airwall_data (factory_id,
-                                          tvoc,
-                                          co2,
-                                          temperature,
-                                          pm1_0,
-                                          pm2_5,
-                                          pm10,
-                                          timestamp,
-                                          sensor_module_id) VALUES (?,?,?,?,?,?,?,?,?)`;
-
-        const insert_value = [
-          result[0].factory_id,
-          values[12],
-          values[13],
-          values[20],
-          values[14],
-          values[15],
-          values[16],
-          new Date(Date.now()),
-          parseInt(values[0]),
-        ];
-
-        connection.query(insert_query, insert_value, (error, result) => {
-          if (error) {
-            console.log(error);
-          }
-        });
+  connection.query(
+    `update airwall set last_update = ?, last_tvoc = ?, last_co2 = ?, last_temperature = ?, last_pm1_0 = ?, last_pm2_5 = ?, last_pm10 = ? where module_id = ?`,
+    [
+      new Date(Date.now()),
+      airwallData.tvoc,
+      airwallData.co2,
+      airwallData.temperature,
+      airwallData.pm1_0,
+      airwallData.pm2_5,
+      airwallData.pm10,
+      airwallData.sensor_module_id,
+    ],
+    (error, result) => {
+      if (error) {
+        console.log(error);
       }
-    );
+    }
+  );
 
-    connection.query(
-      `update airwall set last_update = ?, last_tvoc = ?, last_co2 = ?, last_temperature = ?, last_pm1_0 = ?, last_pm2_5 = ?, last_pm10 = ? where module_id = ?`,
-      [
-        new Date(Date.now()),
-        parseInt(values[12]),
-        parseInt(values[13]),
-        parseFloat(values[20]),
-        parseInt(values[14]),
-        parseInt(values[15]),
-        parseInt(values[16]),
-        values[0],
-      ],
-      (error, result) => {
-        if (error) {
-          console.log(error);
-        }
-      }
-    );
-  }
   return true;
 }
 
@@ -500,58 +496,3 @@ function saveWatchData(rawData) {
   }
   return true;
 }
-
-// wsServer.on("connection", (ws, req) => {
-//   // 웹소켓 연결 시
-//   const ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
-//   console.log("새로운 클라이언트 접속", ip);
-//   ws.on("message", (message) => {
-//     // 클라이언트로부터 메시지
-//     console.log("message:", message.toString());
-//   });
-//   ws.on("error", (error) => {
-//     // 에러 시
-//     console.error(error);
-//   });
-//   ws.on("close", () => {
-//     // 연결 종료 시
-//     console.log("클라이언트 접속 해제", ip);
-//     clearInterval(ws.interval);
-//     wsIntervalMap.delete(ws); // 맵에서 제거
-//   });
-
-//   let query = `SELECT
-//     sd.ID,
-//         sd.BATT,
-//         sd.AQI,
-//         sd.TVOC,
-//         sd.EC2,
-//         sd.PM10,
-//         sd.PM25,
-//         sd.PM100,
-//         sd.IRUN,
-//         sd.TEMP,
-//         DATE_FORMAT(sd.created_at, '%Y/%m/%d %H:%i:%s') AS CREATED_AT
-//     FROM raw_data sd
-//     INNER JOIN (
-//         SELECT
-//     ID,
-//         MAX(created_at) AS max_created_at
-//     FROM raw_data
-//     GROUP BY ID
-// ) max_data
-//     ON sd.ID = max_data.ID AND sd.created_at = max_data.max_created_at;`;
-
-//   const wsInterval = setInterval(() => {
-//     if (ws.readyState === ws.OPEN) {
-//       connection.query(query, (error, result) => {
-//         if (error) {
-//           console.log(error);
-//         }
-//         result.forEach((e) => ws.send(JSON.stringify(e)));
-//       });
-//     }
-//   }, 1000);
-
-//   wsIntervalMap.set(ws, wsInterval); // WebSocket과 해당 인터벌을 맵에 추가
-// });

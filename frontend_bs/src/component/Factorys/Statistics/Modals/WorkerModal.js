@@ -5,7 +5,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import "../../../../css/WorkerModal.css";
-import { healthIndexToText } from "../../../../util";
+import { levelToText } from "../../../../util";
 import Tooltip from "../../../Tooltip";
 import HealthGraphCard from "../../HealthGraphCard";
 
@@ -25,17 +25,19 @@ function WorkerModal({ modalOpen, setModalOpen, data, previousModal }) {
   const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
-    axios
-      .get(
-        `http://junlab.postech.ac.kr:880/api2/user/${data?.selectedWorker}/info`
-      )
-      .then((response) => {
-        const data = response.data;
-        setUserInfo(data);
-      })
-      .catch((error) => {
-        console.error("API 요청 실패:", error);
-      });
+    if (data?.selectedWorker) {
+      axios
+        .get(
+          `http://junlab.postech.ac.kr:880/api2/user/${data?.selectedWorker}/info`
+        )
+        .then((response) => {
+          const data = response.data;
+          setUserInfo(data);
+        })
+        .catch((error) => {
+          console.error("API 요청 실패:", error);
+        });
+    }
   }, [data]);
 
   return (
@@ -43,7 +45,6 @@ function WorkerModal({ modalOpen, setModalOpen, data, previousModal }) {
       isOpen={modalOpen}
       style={customModalStyles}
       className="workermodal layerModal"
-      shouldCloseOnOverlayClick={false}
       appElement={document.getElementById("root")}
       onRequestClose={() => setModalOpen(0)}
     >
@@ -65,7 +66,7 @@ function WorkerModal({ modalOpen, setModalOpen, data, previousModal }) {
         <div className="right">
           <div className="score">
             <span title={`Index: ${userInfo?.health_index}`}>
-              건강 상태: {healthIndexToText(userInfo?.health_index)} &nbsp;
+              건강 상태: {levelToText(userInfo?.health_level)} &nbsp;
             </span>
 
             <Tooltip

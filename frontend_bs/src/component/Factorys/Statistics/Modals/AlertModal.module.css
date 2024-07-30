@@ -1,0 +1,128 @@
+.alertmodal {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+
+  width: calc(100% - 13rem);
+  max-width: 80rem;
+  height: calc(100% - 13rem);
+  max-height: 75rem;
+  z-index: 15;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 0.5rem;
+  overflow: auto;
+  border: none;
+}
+
+.alertmodal .header {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  /* background: #000; */
+}
+
+.alertmodal .header .title {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  text-wrap: nowrap;
+}
+
+.alertmodal .close:hover {
+  opacity: 0.85;
+}
+
+.alertmodal .close {
+  cursor: pointer;
+  top: 1rem;
+  right: 1rem;
+  position: absolute;
+}
+
+.alertmodal .body {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  overflow-y: scroll;
+}
+
+.alertmodal .body .search {
+  border-bottom: 1px solid var(--border-color);
+
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.alertmodal .body .search .forms {
+  display: flex;
+  text-wrap: nowrap;
+  align-items: flex-end;
+}
+
+.alertmodal .body .search .forms label {
+  font-size: small;
+}
+
+.alertmodal .body .search .forms select {
+  font-size: small;
+  margin-left: 0.5rem;
+  margin-right: 1rem;
+}
+
+.alertmodal .body .search .forms .read {
+  flex-direction: row;
+}
+
+.alertmodal .body .alert-wrapper {
+  width: 100%;
+}
+
+.alertmodal .body .alert-wrapper .card {
+  border-bottom: 1px solid var(--border-color);
+
+  padding: 1rem;
+  display: flex;
+  font-size: small;
+}
+
+.alertmodal .body .alert-wrapper .card .date-time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin-right: 1rem;
+}
+
+.alertmodal .body .alert-wrapper .card .log {
+  font-size: medium;
+}
+
+.alertmodal .body .read {
+  margin-left: auto;
+  text-wrap: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  font-size: small;
+}
+
+@media (max-width: 680px) {
+  .alertmodal {
+    width: calc(100% - 7rem);
+    height: calc(100% - 7rem);
+  }
+}
+
+@media (max-width: 450px) {
+  .alertmodal {
+    width: calc(100% - 1rem);
+    height: calc(100% - 1rem);
+  }
+}

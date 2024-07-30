@@ -20,7 +20,7 @@ import humid from "../../../../image/humid2.svg";
 import temperature from "../../../../image/temperature2.svg";
 import tvoc from "../../../../image/tvoc2.svg";
 import ultrafinedust from "../../../../image/ultrafinedust2.svg";
-import { EnvIndexToText, healthIndexToText } from "../../../../util";
+import { healthIndexToText, levelToText } from "../../../../util";
 import styles from "./WorkShopModal.module.css";
 
 const customModalStyles = {
@@ -58,7 +58,7 @@ function WorkShopModal({
           y: item.y,
         }));
         setChartData(formattedData);
-        console.log("res", response.data);
+        // console.log("res", response.data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -237,7 +237,7 @@ function WorkShopModal({
     axios
       .get(`http://junlab.postech.ac.kr:880/api2/${data?.module_id}/workers`)
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         setWorkers(response.data);
       });
   }, [data]);
@@ -296,9 +296,9 @@ function WorkShopModal({
               </span>
               <span
                 className={`${styles["value"]}`}
-                title={EnvIndexToText(data?.env_index)}
+                title={levelToText(data?.env_level)}
               >
-                {EnvIndexToText(data?.env_index)}
+                {levelToText(data?.env_level)}
               </span>
             </div>
             <div className={`${styles["info-card"]} layer3`}>

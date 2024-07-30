@@ -10,11 +10,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useParams } from "react-router-dom";
-import {
-  EnvIndexToText,
-  healthIndexToLevel,
-  healthIndexToText,
-} from "../../../../util";
+import { levelToText } from "../../../../util";
 import styles from "./WorkloadModal.module.css";
 
 const customModalStyles = {
@@ -35,16 +31,20 @@ function WorkloadModal({
   data,
   setPreviousModal,
   setWorkerModalData,
+  doUpdate,
+  update,
 }) {
   const { factoryId } = useParams();
   const [modules, setModules] = useState([]);
   const [workers, setWorkers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchModules = () => {
     axios
       .get(`http://junlab.postech.ac.kr:880/api2/factory/${factoryId}/airwalls`)
       .then((response) => {
         setModules(response.data);
+        console.log("modules: ", response.data);
       });
   };
 
@@ -52,34 +52,95 @@ function WorkloadModal({
     axios
       .get(`http://junlab.postech.ac.kr:880/api2/factory/${factoryId}/workers`)
       .then((response) => {
-        const filteredData = response.data.filter((d) => {
-          switch (data.filter) {
-            case "All":
-              return true;
-            case "Wearing":
-              return d.last_wear && d.online;
-            case "Not worn":
-              return !d.last_wear || !d.online;
-            case 5:
-              return d.online && d.last_wear === 1 && d.workload === 5;
-            case 4:
-              return d.online && d.last_wear === 1 && d.workload == 4;
-            case 3:
-              return d.online && d.last_wear === 1 && d.workload == 3;
-            case 2:
-              return d.online && d.last_wear === 1 && d.workload == 2;
-            case 1:
-              return d.online && d.last_wear === 1 && d.workload == 1;
+        const filteredData = response.data
+          .filter((d) => {
+            switch (data.filter) {
+              case "All":
+                return true;
+              case "Wearing":
+                return d.last_wear && d.online;
+              case "Not worn":
+                return !d.last_wear || !d.online;
+              case 5:
+                return d.online && d.last_wear === 1 && d.workload === 5;
+              case 4:
+                return d.online && d.last_wear === 1 && d.workload == 4;
+              case 3:
+                return d.online && d.last_wear === 1 && d.workload == 3;
+              case 2:
+                return d.online && d.last_wear === 1 && d.workload == 2;
+              case 1:
+                return d.online && d.last_wear === 1 && d.workload == 1;
+              case "Workshop":
+                return d.airwall_id === data.id;
+              case "매우 나쁨":
+                return d.online && d.last_wear === 1 && d.health_index >= 0.9;
+              case "나쁨":
+                return (
+                  d.online &&
+                  d.last_wear === 1 &&
+                  d.health_index < 0.9 &&
+                  d.health_index >= 0.6
+                );
+              case "보통":
+                return (
+                  d.online &&
+                  d.last_wear === 1 &&
+                  d.health_index < 0.6 &&
+                  d.health_index >= 0.3
+                );
+              case "좋음":
+                return (
+                  d.online &&
+                  d.last_wear === 1 &&
+                  d.health_index < 0.3 &&
+                  d.health_index >= 0.1
+                );
+              case "매우 좋음":
+                return d.online && d.last_wear === 1 && d.health_index < 0.1;
+            }
+          })
+          .map((worker) => ({ ...worker, overlay: false }));
+
+        const sortedData = filteredData.sort((a, b) => {
+          if (a.online === b.online) {
+            if (a.online) {
+              if (a.workload === b.workload) {
+                return a.name.localeCompare(b.name, "ko-KR");
+              }
+              return b.workload - a.workload;
+            } else {
+              return a.name.localeCompare(b.name, "ko-KR");
+            }
           }
+          return b.online - a.online;
         });
-        setWorkers(filteredData);
+
+        console.log(sortedData);
+
+        setWorkers(sortedData);
+        setLoading(false);
       });
   };
 
+  const handleActionClick = (index, open) => {
+    setWorkers((prevWorkers) => {
+      const newWorkers = [...prevWorkers];
+      newWorkers[index].overlay = open;
+      return newWorkers;
+    });
+  };
+
   useEffect(() => {
-    fetchModules();
-    fetchWorkers();
-  }, [modalOpen, data]);
+    if (modalOpen) {
+      fetchModules();
+      fetchWorkers();
+    } else {
+      setLoading(true);
+      setWorkers([]);
+      setModules([]);
+    }
+  }, [modalOpen, data, update]);
 
   return (
     <Modal
@@ -99,7 +160,9 @@ function WorkloadModal({
       </div> */}
       <div className={`${styles.body} layer2`}>
         <div className={`${styles["card-wrapper"]}`}>
-          {workers.length > 0 ? (
+          {loading ? (
+            <div className={styles.loading} id="spinner" />
+          ) : workers.length > 0 ? (
             workers?.map((e, index) => (
               <div className={`${styles.card} layer3`} key={index}>
                 <div className={styles.status}>
@@ -113,13 +176,35 @@ function WorkloadModal({
                   {e.online
                     ? "온라인" + (e.last_wear == 1 ? "/착용중" : "/미착용")
                     : "오프라인"}
+                  <div className={styles.workshop}>
+                    {/* <span>작업장:</span> */}
+                    <select
+                      onChange={(s) => {
+                        axios
+                          .put(
+                            `http://junlab.postech.ac.kr:880/api2/user/${e.user_id}/airwall?id=${s.target.value}`
+                          )
+                          .then(() => doUpdate());
+                      }}
+                    >
+                      <option value={"null"}>선택</option>
+                      {modules?.map((m) => (
+                        <option
+                          selected={m.module_name == e.airwall_name}
+                          value={m.module_id}
+                        >
+                          {m.module_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div className={styles.cardbody}>
                   <div className={styles.profile}>
                     <img
                       className={
                         e.online && e.last_wear == 1
-                          ? styles[`level${healthIndexToLevel(e.health_index)}`]
+                          ? styles[`level${e.workload}`]
                           : styles.offline
                       }
                       src={`http://junlab.postech.ac.kr:880/api2/image/${e.profile_image_path}`}
@@ -131,6 +216,15 @@ function WorkloadModal({
                         setWorkerModalData({ selectedWorker: e.user_id });
                       }}
                     />
+                    <div
+                      className={`${styles["workload-index"]} ${
+                        e.online && e.last_wear == 1
+                          ? styles[`level${e.workload}`]
+                          : ""
+                      }`}
+                    >
+                      {e.online && e.last_wear == 1 ? e.workload || "" : ""}
+                    </div>
                     <div className={styles.name}>
                       <FontAwesomeIcon
                         icon={e.gender == "Male" ? faMars : faVenus}
@@ -142,53 +236,112 @@ function WorkloadModal({
                       {e.name}
                     </div>
                   </div>
-                  <hr className={styles.vertical} />
+                  <hr />
                   <div className={styles.info}>
-                    <div className={styles.text}>
-                      <span>작업장:</span>
-                      <select
-                      // onChange={(s) => {
-                      //   axios
-                      //     .put(
-                      //       `http://junlab.postech.ac.kr:880/api2/user/${e.user_id}/airwall?id=${s.target.value}`
-                      //     )
-                      //     .then(() => setUpdate((prev) => !prev));
-                      // }}
-                      >
-                        <option value={"null"}>선택</option>
-                        {modules?.map((m) => (
-                          <option
-                            selected={m.module_name == e.airwall_name}
-                            value={m.module_id}
-                          >
-                            {m.module_name}
-                          </option>
-                        ))}
-                      </select>
+                    <div className={styles.index}>
+                      <div className={styles.header}>
+                        <span className={styles.value}>
+                          {modules?.find((m) => m.module_name == e.airwall_name)
+                            ?.isOnline
+                            ? Math.round(
+                                modules?.find(
+                                  (m) => m.module_name == e.airwall_name
+                                )?.env_index * 100
+                              ) / 100 || 0
+                            : ""}
+                        </span>
+                        <div className={styles.text}>
+                          <span className={styles.t1}>
+                            {modules?.find(
+                              (m) => m.module_name == e.airwall_name
+                            )?.isOnline
+                              ? levelToText(
+                                  modules?.find(
+                                    (m) => m.module_name == e.airwall_name
+                                  )?.env_level
+                                )
+                              : "오프라인(측정기)"}
+                          </span>
+                          <span className={styles.t2}>공기질 지수</span>
+                        </div>
+                      </div>
+                      <div className={styles.gauge}>
+                        <div
+                          className={styles.circle}
+                          style={{
+                            left: `${Math.min(
+                              Math.max(
+                                modules?.find(
+                                  (m) => m.module_name == e.airwall_name
+                                )?.env_index || 0,
+                                0
+                              ) * 15,
+                              95
+                            )}%`,
+                            display: `${e.online && e.last_wear ? "" : "none"}`,
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div
-                      className={styles.text}
-                      title={`Index: ${
-                        modules?.find((m) => m.module_name == e.airwall_name)
-                          ?.env_index
-                      }`}
+                    <div className={styles.index}>
+                      <div className={styles.header}>
+                        <span className={styles.value}>
+                          {e.online && e.last_wear
+                            ? Math.max(
+                                Math.round(e.health_index * 100) / 100,
+                                0
+                              )
+                            : ""}
+                        </span>
+                        <div className={styles.text}>
+                          <span className={styles.t1}>
+                            {e.online && e.last_wear
+                              ? levelToText(e.health_level)
+                              : ""}
+                          </span>
+                          <span className={styles.t2}>건강 지수</span>
+                        </div>
+                      </div>
+                      <div className={styles.gauge}>
+                        <div
+                          className={styles.circle}
+                          style={{
+                            left: `${Math.min(
+                              (Math.max(e.health_index, 0) * 100) / 1.2,
+                              95
+                            )}%`,
+                            display: `${e.online && e.last_wear ? "" : "none"}`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                    {/* <span
+                      className={styles.action}
+                      onClick={() => {
+                        handleActionClick(index, true);
+                      }}
                     >
-                      <span>공기질:</span>
-                      <span>
-                        {EnvIndexToText(
-                          modules?.find((m) => m.module_name == e.airwall_name)
-                            ?.env_index
-                        )}
-                      </span>
-                    </div>
-                    <hr />
-                    <div
-                      className={styles.text}
-                      title={`Index: ${e.health_index}`}
-                    >
-                      <span>건강상태:</span>
-                      <span>{healthIndexToText(e.health_index)}</span>
-                    </div>
+                      조치사항
+                    </span>
+                    {e.overlay ? (
+                      <div className={`${styles["action-overlay"]}`}>
+                        <FontAwesomeIcon
+                          icon={faClose}
+                          onClick={() => {
+                            handleActionClick(index, false);
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <></>
+                    )} */}
+                  </div>
+                  <hr />
+                  <div className={styles.footer}>
+                    <span className={styles.key}>조치사항</span>
+                    <span className={styles.value}>
+                      관리가 잘 되고 있습니다. 별도의 조치가 필요하지 않습니다.
+                    </span>
                   </div>
                 </div>
               </div>

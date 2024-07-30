@@ -20,6 +20,10 @@ function Logs(props) {
   const columns = useMemo(
     () => [
       {
+        Header: "CREATED_AT",
+        accessor: "created_at",
+      },
+      {
         Header: "ID",
         accessor: "ID",
       },
@@ -40,16 +44,16 @@ function Logs(props) {
         accessor: "MAGz",
       },
       {
-        Header: "ZYROx",
-        accessor: "ZYROx",
+        Header: "GYROx",
+        accessor: "GYROx",
       },
       {
-        Header: "ZYROy",
-        accessor: "ZYROy",
+        Header: "GYROy",
+        accessor: "GYROy",
       },
       {
-        Header: "ZYROz",
-        accessor: "ZYROz",
+        Header: "GYROz",
+        accessor: "GYROz",
       },
       {
         Header: "ACCx",
@@ -72,8 +76,8 @@ function Logs(props) {
         accessor: "TVOC",
       },
       {
-        Header: "EC2",
-        accessor: "EC2",
+        Header: "CO2",
+        accessor: "CO2",
       },
       {
         Header: "PM1.0",
@@ -104,8 +108,40 @@ function Logs(props) {
         accessor: "TEMP",
       },
       {
-        Header: "CREATED_AT",
-        accessor: "created_at",
+        Header: "HUMID",
+        accessor: "HUMID",
+      },
+      {
+        Header: "CO",
+        accessor: "CO",
+      },
+      {
+        Header: "H2S",
+        accessor: "H2S",
+      },
+      {
+        Header: "CH4",
+        accessor: "CH4",
+      },
+      {
+        Header: "O2",
+        accessor: "O2",
+      },
+      {
+        Header: "LatitudeNS",
+        accessor: "LatitudeNS",
+      },
+      {
+        Header: "LongitudeEW",
+        accessor: "LongitudeEW",
+      },
+      {
+        Header: "Speed",
+        accessor: "Speed",
+      },
+      {
+        Header: "Angle",
+        accessor: "Angle",
       },
     ],
     []
@@ -115,9 +151,9 @@ function Logs(props) {
     "MAGx",
     "MAGy",
     "MAGz",
-    "ZYROx",
-    "ZYROy",
-    "ZYROz",
+    "GYROx",
+    "GYROy",
+    "GYROz",
     "ACCx",
     "ACCy",
     "ACCz",
@@ -193,10 +229,22 @@ function DateAndTimeForm({ setData, isLoading, setIsLoading, data }) {
     return `${year}-${month}-${day}`;
   };
 
-  const today = getFormattedDate(new Date());
+  const getFormattedDateTime = (date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const seconds = date.getSeconds().toString().padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+  };
 
-  const [startDate, setStartDate] = useState(today + " 00:00:00");
-  const [endDate, setEndDate] = useState(today + " 23:59:59");
+  const now = new Date();
+  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+  const todayEnd = new Date(now.setHours(23, 59, 59, 999));
+
+  const [startDate, setStartDate] = useState(getFormattedDateTime(oneHourAgo));
+  const [endDate, setEndDate] = useState(getFormattedDateTime(todayEnd));
 
   const handleSubmit = (e) => {
     e.preventDefault();

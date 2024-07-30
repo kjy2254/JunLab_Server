@@ -135,6 +135,7 @@ api.get("/factory/:factoryId/airwalls", (req, res) => {
                          aw.last_pm2_5 as pm2_5,
                          aw.last_humid as humid,
                          aw.last_env_index as env_index,
+                         aw.last_env_level as env_level,
                          aw.module_description,
                          aw.type,
                          CASE 
@@ -185,6 +186,7 @@ api.get("/factory/:factoryId/workers", async (req, res) => {
       w.last_sync,
       u.last_workload AS workload,
       w.last_health_index AS health_index,
+      w.last_health_level AS health_level,
       w.last_wear
     FROM
        users u
@@ -321,7 +323,7 @@ api.get("/airwalldata", (req, res) => {
     return res.status(400).send("Date range value does not exist");
   }
 
-  let query = `SELECT module_name, temperature, tvoc, co2, pm1_0, pm2_5, pm10, timestamp
+  let query = `SELECT module_name, temperature, tvoc, co2, pm1_0, pm2_5, pm10, timestamp, humid
                FROM airwall_data d 
                JOIN airwall m ON d.sensor_module_id = m.module_id
                WHERE timestamp >= ? AND timestamp <= ?`;
@@ -604,15 +606,22 @@ api.get("/airwalldata/:env", (req, res) => {
   const date = req.query.date;
   const timeSlot = req.query.timeSlot || 30;
 
+  if (date && new Date(date) > new Date()) {
+    return res.status(400).send("Date cannot be in the future");
+  }
+  let partition = "";
+  if (date) {
+    partition = "p" + date.replace(/-/g, "");
+  }
+
   let query = "";
   let queryParams = [];
 
   if (date) {
     query = `SELECT ${env}, timestamp, a.module_name
-               FROM airwall_data d
+               FROM airwall_data PARTITION(${partition}) d
                JOIN airwall a ON a.module_id = d.sensor_module_id
-               WHERE DATE(timestamp) = ? AND d.factory_id = ? AND a.enable = 1`;
-    queryParams.push(date);
+               WHERE d.factory_id = ? AND a.enable = 1`;
   } else {
     query = `SELECT ${env}, timestamp, a.module_name
                FROM airwall_data d
@@ -670,7 +679,7 @@ api.get("/index/env/:moduleId", (req, res) => {
       const formattedResult = result.map((row) => {
         const hourMinute =
           row.time_slot + (row.slot * slot).toString().padStart(2, "0");
-        return { x: hourMinute, y: row.avg_value };
+        return { x: hourMinute, y: row.avg_value || 0 };
       });
 
       return res.status(200).json(formattedResult);
@@ -699,6 +708,112 @@ api.get("/:moduleId/workers", (req, res) => {
     }
 
     return res.status(200).json(result);
+  });
+});
+
+// api.get("/:factoryId/actionlogs", (req, res) => {
+//   const factoryId = req.params.factoryId;
+
+//   let query = `
+//     SELECT *
+//     FROM action_log
+//     WHERE factory_id = ?
+//   `;
+
+//   connection.query(query, [factoryId], (error, result) => {
+//     if (error) {
+//       console.log(error);
+//       return res.status(500).send("Internal Server Error!");
+//     }
+
+//     return res.status(200).json(result);
+//   });
+// });
+
+api.get("/actionlogs/:factoryId", (req, res) => {
+  const factoryId = req.params.factoryId;
+
+  // action_log 데이터를 가져오는 쿼리
+  let actionLogQuery = `
+    SELECT al.*, aw.module_name, u.name as user_name
+    FROM action_log al
+    LEFT JOIN airwall aw ON al.module_id = aw.module_id
+    LEFT JOIN users u ON al.user_id = u.user_id
+    WHERE al.factory_id = ?
+    ORDER BY al.create_time DESC
+  `;
+
+  // modules 목록을 가져오는 쿼리
+  let modulesQuery = `
+    SELECT module_id, module_name
+    FROM airwall
+    WHERE factory_id = ?
+  `;
+
+  // users 목록을 가져오는 쿼리
+  let usersQuery = `
+    SELECT user_id, name
+    FROM users
+    WHERE factory_id = ?
+  `;
+
+  // action_log 쿼리 실행
+  connection.query(actionLogQuery, [factoryId], (error, actionLogResult) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+
+    // modules 쿼리 실행
+    connection.query(
+      modulesQuery,
+      [factoryId],
+      (moduleError, modulesResult) => {
+        if (moduleError) {
+          console.log(moduleError);
+          return res.status(500).send("Internal Server Error!");
+        }
+
+        // users 쿼리 실행
+        connection.query(usersQuery, [factoryId], (userError, usersResult) => {
+          if (userError) {
+            console.log(userError);
+            return res.status(500).send("Internal Server Error!");
+          }
+
+          // 결과 반환
+          return res.status(200).json({
+            data: actionLogResult,
+            modules: modulesResult,
+            users: usersResult,
+          });
+        });
+      }
+    );
+  });
+});
+
+api.put("/actionlogs", (req, res) => {
+  const { id, read } = req.body;
+
+  // id가 유효한지 확인
+  if (id == null) {
+    return res.status(400).send("Invalid log ID");
+  }
+
+  const query = `
+    UPDATE action_log
+    SET \`read\` = ?
+    WHERE id = ?
+  `;
+
+  connection.query(query, [read, id], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+
+    return res.status(200).send("Update successful");
   });
 });
 

@@ -94,54 +94,19 @@ export function initHorizontalScroll() {
   });
 }
 
-export function healthIndexToText(value) {
-  let text;
-  if (value < 0.1) {
-    text = "매우 좋음";
-  } else if (value < 0.3) {
-    text = "좋음";
-  } else if (value < 0.6) {
-    text = "보통";
-  } else if (value < 0.9) {
-    text = "나쁨";
-  } else {
-    text = "매우 나쁨";
+export function levelToText(value) {
+  switch (value) {
+    case 1:
+      return "매우 좋음";
+    case 2:
+      return "좋음";
+    case 3:
+      return "보통";
+    case 4:
+      return "나쁨";
+    case 5:
+      return "매우 나쁨";
   }
 
-  return text;
-}
-
-export const healthIndexToLevel = (index) => {
-  let level;
-  if (index < 0.1) {
-    level = 1;
-  } else if (index < 0.3) {
-    level = 2;
-  } else if (index < 0.6) {
-    level = 3;
-  } else if (index < 0.9) {
-    level = 4;
-  } else {
-    level = 5;
-  }
-  return level;
-};
-
-export function EnvIndexToText(value) {
-  let text;
-  if (value < 1) {
-    text = "매우 좋음";
-  } else if (value < 3) {
-    text = "좋음";
-  } else if (value < 6) {
-    text = "보통";
-  } else if (value < 10) {
-    text = "나쁨";
-  } else if (value >= 10) {
-    text = "매우 나쁨";
-  } else {
-    text = "-";
-  }
-
-  return text;
+  return "";
 }

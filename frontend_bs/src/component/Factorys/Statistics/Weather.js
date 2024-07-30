@@ -28,7 +28,6 @@ function Weather() {
           if (response.data.sky) {
             setLoading(false);
           }
-          console.log(response.data);
         })
         .catch((error) => {
           console.error("API 요청 실패:", error);
@@ -50,6 +49,9 @@ function Weather() {
   };
 
   const getWeatherIcon = (skyCondition) => {
+    if (!skyCondition) {
+      return faSun;
+    }
     if (skyCondition.includes("맑음")) {
       return faSun;
     } else if (skyCondition.includes("구름")) {
@@ -76,7 +78,7 @@ function Weather() {
           <span>{data.location}</span>
         </div>
         <div className={styles.cards}>
-          <div className={`${styles.card} ${styles.level_default} layer3`}>
+          <div className={`${styles.card} layer3`}>
             <span className={styles.title}>날씨</span>
             {loading ? (
               <div id="spinner" />
@@ -85,7 +87,7 @@ function Weather() {
             )}
             <span className={styles.value}>{data.sky}</span>
           </div>
-          <div className={`${styles.card} ${styles.level_default} layer3`}>
+          <div className={`${styles.card} layer3`}>
             <span className={styles.title}>기온</span>
             {loading ? (
               <div id="spinner" />
@@ -94,7 +96,7 @@ function Weather() {
             )}
             <span className={styles.value}>{data.temperature}</span>
           </div>
-          <div className={`${styles.card} ${styles.level_default} layer3`}>
+          <div className={`${styles.card} layer3`}>
             <span className={styles.title}>습도</span>
             {loading ? (
               <div id="spinner" />
@@ -103,7 +105,7 @@ function Weather() {
             )}
             <span className={styles.value}>{data.humidity}</span>
           </div>
-          <div className={`${styles.card} ${styles.level_default} layer3`}>
+          <div className={`${styles.card} layer3`}>
             <span className={styles.title}>강수량</span>
             {loading ? (
               <div id="spinner" />

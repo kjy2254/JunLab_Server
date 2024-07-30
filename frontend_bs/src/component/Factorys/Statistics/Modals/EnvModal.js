@@ -75,15 +75,22 @@ function EnvGraphCard({ header, img, endpoint, title }) {
   const firstLoad = useRef(true); // 최초 로드 여부 추적
 
   const groupDataByModuleName = (data) => {
-    return data.reduce((acc, item) => {
+    const groupedData = data.reduce((acc, item) => {
       const { timestamp, module_name } = item;
       const value = parseFloat(item[endpoint], 10);
       if (!acc[module_name]) {
         acc[module_name] = [];
       }
       acc[module_name].push([new Date(timestamp).getTime(), value]);
+      // acc[module_name].sort((a, b) => a[0] - b[0]);
       return acc;
     }, {});
+
+    Object.keys(groupedData).forEach((module_name) => {
+      groupedData[module_name].sort((a, b) => a[0] - b[0]);
+    });
+
+    return groupedData;
   };
 
   const createSeriesFromGroupedData = (groupedData) => {

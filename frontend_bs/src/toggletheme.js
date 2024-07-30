@@ -238,10 +238,7 @@ export function setTheme4() {
     "rgba(25, 36, 48, 0.3)"
   );
 
-  document.documentElement.style.setProperty(
-    "--layerSB-bg-color",
-    "rgba(0, 0, 0, 0.7)"
-  );
+  document.documentElement.style.setProperty("--layerSB-bg-color", "#160D14");
   document.documentElement.style.setProperty(
     "--layerHD-bg-color",
     "rgb(20, 20, 20)"

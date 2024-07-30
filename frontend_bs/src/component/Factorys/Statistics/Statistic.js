@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import AirQualitySummary from "./AirQualitySummary";
 import Alert from "./Alert";
-import Log from "./Log";
+import AlertModal from "./Modals/AlertModal";
 import EnvModal from "./Modals/EnvModal";
-import HealthIndexModal from "./Modals/HealthIndexModal";
 import WorkerModal from "./Modals/WorkerModal";
 import WorkloadModal from "./Modals/WorkloadModal";
-import WorkShopModal from "./Modals/WorkShopModal";
 import styles from "./Statistic.module.css";
 import Weather from "./Weather";
+import WorkerList from "./WorkerList";
 import WorkerSummary from "./WorkerSummary";
 
 function Statistic(props) {
@@ -16,6 +15,7 @@ function Statistic(props) {
     props.setHeaderText("통계");
   }, []);
 
+  const [modalIndex, setModalIndex] = useState(0);
   const [previousModal, setPreviousModal] = useState(0);
 
   const [workloadModalData, setWorkloadModalData] = useState({});
@@ -23,14 +23,25 @@ function Statistic(props) {
   const [workerModalData, setWorkerModalData] = useState({});
   const [workShopModalData, setWorkShopModalData] = useState({});
   const [envModalData, setEnvModalData] = useState({});
+  const [alertModalData, setAlertModalData] = useState([]);
 
-  const [modalIndex, setModalIndex] = useState(0);
+  const [update, setUpdate] = useState(false);
+
+  const doUpdate = () => setUpdate((prev) => !prev);
+  useEffect(() => {
+    const interval = setInterval(() => doUpdate(), 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className={styles.statistic}>
       <div className={styles.left}>
         <div className={`${styles["first-row"]}`}>
-          <Alert />
+          <Alert
+            setAlertModalData={setAlertModalData}
+            setModalOpen={setModalIndex}
+            update={update}
+          />
         </div>
         <div className={`${styles["second-row"]}`}>
           <WorkerSummary
@@ -38,6 +49,7 @@ function Statistic(props) {
             setHealthIndexModalData={setHealthIndexModalData}
             setWorkerModalData={setWorkerModalData}
             setModalOpen={setModalIndex}
+            update={update}
           />
           <Weather />
         </div>
@@ -55,12 +67,21 @@ function Statistic(props) {
         <div className={`${styles["third-row"]}`}>
           <AirQualitySummary
             setEnvModalData={setEnvModalData}
+            setWorkloadModalData={setWorkloadModalData}
             setModalOpen={setModalIndex}
+            setPreviousModal={setPreviousModal}
+            update={update}
           />
         </div>
       </div>
       <div className={styles.right}>
-        <Log />
+        <WorkerList
+          doUpdate={doUpdate}
+          update={update}
+          setModalOpen={setModalIndex}
+          setPreviousModal={setPreviousModal}
+          setWorkerModalData={setWorkerModalData}
+        />
       </div>
 
       <WorkloadModal
@@ -69,13 +90,21 @@ function Statistic(props) {
         data={workloadModalData}
         setPreviousModal={setPreviousModal}
         setWorkerModalData={setWorkerModalData}
+        doUpdate={doUpdate}
+        update={update}
       />
-      <HealthIndexModal
+      {/* <HealthIndexModal
         modalOpen={modalIndex == 2}
         setModalOpen={setModalIndex}
         data={healthIndexModalData}
         setPreviousModal={setPreviousModal}
         setWorkerModalData={setWorkerModalData}
+      /> */}
+      <AlertModal
+        modalOpen={modalIndex == 2}
+        setModalOpen={setModalIndex}
+        data={alertModalData}
+        doUpdate={doUpdate}
       />
       <WorkerModal
         modalOpen={modalIndex == 3}
@@ -83,14 +112,14 @@ function Statistic(props) {
         data={workerModalData}
         previousModal={previousModal}
       />
-      <WorkShopModal
+      {/* <WorkShopModal
         modalOpen={modalIndex == 4}
         setModalOpen={setModalIndex}
         data={workShopModalData}
         setPreviousModal={setPreviousModal}
         setWorkerModalData={setWorkerModalData}
         setEnvModalData={setEnvModalData}
-      />
+      /> */}
       <EnvModal
         modalOpen={modalIndex == 5}
         setModalOpen={setModalIndex}

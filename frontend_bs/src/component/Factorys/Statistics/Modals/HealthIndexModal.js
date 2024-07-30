@@ -1,14 +1,16 @@
 import {
   faClose,
+  faMars,
   faPlugCircleCheck,
   faPlugCircleXmark,
+  faVenus,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useParams } from "react-router-dom";
-import { healthIndexToLevel, healthIndexToText } from "../../../../util";
+import { levelToText } from "../../../../util";
 import styles from "./HealthIndexModal.module.css";
 
 const customModalStyles = {
@@ -67,14 +69,30 @@ function HealthIndexModal({
               return d.online && d.last_wear === 1 && d.health_index < 0.1;
           }
         });
-        setWorkers(filteredData);
+
+        const sortedData = filteredData.sort((a, b) => {
+          if (a.online === b.online) {
+            if (a.online) {
+              return b.health_index - a.health_index;
+            } else {
+              return a.name.localeCompare(b.name, "ko-KR");
+            }
+          }
+          return b.online - a.online;
+        });
+
+        setWorkers(sortedData);
         setLoading(false);
       });
   };
 
   useEffect(() => {
     setLoading(true);
-    fetchWorkers();
+    if (modalOpen) {
+      fetchWorkers();
+    } else {
+      setWorkers([]);
+    }
   }, [modalOpen, data]);
 
   return (
@@ -123,22 +141,24 @@ function HealthIndexModal({
                 <img
                   className={
                     e.online && e.last_wear == 1
-                      ? styles[`level${healthIndexToLevel(e.health_index)}`]
+                      ? styles[`level${e.health_level}`]
                       : styles.offline
                   }
                   src={`http://junlab.postech.ac.kr:880/api2/image/${e.profile_image_path}`}
                   width={120}
                   height={120}
                 />
-                <div className={styles.name}>{e.name}</div>
-                <div className={styles.text} title={`index: ${e.health_index}`}>
-                  <span>건강 상태:</span>
-                  <span>{healthIndexToText(Math.max(e.health_index, 0))}</span>
+                <div className={styles.name}>
+                  <FontAwesomeIcon
+                    icon={e.gender == "Male" ? faMars : faVenus}
+                    style={{
+                      color: e.gender == "Male" ? "skyblue" : "orange",
+                      height: "100%",
+                    }}
+                  />
+                  {e.name}
                 </div>
-                <div className={styles.text} title={`index: ${e.health_index}`}>
-                  <span>건강 지수:</span>
-                  <span>{e.health_index}</span>
-                </div>
+
                 <hr />
                 <div className={styles.text}>
                   <span>심박수:</span>
@@ -151,6 +171,35 @@ function HealthIndexModal({
                 <div className={styles.text}>
                   <span>산소포화도:</span>
                   <span>{e.last_oxygen_saturation || "-"}%</span>
+                </div>
+                {/* <hr /> */}
+                <div className={styles.index}>
+                  <div className={styles.header}>
+                    <span className={styles.value}>
+                      {e.online && e.last_wear
+                        ? Math.max(Math.round(e.health_index * 100) / 100, 0)
+                        : "-"}
+                    </span>
+                    <div className={styles.text}>
+                      <span className={styles.t1}>
+                        {e.online && e.last_wear
+                          ? levelToText(e.health_level)
+                          : "-"}
+                      </span>
+                      <span className={styles.t2}>건강 지수</span>
+                    </div>
+                  </div>
+                  <div className={styles.gauge}>
+                    <div
+                      className={styles.circle}
+                      style={{
+                        left: `${Math.min(
+                          Math.max(e.health_index, 0) * 100,
+                          95
+                        )}%`,
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             ))

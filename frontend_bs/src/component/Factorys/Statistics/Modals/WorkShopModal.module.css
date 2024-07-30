@@ -224,23 +224,23 @@
 }
 
 .level5 {
-  border-left: 4px solid rgb(250, 0, 25);
+  border-left: 4px solid var(--level5-color);
 }
 
 .level4 {
-  border-left: 4px solid rgb(253, 188, 58);
+  border-left: 4px solid var(--level4-color);
 }
 
 .level3 {
-  border-left: 4px solid rgb(255, 252, 75);
+  border-left: 4px solid var(--level3-color);
 }
 
 .level2 {
-  border-left: 4px solid rgb(150, 208, 96);
+  border-left: 4px solid var(--level2-color);
 }
 
 .level1 {
-  border-left: 4px solid rgb(34, 180, 237);
+  border-left: 4px solid var(--level1-color);
 }
 
 @media (max-width: 680px) {

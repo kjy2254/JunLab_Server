@@ -1,12 +1,8 @@
 .air-quality {
   width: 100%;
-  /* max-width: 42rem; */
-
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  overflow: hidden;
-  /* min-height: 45rem; */
 }
 
 .air-quality .body {
@@ -20,6 +16,7 @@
   margin: 0.8rem 0 0 1rem;
   font-size: large;
   position: absolute;
+  text-wrap: nowrap;
 }
 
 .air-quality .body .left {
@@ -64,25 +61,81 @@
   margin-top: 3.5rem;
   display: flex;
   flex-direction: column;
-  min-width: 15rem;
+  min-width: 16rem;
   overflow-y: scroll;
   padding: 0 1rem;
-  max-height: 28rem;
+  max-height: 34.5rem;
 }
 
 .air-quality .body .workshop-card-wrapper .card {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   padding: 1rem;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
   cursor: pointer;
+  min-height: 4.5rem;
+
+  position: relative;
+  overflow: hidden;
+}
+.air-quality .body .workshop-card-wrapper .card.selected,
+.air-quality .body .workshop-card-wrapper .card:hover {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.34) 12%,
+    rgba(255, 255, 255, 0.18) 25%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+}
+
+.air-quality .body .workshop-card-wrapper .card .pin {
+  cursor: pointer;
+}
+
+.air-quality .body .workshop-card-wrapper .card svg {
+  width: 0.7rem;
+  position: absolute;
+  /* bottom: 0.3rem;
+  right: 0.3rem; */
+  opacity: 0.7;
+  cursor: alias;
+}
+.air-quality .body .workshop-card-wrapper .card svg:hover {
+  font-weight: bold;
+  opacity: 1;
 }
 
 .air-quality .body .workshop-card-wrapper .card .text {
   justify-content: space-between;
+  align-items: center;
   display: flex;
-  margin-bottom: 0.5rem;
+  height: 100%;
+  /* width: 3rem; */
+
+  display: flex;
+  flex-direction: column;
+  text-wrap: nowrap;
+}
+
+.air-quality .body .workshop-card-wrapper .card .text.t1 {
+  margin-right: auto;
+  margin-left: 0.4rem;
+  align-items: flex-start;
+}
+
+.air-quality .body .workshop-card-wrapper .card .text.t2 {
+  margin-right: 0.5rem;
+}
+
+.air-quality .body .workshop-card-wrapper .card .text.t3 {
+  margin-left: 0.5rem;
+  margin-right: 0.4rem;
+}
+
+.air-quality .body .workshop-card-wrapper .card .caption {
+  font-size: small;
 }
 
 .air-quality .body .info-card-wrapper {
@@ -91,7 +144,7 @@
   width: 100%;
   padding-right: 1rem;
   /* margin-bottom: 1rem; */
-  margin-top: 3.5rem;
+  margin-top: 2.5rem;
 }
 
 .air-quality .body .info-card-wrapper .card {
@@ -102,8 +155,11 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin-top: 1rem;
   margin-left: 1rem;
   overflow: hidden;
+
+  user-select: text;
 }
 
 .air-quality .info-card-wrapper .card svg {
@@ -125,9 +181,11 @@
 
 .air-quality .info-card-wrapper .card .value {
   font-size: large;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
+
+  text-align: right;
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .air-quality .env-card-wrapper {
@@ -146,6 +204,16 @@
   cursor: pointer;
 
   margin: 1rem 0 0 1rem;
+}
+
+.air-quality .env-card-wrapper .card:hover {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.34) 12%,
+    rgba(255, 255, 255, 0.18) 25%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
 }
 
 .air-quality .env-card-wrapper .card .icon {
@@ -179,6 +247,9 @@
 
 .progress-bar {
   height: 2px;
+  position: absolute;
+  bottom: 2px;
+  left: 0;
 }
 .progress-bar.selected {
   background-color: #76c7c0;
@@ -228,58 +299,75 @@
   width: 0;
 }
 
-.level_default {
-  /* border-bottom: 2px solid gray;
-  border-top: 2px solid gray; */
-  border-left: 4px solid gray;
+@media (max-width: 2140px) {
+  .air-quality .body {
+    flex-direction: column;
+  }
+
+  .air-quality .body .workshop-card-wrapper {
+    flex-direction: row;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    max-height: unset;
+    min-width: unset;
+    /* background: #000; */
+    width: 100%;
+  }
+  .air-quality .body .workshop-card-wrapper .card {
+    min-width: 12rem;
+    margin-right: 1rem;
+  }
+  .vertical {
+    width: 100%;
+    border-top: 1px var(--border-color) solid;
+    height: 0;
+  }
 }
 
-.level5 {
-  /* border-bottom: 2px solid rgb(250, 0, 25);
-  border-top: 2px solid rgb(250, 0, 25); */
-  border-left: 4px solid rgb(250, 0, 25);
+@media (max-width: 2100px) {
+  .air-quality .env-card-wrapper .card {
+    width: calc(100% / 3 - 1rem);
+  }
+
+  .air-quality .graph-wrapper {
+    flex-direction: column;
+    align-items: center;
+    height: unset;
+  }
+
+  .air-quality .graph-wrapper .graph-radar {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .air-quality .graph-wrapper .graph-aq {
+    margin-left: 0;
+    width: 100%;
+  }
 }
 
-.level4 {
-  /* border-bottom: 2px solid rgb(253, 188, 58);
-  border-top: 2px solid rgb(253, 188, 58); */
-  border-left: 4px solid rgb(253, 188, 58);
+@media (max-width: 1225px) {
+  .air-quality .body .info-card-wrapper .card {
+    width: calc(100% / 3 - 1rem);
+  }
 }
 
-.level3 {
-  /* border-bottom: 2px solid rgb(255, 252, 75);
-  border-top: 2px solid rgb(255, 252, 75); */
-  border-left: 4px solid rgb(255, 252, 75);
+@media (max-width: 670px) {
+  .air-quality .body .info-card-wrapper .card {
+    width: calc(100% / 2 - 1rem);
+  }
+
+  .air-quality .body .env-card-wrapper .card {
+    width: calc(100% / 2 - 1rem);
+  }
 }
 
-.level2 {
-  /* border-bottom: 2px solid rgb(150, 208, 96);
-  border-top: 2px solid rgb(150, 208, 96); */
-  border-left: 4px solid rgb(150, 208, 96);
-}
+@media (max-width: 440px) {
+  .air-quality .body .info-card-wrapper .card {
+    width: calc(100% / 1 - 1rem);
+  }
 
-.level1 {
-  /* border-bottom: 2px solid rgb(34, 180, 237);
-  border-top: 2px solid rgb(34, 180, 237); */
-  border-left: 4px solid rgb(34, 180, 237);
-}
-
-.level5 .value {
-  color: rgb(250, 0, 25);
-}
-
-.level4 .value {
-  color: rgb(253, 188, 58);
-}
-
-.level3 .value {
-  color: rgb(255, 252, 75);
-}
-
-.level2 .value {
-  color: rgb(150, 208, 96);
-}
-
-.level1 .value {
-  color: rgb(34, 180, 237);
+  .air-quality .body .env-card-wrapper .card {
+    width: calc(100% / 1 - 1rem);
+  }
 }

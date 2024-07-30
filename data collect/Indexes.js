@@ -164,22 +164,28 @@ async function Enviroment() {
           );
 
           const insertQuery = `
-            INSERT INTO Index_env (timestamp, value, module_id, model_version)
-            VALUES (NOW(), ?, ?, ?);
+            INSERT INTO Index_env (timestamp, value, module_id, model_version, level)
+            VALUES (NOW(), ?, ?, ?, ?);
           `;
 
           const envIndex = response.data["환경 지수"];
+          const envLevel = response.data["환경 단계"] + 1;
           const modelVersion = response.data["env_version"];
 
-          await queryAsync(insertQuery, [envIndex, moduleId, modelVersion]);
+          await queryAsync(insertQuery, [
+            envIndex,
+            moduleId,
+            modelVersion,
+            envLevel,
+          ]);
 
           const updateQuery = `
             UPDATE airwall
-            SET last_env_index = ?
+            SET last_env_index = ?, last_env_level = ?
             WHERE module_id = ?;
           `;
 
-          await queryAsync(updateQuery, [envIndex, moduleId]);
+          await queryAsync(updateQuery, [envIndex, envLevel, moduleId]);
         } catch (error) {
           console.error(
             `Error processing data for module_id ${moduleId}:`,
@@ -214,22 +220,28 @@ async function Health() {
           );
 
           const insertQuery = `
-            INSERT INTO Index_health (timestamp, value, watch_id, model_version)
-            VALUES (NOW(), ?, ?, ?);
+            INSERT INTO Index_health (timestamp, value, watch_id, model_version, level)
+            VALUES (NOW(), ?, ?, ?, ?);
           `;
 
           const healthIndex = response.data["건강 지수"];
+          const healthLevel = response.data["건강 단계"] + 1;
           const modelVersion = response.data["hc_version"];
 
-          await queryAsync(insertQuery, [healthIndex, watchId, modelVersion]);
+          await queryAsync(insertQuery, [
+            healthIndex,
+            watchId,
+            modelVersion,
+            healthLevel,
+          ]);
 
           const updateQuery = `
             UPDATE airwatch
-            SET last_health_index = ?
+            SET last_health_index = ?, last_health_level = ?
             WHERE watch_id = ?;
           `;
 
-          await queryAsync(updateQuery, [healthIndex, watchId]);
+          await queryAsync(updateQuery, [healthIndex, healthLevel, watchId]);
         } catch (error) {
           console.error(
             `Error processing data for watch_id ${watchId}:`,
@@ -268,7 +280,7 @@ async function Workload() {
             VALUES (NOW(), ?, ?, ?, ?);
           `;
 
-          const workloadIndex = response.data["작업 강도"];
+          const workloadIndex = response.data["작업 강도 단계"];
           const modelEnvVersion = response.data["env_version"];
           const modelHealthVersion = response.data["hc_version"];
 
