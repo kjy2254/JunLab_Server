@@ -12,7 +12,7 @@
   height: 100%;
   padding: 1.5rem;
   /* background-color: rgb(25, 36, 48); */
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
   max-width: 90rem;
   display: flex;
   max-height: calc(100dvh - 200px);
@@ -249,7 +249,7 @@ button,
 button {
   padding: 0.3rem 0.8rem 0.3rem 0.8rem;
   color: white;
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
   border-style: none;
   text-wrap: nowrap;
   /* height: 2.5rem;
@@ -310,7 +310,7 @@ button:hover {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
   overflow: auto;
   border: none;
 }
@@ -332,7 +332,7 @@ button:hover {
   border: none;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
   position: relative;
   height: 100%;
   width: 100%;
@@ -349,7 +349,7 @@ button:hover {
 
 .factory-modal .contents img {
   width: 50%;
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
 }
 
 .factory-modal .contents label {

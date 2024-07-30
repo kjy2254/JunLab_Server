@@ -73,10 +73,10 @@ function WorkerSummary({
             <div className="info">
               <span className="name">{row.original.name}</span>
               <span className="watch">
-                Watch: {row.original.watch_id || "-"}
+                워치: {row.original.watch_id || "-"}
               </span>
               <span className="watch">
-                AirWall: {row.original.airwall_id || "-"}
+                작업장: {row.original.airwall_name || "-"}
               </span>
             </div>
           </div>

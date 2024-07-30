@@ -1,0 +1,278 @@
+.workshopmodal {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+
+  width: calc(100% - 13rem);
+  max-width: 80rem;
+  height: calc(100% - 13rem);
+  max-height: 75rem;
+  z-index: 15;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 0.5rem;
+  overflow: auto;
+  border: none;
+}
+
+.workshopmodal .header {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  /* background: #000; */
+}
+
+.workshopmodal .header .title {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  text-wrap: nowrap;
+}
+
+.workshopmodal .close:hover {
+  opacity: 0.85;
+}
+
+.workshopmodal .close {
+  cursor: pointer;
+  top: 1rem;
+  right: 1rem;
+  position: absolute;
+}
+
+.workshopmodal .body {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  overflow-y: scroll;
+}
+
+.workshopmodal .wrapper {
+  display: flex;
+  flex-direction: column;
+  padding-top: 1rem;
+}
+
+.workshopmodal .header {
+  margin: 0rem 0 0 1rem;
+}
+
+.workshopmodal .env-cards {
+  display: flex;
+  justify-content: space-between;
+  /* padding: 1rem; */
+  /* padding-bottom: 0; */
+  padding-right: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  /* background: #000; */
+}
+
+.workshopmodal .env-card {
+  display: flex;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  width: calc(100% / 3 - 1rem);
+  margin-bottom: 1rem;
+  cursor: pointer;
+
+  margin: 1rem 0 0 1rem;
+}
+
+.workshopmodal .air-info {
+  display: flex;
+  justify-content: flex-start;
+  /* padding: 1rem; */
+  padding-bottom: 0;
+  flex-wrap: wrap;
+  padding-right: 1rem;
+  text-wrap: nowrap;
+}
+
+.workshopmodal .info-card {
+  font-size: large;
+  padding: 0.7rem;
+  border-radius: 0.5rem;
+  width: calc(100% / 6 - 1rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 1rem 0 0 1rem;
+  overflow: hidden;
+}
+
+.workshopmodal .info-card .key {
+  display: flex;
+  justify-content: flex-start;
+  font-size: small;
+  font-weight: bold;
+}
+
+.workshopmodal .info-card .value {
+  /* text-align: right; */
+  font-size: large;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.workshopmodal .info-card svg {
+  border-radius: 100%;
+  /* background: #0a8d1b; */
+  width: 13px;
+  height: 13px;
+  padding: 0.2rem;
+  font-size: small;
+  margin-right: 0.3rem;
+}
+
+.workshopmodal .env-card .icon {
+  width: 3.5rem;
+}
+
+.workshopmodal .env-card .text {
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-size: large;
+  text-wrap: nowrap;
+  overflow: hidden;
+}
+
+.workshopmodal .env-card .text .key {
+  font-weight: bold;
+}
+
+.workshopmodal .env-card .text .value {
+  text-align: right;
+  font-size: larger;
+}
+
+.workshopmodal .graph {
+  margin: 1rem;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.workshopmodal .workers {
+  display: flex;
+  width: 100%;
+  /* background: #000; */
+  padding: 1rem;
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.workshopmodal .workers .worker-card {
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.workshopmodal .workers .worker-card .status {
+  display: flex;
+  align-items: center;
+}
+
+.workshopmodal .workers .worker-card img {
+  height: 3.5rem;
+  margin-right: 1rem;
+}
+
+.workshopmodal .workers .worker-card .info {
+  display: flex;
+  flex-direction: column;
+  /* background: #000; */
+}
+
+.workshopmodal .workers .worker-card .info .vitals {
+  margin-top: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.workshopmodal .workers .worker-card .info .vital {
+  margin-right: 1rem;
+  text-wrap: nowrap;
+}
+
+.workshopmodal .workers .worker-card .index {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-wrap: nowrap;
+  justify-content: space-between;
+  margin-left: auto;
+}
+
+.workshopmodal hr {
+  margin-bottom: 1rem;
+}
+
+.level_default {
+  border-left: 4px solid gray;
+}
+
+.level5 {
+  border-left: 4px solid var(--level5-color);
+}
+
+.level4 {
+  border-left: 4px solid var(--level4-color);
+}
+
+.level3 {
+  border-left: 4px solid var(--level3-color);
+}
+
+.level2 {
+  border-left: 4px solid var(--level2-color);
+}
+
+.level1 {
+  border-left: 4px solid var(--level1-color);
+}
+
+@media (max-width: 680px) {
+  .workshopmodal {
+    width: calc(100% - 7rem);
+    height: calc(100% - 7rem);
+  }
+}
+
+@media (max-width: 450px) {
+  .workshopmodal {
+    width: calc(100% - 1rem);
+    height: calc(100% - 1rem);
+  }
+}
+
+@media (max-width: 1065px) {
+  .workshopmodal .env-card {
+    width: calc(100% / 2 - 1rem);
+  }
+
+  .workshopmodal .info-card {
+    width: calc(100% / 3 - 1rem);
+  }
+}
+
+@media (max-width: 800px) {
+  .workshopmodal .env-card {
+    width: calc(100% / 1 - 1rem);
+  }
+
+  .workshopmodal .info-card {
+    width: calc(100% / 2 - 1rem);
+  }
+}

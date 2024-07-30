@@ -20,13 +20,15 @@ import AirWall from "./component/Factorys/AirWall";
 import AirWatch from "./component/Factorys/AirWatch";
 import Confirm from "./component/Factorys/Confirm";
 import Dashboard from "./component/Factorys/Dashboard/Dashboard";
+import Statistic from "./component/Factorys/Statistics/Statistic";
 import Header from "./component/Header";
 import Settings from "./component/Settings/Settings";
 import Sidebar from "./component/Sidebar";
+import ChangePW from "./component/Users/ChangePW";
 import UserInit from "./component/Users/MyPage";
 import SidebarUser from "./component/Users/SidebarUser";
 import Vital from "./component/Users/Vital";
-import Labeling from "./component/labeling/Labeling";
+import { setTheme1, setTheme2, setTheme3, setTheme4 } from "./toggletheme";
 import { authcheck } from "./util";
 
 function App() {
@@ -34,9 +36,7 @@ function App() {
   const [toggleSmallSide, setToggleSmallSide] = useState(false);
   const [smallView, setSmallView] = useState(window.innerWidth < 800);
   const [headerText, setHeaderText] = useState("");
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("darkMode") === "true"
-  );
+  const [theme, setTheme] = useState(localStorage.getItem("theme"));
 
   const toggleSidebar = () => {
     setToggleSide(!toggleSide);
@@ -60,59 +60,28 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (darkMode) {
-      // 다크모드에서의 색상
-      document.documentElement.style.setProperty(
-        "--layer1-bg-color",
-        "rgb(48, 58, 69)"
-      );
-      document.documentElement.style.setProperty(
-        "--layer2-bg-color",
-        "rgb(25, 36, 48)"
-      );
-      document.documentElement.style.setProperty(
-        "--layerSB-bg-color",
-        "rgb(25, 36, 48)"
-      );
-      document.documentElement.style.setProperty(
-        "--layerHD-bg-color",
-        "rgb(25, 36, 48)"
-      );
-      document.documentElement.style.setProperty(
-        "--layerModal-bg-color",
-        "rgb(48, 58, 69)"
-      );
-      document.documentElement.style.setProperty(
-        "--border-color",
-        "rgba(255, 255, 255, 0.2)"
-      );
-      document.documentElement.style.setProperty("--select-color", "#303a45");
-      document.documentElement.style.setProperty("--text-color", "white");
-      document.documentElement.style.setProperty(
-        "--spinner-color",
-        "rgba(255, 255, 255, 0.3)"
-      );
-      document.documentElement.style.setProperty(
-        "--spinner-top-color",
-        "white"
-      );
-      document.documentElement.style.setProperty(
-        "--graph-lable-color",
-        "rgb(230, 233, 236)"
-      );
-      document.documentElement.style.setProperty("--drag-over-color", "#ccc");
-      document.documentElement.style.setProperty("--dot-color", "white");
-
-      document.documentElement.style.setProperty("--radar-red", "#d65959");
-      document.documentElement.style.setProperty("--radar-yellow", "#e0e050");
-      document.documentElement.style.setProperty("--radar-green", "#50eb50");
+    if (theme == 1) {
+      setTheme1();
+    } else if (theme == 2) {
+      setTheme2();
+    } else if (theme == 3) {
+      setTheme3();
+    } else if (theme == 4) {
+      setTheme4();
     }
   }, []);
 
   const [authData, setAuthData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const debug = 1;
+  let debug = false;
+
+  if (process.env.REACT_APP_ENV === "development") {
+    console.log("Development mode: This code runs only during npm start");
+    debug = true;
+  }
+
+  // const debug = 10;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,7 +99,7 @@ function App() {
       setAuthData({
         isLogin: true,
         name: "JunLab",
-        userId: 10,
+        userId: 1,
         authority: 4,
         manageOf: -1,
       });
@@ -140,7 +109,7 @@ function App() {
       setAuthData({
         isLogin: true,
         name: "JunLab",
-        userId: 41,
+        userId: 1,
         authority: 1,
       });
       setIsLoading(false);
@@ -172,8 +141,8 @@ function App() {
                 toggleSmallSidebar={toggleSmallSidebar}
                 headerText={headerText}
                 isLogin={authData.isLogin}
-                darkMode={darkMode}
-                setDarkMode={setDarkMode}
+                // darkMode={theme}
+                // setDarkMode={setTheme}
               />
             }
           />
@@ -227,17 +196,15 @@ function App() {
                 />
               }
             />
-            <Route
+            {/* <Route
               path="/labeling"
               element={
                 <RestrictRoute
-                  element={
-                    <Labeling darkMode={darkMode} setDarkMode={setDarkMode} />
-                  }
+                  element={<Labeling darkMode={theme} setDarkMode={setTheme} />}
                   isAllow={true}
                 />
               }
-            />
+            /> */}
             <Route
               path="/factorymanagement/admin/factory"
               element={
@@ -280,7 +247,26 @@ function App() {
                 <RestrictRoute
                   element={
                     <CustomComponent
+                      // Component={Dashboard}
+                      Component={Statistic}
+                      toggleSide={toggleSide}
+                      setHeaderText={setHeaderText}
+                      closeSmallSidebar={closeSmallSidebar}
+                    />
+                  }
+                  isAllow={authData.isLogin && authData.authority >= 3}
+                  manageOf={authData.manageOf}
+                />
+              }
+            />
+            <Route
+              path="/factorymanagement/factory/:factoryId/dashboardLegacy"
+              element={
+                <RestrictRoute
+                  element={
+                    <CustomComponent
                       Component={Dashboard}
+                      // Component={Statistic}
                       toggleSide={toggleSide}
                       setHeaderText={setHeaderText}
                       closeSmallSidebar={closeSmallSidebar}
@@ -394,6 +380,23 @@ function App() {
               }
             />
             <Route
+              path="/factorymanagement/user/:userId/password"
+              element={
+                <RestrictRoute
+                  element={
+                    <CustomComponent
+                      Component={ChangePW}
+                      toggleSide={toggleSide}
+                      setHeaderText={setHeaderText}
+                      closeSmallSidebar={closeSmallSidebar}
+                    />
+                  }
+                  isAllow={authData.isLogin}
+                  loginUserId={authData.userId}
+                />
+              }
+            />
+            <Route
               path="/factorymanagement/*"
               element={<HomeRedirector authData={authData} />}
             />
@@ -416,7 +419,7 @@ function RestrictRoute({ element, isAllow, manageOf, loginUserId }) {
     isAllowed = isAllow && (manageOf == factoryId || manageOf < 0);
   } else if (loginUserId) {
     isAllowed = isAllow && userId == loginUserId;
-    console.log(isAllow, isAllowed);
+    // console.log(isAllow, isAllowed);
   } else {
     isAllowed = isAllow;
   }

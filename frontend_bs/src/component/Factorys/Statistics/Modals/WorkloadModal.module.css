@@ -1,0 +1,371 @@
+.workermodal {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+
+  width: calc(100% - 13rem);
+  max-width: 80rem;
+  height: calc(100% - 13rem);
+  max-height: 75rem;
+  z-index: 15;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 0.5rem;
+  overflow: auto;
+  border: none;
+}
+
+.workermodal .header {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  /* background: #000; */
+}
+
+.workermodal .header .title {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  text-wrap: nowrap;
+}
+
+.workermodal .close:hover {
+  opacity: 0.85;
+}
+
+.workermodal .close {
+  cursor: pointer;
+  top: 1rem;
+  right: 1rem;
+  position: absolute;
+}
+
+.workermodal .body {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  overflow-y: scroll;
+}
+
+.workermodal .card-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  align-items: flex-start;
+  width: 100%;
+
+  justify-content: flex-start;
+
+  padding: 0 1rem 1rem 0;
+  overflow-y: scroll;
+}
+
+.workermodal .card {
+  width: calc(100% / 5 - 1rem);
+  /* height: 25rem; */
+  margin: 1rem 0 0 1rem;
+  /* background: var(--layer3-bg-color); */
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+
+  min-width: 10rem;
+  position: relative;
+  user-select: none;
+
+  overflow: hidden;
+}
+
+.workermodal .card .workshop {
+  margin-left: auto;
+}
+
+.workermodal .card .action {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.workermodal .card .action:hover {
+  opacity: 1;
+}
+
+.workermodal .card .action-overlay {
+  background: #00000098;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  border-radius: 0.5rem;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.workermodal .card .action-overlay svg {
+  margin-left: auto;
+  margin-top: 0.5rem;
+}
+
+.workermodal .card .cardbody {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+}
+
+.workermodal .card .cardbody .profile {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1.5rem 0 0.8rem;
+  position: relative;
+  align-items: center;
+}
+
+.workermodal .card .status {
+  display: flex;
+  align-items: center;
+  text-wrap: nowrap;
+  flex-wrap: wrap;
+}
+
+.workermodal .card .status select {
+  font-size: small;
+  padding: 0.2rem 0.1rem;
+}
+
+.workermodal .card svg {
+  border-radius: 100%;
+  /* background: #0a8d1b; */
+  width: 13px;
+  height: 13px;
+  padding: 0.2rem;
+  font-size: small;
+  margin-right: 0.3rem;
+}
+
+.workermodal .card .footer {
+  opacity: 0.8;
+  display: flex;
+  flex-direction: column;
+  font-size: small;
+}
+
+.workermodal .card .footer .key {
+  opacity: 1;
+}
+
+.workermodal .card img.level5 {
+  border: 0.5rem solid var(--level5-color);
+}
+
+.workermodal .card img.level4 {
+  border: 0.5rem solid var(--level4-color);
+}
+
+.workermodal .card img.level3 {
+  border: 0.5rem solid var(--level3-color);
+}
+.workermodal .card img.level2 {
+  border: 0.5rem solid var(--level2-color);
+}
+
+.workermodal .card img.level1 {
+  border: 0.5rem solid var(--level1-color);
+}
+
+.workermodal .card img.offline {
+  border: 0.5rem solid gray;
+}
+
+.workermodal .card img {
+  align-self: center;
+  border-radius: 100%;
+  margin: 0.5rem 0 0.7rem 0;
+  cursor: pointer;
+}
+
+.workermodal .card .workload-index {
+  position: absolute;
+  border-radius: 100%;
+  width: 1.5rem;
+  height: 1.5rem;
+  text-align: center;
+  font-weight: bold;
+  text-wrap: nowrap;
+  left: calc(50% + 2rem);
+  top: 1.3rem;
+  /* right: 3rem; */
+
+  color: white;
+  /* background: gray; */
+}
+
+.workermodal .card .workload-index.level5 {
+  background: var(--level5-color);
+}
+
+.workermodal .card .workload-index.level4 {
+  background: var(--level4-color);
+}
+
+.workermodal .card .workload-index.level3 {
+  background: var(--level3-color);
+  color: #9f781a;
+}
+.workermodal .card .workload-index.level2 {
+  background: var(--level2-color);
+}
+
+.workermodal .card .workload-index.level1 {
+  background: var(--level1-color);
+}
+
+.workermodal .card .name {
+  text-align: center;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background: #000; */
+}
+
+.workermodal .card .info {
+  /* background: #000; */
+  /* width: calc(100% - 12rem); */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  /* padding: 0 0 1.5rem 1rem; */
+}
+
+.workermodal .card .index {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0.5rem 1rem 0.5rem;
+}
+
+.workermodal .card .index .header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  /* margin-bottom: 0.3rem; */
+}
+
+.workermodal .card .index .header .value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  /* width: 3.5rem; */
+  text-align: right;
+  margin-right: 0.7rem;
+  height: 3rem;
+}
+
+.workermodal .card .index .header .text {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.workermodal .card .index .header .text .t1 {
+  font-weight: bold;
+}
+
+.workermodal .card .index .header .text .t2 {
+  font-weight: bold;
+  color: rgb(138, 138, 138);
+  margin-bottom: 0.3rem;
+}
+
+.workermodal .card .index .gauge {
+  height: 0.4rem;
+  border-radius: 0.3rem;
+  background: linear-gradient(
+    90deg,
+    rgb(34, 180, 237) 12%,
+    rgb(150, 208, 96) 40%,
+    rgb(255, 252, 75) 60%,
+    rgb(253, 188, 58) 75%,
+    rgb(250, 0, 25) 100%
+  );
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.workermodal .card .index .gauge .circle {
+  position: absolute;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 100%;
+  border: white 2px solid;
+  background: none;
+}
+
+.workermodal .card hr {
+  /* margin-top: 10rem; */
+  margin: 0.5rem 0;
+}
+
+.noData {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-wrap: nowrap;
+}
+
+@media (max-width: 680px) {
+  .workermodal {
+    width: calc(100% - 7rem);
+    height: calc(100% - 7rem);
+  }
+}
+
+@media (max-width: 450px) {
+  .workermodal {
+    width: calc(100% - 1rem);
+    height: calc(100% - 1rem);
+  }
+}
+
+.vertical {
+  /* height: 100%; */
+  border-left: 1px var(--border-color) solid;
+  width: 0;
+}
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+@media (max-width: 1450px) {
+  .workermodal .card {
+    width: calc(100% / 2 - 1rem);
+  }
+}
+@media (max-width: 1070px) {
+  .workermodal .card {
+    width: calc(100% / 1 - 1rem);
+  }
+}
+@media (max-width: 580px) {
+  .workermodal .card .cardbody {
+    flex-direction: column;
+  }
+}

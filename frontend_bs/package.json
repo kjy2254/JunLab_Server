@@ -3,17 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.5.1",
-    "@fortawesome/free-brands-svg-icons": "^6.5.1",
-    "@fortawesome/free-regular-svg-icons": "^6.5.1",
-    "@fortawesome/free-solid-svg-icons": "^6.5.1",
-    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-brands-svg-icons": "^6.6.0",
+    "@fortawesome/free-regular-svg-icons": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.5",
     "bootstrap": "^5.3.2",
-    "highcharts": "^11.3.0",
+    "highcharts": "^11.2.0",
     "highcharts-react-official": "^3.2.1",
     "react": "^18.2.0",
     "react-animated-numbers": "^0.17.1",
@@ -32,12 +32,13 @@
     "react-toastify": "^10.0.4",
     "react-tooltip": "^5.26.4",
     "slick-carousel": "^1.8.1",
+    "styled-components": "^6.1.12",
     "swiper": "^11.0.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start --host 0.0.0.0 ",
-    "build": "react-scripts build",
+    "start": "cross-env REACT_APP_ENV=development react-scripts start --host 0.0.0.0 ",
+    "build": "cross-env REACT_APP_ENV=production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -58,5 +59,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }

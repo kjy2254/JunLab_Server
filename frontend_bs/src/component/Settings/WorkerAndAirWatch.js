@@ -189,7 +189,7 @@ function WorkerAndAirWatch() {
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="worker-airwatch">
         <div className="left">
-          <div className="top layer2">
+          <div className="top ">
             <input
               type="text"
               placeholder="Search Worker Name..."
@@ -271,7 +271,7 @@ function WorkerAndAirWatch() {
           </div>
         </div>
         <div className="right">
-          <div className="top layer2">
+          <div className="top">
             <input
               type="text"
               placeholder="Search Watch ID..."

@@ -175,7 +175,7 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
         lineWidth: 0,
         labels: {
           style: {
-            color: "var(--graph-lable-color)",
+            color: "var(--graph-label-color)",
             fontWeight: "light",
             fontFamily: "SUITE-Regular",
           },
@@ -184,7 +184,7 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
       legend: {
         itemStyle: {
           fontFamily: "SUITE-Regular",
-          color: "var(--graph-lable-color)",
+          color: "var(--graph-label-color)",
         },
         enabled: false,
       },
@@ -197,7 +197,7 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
         labels: {
           enabled: false,
           style: {
-            color: "var(--graph-lable-color)",
+            color: "var(--graph-label-color)",
             fontWeight: "light",
             fontFamily: "SUITE-Regular",
           },
@@ -256,6 +256,8 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
               "환경 점수는 측정된 환경 값들을 복합적으로 고려한 수치입니다.",
               "- 1을 초과하는 경우 인체에 영향이 있을 수 있습니다.",
             ]}
+            directionX="left"
+            directionY="bottom"
           >
             <FontAwesomeIcon icon={faCircleQuestion} />
           </Tooltip>
@@ -270,6 +272,7 @@ function AirWallSummary({ setSelectedEnvCard, setEnvModalOpen, setImg }) {
           setSelectedEnvCard={setSelectedEnvCard}
           setEnvModalOpen={setEnvModalOpen}
           setImg={setImg}
+          isOnline={envData[moduleIndex]?.isOnline}
         />
       </div>
       <div className="module-list">

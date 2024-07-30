@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import time
 from datetime import datetime
+import joblib
 
 # 데이터베이스 연결 설정
 config = {
@@ -16,11 +17,14 @@ config = {
 }
 
 # 모델 로드
-model_path = './wl_best_model_ver7.h5'
+model_path = './new_model_1.h5'
 model = tf.keras.models.load_model(model_path)
-model_version = 'wl_best_model_ver7.h5'
+model_version = 'new_model_1.h5'
+scaler_path = './scaler.pkl'
 
 pd.options.display.float_format = '{:.2f}'.format
+scaler = joblib.load(scaler_path)
+
 
 def get_all_user_ids():
     conn = mysql.connector.connect(**config)
@@ -113,7 +117,20 @@ def predict_workload_for_user(user_id):
 
     # 30분 데이터를 4x30 형태로 변환
     input_data = np.array([avg_co2, avg_tvoc, avg_heart_rates, avg_body_temperatures]).T
-    input_data = input_data.reshape(1, 30, 4)  # 모델 입력에 맞게 reshape
+    
+    # 배열의 shape 저장
+    original_shape = input_data.shape
+
+    # 2차원 배열로 변환 (reshape)
+    data_reshaped = input_data.reshape(-1, original_shape[-1])
+
+    # 저장된 스케일러를 사용하여 테스트 데이터 변환
+    scaled_data_reshaped = scaler.transform(data_reshaped)
+
+    # 다시 원래 shape로 변환
+    scaled_data = scaled_data_reshaped.reshape(original_shape)
+
+    input_data = scaled_data.reshape(1, 30, 4)  # 모델 입력에 맞게 reshape
 
     print(input_data)
 

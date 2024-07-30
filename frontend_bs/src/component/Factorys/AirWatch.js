@@ -14,7 +14,7 @@ import { notify } from "../../util";
 function AirWatch(props) {
   const [data, setData] = useState([]);
   useEffect(() => {
-    props.setHeaderText("로그 / 이동식");
+    props.setHeaderText("로그 / 워치");
   }, []);
 
   const columns = useMemo(
@@ -66,7 +66,7 @@ function AirWatch(props) {
       <div className="airwatch-wrapper layer2">
         <span className="bar" />
         <div className="header">
-          <span>이동식 로그 검색</span>
+          <span>워치 로그 검색</span>
         </div>
         <DateAndTimeForm
           setData={setData}

@@ -125,23 +125,35 @@ api.get("/factory/:factoryId/name", (req, res) => {
 api.get("/factory/:factoryId/airwalls", (req, res) => {
   const factoryId = parseInt(req.params.factoryId);
 
-  const query = `SELECT module_id,
-                         module_name,
-                         last_update,
-                         last_tvoc as tvoc,
-                         last_co2 as co2,
-                         last_temperature as temperature,
-                         last_pm10 as pm10,
-                         last_pm2_5 as pm2_5,
-                         last_humid as humid,
-                         module_description,
-                         type,
+  const query = `SELECT aw.module_id,
+                         aw.module_name,
+                         aw.last_update,
+                         aw.last_tvoc as tvoc,
+                         aw.last_co2 as co2,
+                         aw.last_temperature as temperature,
+                         aw.last_pm10 as pm10,
+                         aw.last_pm2_5 as pm2_5,
+                         aw.last_humid as humid,
+                         aw.last_env_index as env_index,
+                         aw.last_env_level as env_level,
+                         aw.module_description,
+                         aw.type,
                          CASE 
-                           WHEN last_update >= DATE_SUB(NOW(), INTERVAL 3 MINUTE) THEN true
+                           WHEN aw.last_update >= DATE_SUB(NOW(), INTERVAL 3 MINUTE) THEN true
                            ELSE false
-                         END as isOnline
-                  FROM airwall 
-                  WHERE factory_id = ? AND enable = 1`;
+                         END as isOnline,
+                         (SELECT COUNT(*) 
+                          FROM users u 
+                          WHERE u.airwall_id = aw.module_id) as num_of_workers,
+                          (SELECT COUNT(*) 
+                          FROM users u 
+                          LEFT JOIN airwatch awat ON awat.watch_id = u.watch_id
+                          WHERE u.airwall_id = aw.module_id
+                          AND awat.last_wear = 1
+                          AND awat.last_sync >= DATE_SUB(NOW(), INTERVAL 30 SECOND)) as num_of_online_workers
+                  FROM airwall aw
+                  WHERE aw.factory_id = ? AND aw.enable = 1
+                  ORDER BY aw.module_name`;
 
   connection.query(query, [factoryId], (error, results) => {
     if (error) {
@@ -161,7 +173,9 @@ api.get("/factory/:factoryId/workers", async (req, res) => {
       u.name, u.user_id,
       u.watch_id, 
       u.profile_image_path,
-      aw.module_name AS airwall_id,
+      u.gender,
+      aw.module_name AS airwall_name,
+      u.airwall_id,
       w.last_sync,
       w.last_heart_rate,
       w.last_body_temperature,
@@ -171,6 +185,8 @@ api.get("/factory/:factoryId/workers", async (req, res) => {
       w.last_co2,
       w.last_sync,
       u.last_workload AS workload,
+      w.last_health_index AS health_index,
+      w.last_health_level AS health_level,
       w.last_wear
     FROM
        users u
@@ -307,7 +323,7 @@ api.get("/airwalldata", (req, res) => {
     return res.status(400).send("Date range value does not exist");
   }
 
-  let query = `SELECT module_name, temperature, tvoc, co2, pm1_0, pm2_5, pm10, timestamp
+  let query = `SELECT module_name, temperature, tvoc, co2, pm1_0, pm2_5, pm10, timestamp, humid
                FROM airwall_data d 
                JOIN airwall m ON d.sensor_module_id = m.module_id
                WHERE timestamp >= ? AND timestamp <= ?`;
@@ -590,20 +606,27 @@ api.get("/airwalldata/:env", (req, res) => {
   const date = req.query.date;
   const timeSlot = req.query.timeSlot || 30;
 
+  if (date && new Date(date) > new Date()) {
+    return res.status(400).send("Date cannot be in the future");
+  }
+  let partition = "";
+  if (date) {
+    partition = "p" + date.replace(/-/g, "");
+  }
+
   let query = "";
   let queryParams = [];
 
   if (date) {
     query = `SELECT ${env}, timestamp, a.module_name
-               FROM airwall_data d
+               FROM airwall_data PARTITION(${partition}) d
                JOIN airwall a ON a.module_id = d.sensor_module_id
-               WHERE DATE(timestamp) = ? AND d.factory_id = ?`;
-    queryParams.push(date);
+               WHERE d.factory_id = ? AND a.enable = 1`;
   } else {
     query = `SELECT ${env}, timestamp, a.module_name
                FROM airwall_data d
                JOIN airwall a ON a.module_id = d.sensor_module_id
-               WHERE timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND d.factory_id = ?`;
+               WHERE timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND d.factory_id = ? AND a.enable = 1`;
     queryParams.push(timeSlot);
   }
   queryParams.push(factory_id);
@@ -614,6 +637,183 @@ api.get("/airwalldata/:env", (req, res) => {
       return res.status(500).send("Internal Server Error!");
     }
     return res.status(200).json(result);
+  });
+});
+
+api.get("/index/env/:moduleId", (req, res) => {
+  const moduleId = req.params.moduleId;
+  const minute = parseInt(req.query.minute) || 300;
+  const slot = parseInt(req.query.slot) || 20;
+
+  const currentTime = new Date();
+
+  // minute 단위로 계산하여 시작 시간 구하기
+  const startTime = new Date(
+    currentTime.getTime() - minute * 60 * 1000 + 9 * 60 * 60 * 1000
+  );
+  const formattedStartTime = startTime
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");
+
+  let query = `
+    SELECT 
+      DATE_FORMAT(timestamp, '%Y-%m-%d %H:') AS time_slot,
+      FLOOR(MINUTE(timestamp) / ?) AS slot,
+      AVG(value) AS avg_value
+    FROM Index_env
+    WHERE module_id = ? AND timestamp >= ?
+    GROUP BY time_slot, slot
+    ORDER BY time_slot, slot
+  `;
+
+  connection.query(
+    query,
+    [slot, moduleId, formattedStartTime],
+    (error, result) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error!");
+      }
+
+      const formattedResult = result.map((row) => {
+        const hourMinute =
+          row.time_slot + (row.slot * slot).toString().padStart(2, "0");
+        return { x: hourMinute, y: row.avg_value || 0 };
+      });
+
+      return res.status(200).json(formattedResult);
+    }
+  );
+});
+
+api.get("/:moduleId/workers", (req, res) => {
+  const moduleId = req.params.moduleId;
+
+  let query = `
+    SELECT user_id, name, last_workload, a.last_heart_rate, a.last_body_temperature, a.last_oxygen_saturation, a.last_health_index, profile_image_path,
+      CASE 
+        WHEN TIMESTAMPDIFF(MINUTE, a.last_sync, NOW()) <= 1 THEN true 
+        ELSE false 
+      END AS isOnline
+    FROM users u 
+    LEFT JOIN airwatch a ON u.watch_id = a.watch_id
+    WHERE u.airwall_id = ?
+  `;
+
+  connection.query(query, [moduleId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+
+    return res.status(200).json(result);
+  });
+});
+
+// api.get("/:factoryId/actionlogs", (req, res) => {
+//   const factoryId = req.params.factoryId;
+
+//   let query = `
+//     SELECT *
+//     FROM action_log
+//     WHERE factory_id = ?
+//   `;
+
+//   connection.query(query, [factoryId], (error, result) => {
+//     if (error) {
+//       console.log(error);
+//       return res.status(500).send("Internal Server Error!");
+//     }
+
+//     return res.status(200).json(result);
+//   });
+// });
+
+api.get("/actionlogs/:factoryId", (req, res) => {
+  const factoryId = req.params.factoryId;
+
+  // action_log 데이터를 가져오는 쿼리
+  let actionLogQuery = `
+    SELECT al.*, aw.module_name, u.name as user_name
+    FROM action_log al
+    LEFT JOIN airwall aw ON al.module_id = aw.module_id
+    LEFT JOIN users u ON al.user_id = u.user_id
+    WHERE al.factory_id = ?
+    ORDER BY al.create_time DESC
+  `;
+
+  // modules 목록을 가져오는 쿼리
+  let modulesQuery = `
+    SELECT module_id, module_name
+    FROM airwall
+    WHERE factory_id = ?
+  `;
+
+  // users 목록을 가져오는 쿼리
+  let usersQuery = `
+    SELECT user_id, name
+    FROM users
+    WHERE factory_id = ?
+  `;
+
+  // action_log 쿼리 실행
+  connection.query(actionLogQuery, [factoryId], (error, actionLogResult) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+
+    // modules 쿼리 실행
+    connection.query(
+      modulesQuery,
+      [factoryId],
+      (moduleError, modulesResult) => {
+        if (moduleError) {
+          console.log(moduleError);
+          return res.status(500).send("Internal Server Error!");
+        }
+
+        // users 쿼리 실행
+        connection.query(usersQuery, [factoryId], (userError, usersResult) => {
+          if (userError) {
+            console.log(userError);
+            return res.status(500).send("Internal Server Error!");
+          }
+
+          // 결과 반환
+          return res.status(200).json({
+            data: actionLogResult,
+            modules: modulesResult,
+            users: usersResult,
+          });
+        });
+      }
+    );
+  });
+});
+
+api.put("/actionlogs", (req, res) => {
+  const { id, read } = req.body;
+
+  // id가 유효한지 확인
+  if (id == null) {
+    return res.status(400).send("Invalid log ID");
+  }
+
+  const query = `
+    UPDATE action_log
+    SET \`read\` = ?
+    WHERE id = ?
+  `;
+
+  connection.query(query, [read, id], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+
+    return res.status(200).send("Update successful");
   });
 });
 

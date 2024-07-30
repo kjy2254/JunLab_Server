@@ -257,4 +257,63 @@ login.post("/signup2", (req, res) => {
   }
 });
 
+login.post("/change-password", (req, res) => {
+  const userId = parseInt(req.body.userId);
+  const oldPassword = req.body.oldPassword;
+  const newPassword = req.body.newPassword;
+  const newPassword2 = req.body.newPassword2;
+  const sendData = { isSuccess: false, message: "" };
+
+  console.log(userId, oldPassword, newPassword, newPassword2);
+
+  if (userId && oldPassword && newPassword && newPassword2) {
+    if (newPassword !== newPassword2) {
+      sendData.message = "새 비밀번호가 일치하지 않습니다.";
+      res.send(sendData);
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      sendData.message = "새 비밀번호는 최소 6자 이상이어야 합니다.";
+      res.send(sendData);
+      return;
+    }
+
+    connection.query(
+      "SELECT * FROM users WHERE user_id = ?",
+      [userId],
+      function (error, results) {
+        if (error) throw error;
+        if (results.length > 0) {
+          bcrypt.compare(oldPassword, results[0].password, (err, result) => {
+            if (result === true) {
+              const hashedNewPassword = bcrypt.hashSync(newPassword, 10);
+              connection.query(
+                "UPDATE users SET password = ? WHERE user_id = ?",
+                [hashedNewPassword, userId],
+                (error) => {
+                  if (error) throw error;
+                  sendData.isSuccess = true;
+                  sendData.message =
+                    "비밀번호가 성공적으로 변경되었습니다. \n로그인 페이지로 이동합니다.";
+                  res.send(sendData);
+                }
+              );
+            } else {
+              sendData.message = "현재 비밀번호가 일치하지 않습니다.";
+              res.send(sendData);
+            }
+          });
+        } else {
+          sendData.message = "사용자 정보를 찾을 수 없습니다.";
+          res.send(sendData);
+        }
+      }
+    );
+  } else {
+    sendData.message = "모든 필드를 입력하세요.";
+    res.send(sendData);
+  }
+});
+
 module.exports = login;
