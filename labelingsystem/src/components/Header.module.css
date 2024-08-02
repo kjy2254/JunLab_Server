@@ -1,0 +1,8 @@
+.header {
+  height: 56px;
+  display: flex;
+}
+
+.header span {
+  margin: 1rem;
+}

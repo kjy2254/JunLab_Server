@@ -43,26 +43,28 @@
   margin-left: 0.3rem;
   border-radius: 1rem;
   padding: 0.1rem 0.5rem;
+  background: gray;
+  color: white;
 }
 
 .lv1 {
-  background: var(--level1-color);
+  background: var(--level1-color) !important;
   color: white;
 }
 .lv2 {
-  background: var(--level2-color);
+  background: var(--level2-color) !important;
   color: white;
 }
 .lv3 {
-  background: var(--level3-color);
-  color: #9f781a;
+  background: var(--level3-color) !important;
+  color: #9f781a !important;
 }
 .lv4 {
-  background: var(--level4-color);
+  background: var(--level4-color) !important;
   color: white;
 }
 .lv5 {
-  background: var(--level5-color);
+  background: var(--level5-color) !important;
   color: white;
 }
 

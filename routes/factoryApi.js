@@ -19,12 +19,7 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
-const {
-  calcWorkLoadIndex,
-  calcEnviromentIndex,
-  calclevel,
-  generateRandomCode,
-} = require("../util/util.js");
+const { generateRandomCode } = require("../util/util.js");
 
 api.get("/image/profile/:imagePath", (req, res) => {
   const imagePath = req.params.imagePath;

@@ -1,0 +1,242 @@
+.main {
+  display: flex;
+  flex-grow: 1;
+  padding: 2rem;
+  justify-content: center;
+}
+
+.section {
+  display: flex;
+  flex-grow: 1;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+}
+
+.title {
+  display: flex;
+  font-size: larger;
+  padding-top: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.section .origin {
+  width: 75rem;
+  height: 50rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.section .origin .header {
+  display: flex;
+  /* padding: 0.5rem; */
+  /* background: #574f4f; */
+}
+
+.section .origin .header span {
+  padding: 0.5rem 1rem;
+  background: var(--layer1-bg-color);
+  border-radius: 0.5rem;
+  margin: 0 1rem 1rem 0;
+}
+
+.section .current {
+  width: 20rem;
+  height: 35rem;
+  margin-left: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.section .submit {
+  width: 20rem;
+  height: 13rem;
+  margin-left: 2rem;
+  margin-top: 2rem;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.current .body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: flex-start;
+}
+
+.current .body span {
+  padding: 0.2rem;
+}
+
+.current .body img {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  object-fit: cover;
+}
+
+.submit .body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.submit .control {
+  display: flex;
+  margin-top: auto;
+  justify-content: space-between;
+}
+
+.origin .body {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  height: calc(100% - 5rem);
+  /* flex-grow: 1; */
+}
+
+.origin .body .img-wrapper {
+  position: relative;
+  justify-content: flex-start;
+  width: 100%;
+  height: calc(100% - 1rem);
+  background: rgba(128, 128, 128, 0.041);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left top;
+}
+
+.selectedArea {
+  border: 1px solid red;
+  position: absolute;
+}
+
+.labeled-area {
+  position: absolute;
+}
+
+.class0 {
+  background: #0000005d;
+}
+.class1 {
+  background: #d9ff002a;
+}
+.class2 {
+  background: #00aeff2a;
+}
+.class3 {
+  background: #c300ff2a;
+}
+.class4 {
+  background: #00ffff2a;
+}
+
+.current .body .current-img-wrapper {
+  position: relative;
+  width: 100%;
+  background: rgba(128, 128, 128, 0.041);
+  overflow: hidden;
+  margin-bottom: auto;
+}
+
+.current .body .current-img-wrapper img {
+  width: auto;
+  height: auto;
+  transform-origin: top left;
+  top: 0px;
+  left: 10px;
+
+  image-rendering: pixelated;
+}
+
+.current .body .current-img-wrapper:after {
+  content: "";
+  display: block;
+  padding-bottom: 100%;
+}
+
+/* -------------------- 라디오 버튼 -------------------- */
+.radios {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  height: 5rem;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  margin: 0 0.3rem 0.3rem;
+}
+
+.radioInput {
+  margin-right: 0.3rem;
+}
+
+/* -------------------- 방향키 버튼 -------------------- */
+
+.arrows {
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-button {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background-color: #ddd;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  margin: 1px;
+}
+
+.arrow-button:focus {
+  outline: none;
+}
+
+.arrow-button.up::before {
+  content: "▲";
+}
+
+.arrow-button.down::before {
+  content: "▼";
+}
+
+.arrow-button.left::before {
+  content: "◄";
+}
+
+.arrow-button.right::before {
+  content: "►";
+}
+
+.next {
+  margin-top: 1rem;
+  margin-left: auto;
+  padding: 0.5rem;
+  width: 10rem;
+  background-color: #ddd;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+li {
+  cursor: pointer;
+}

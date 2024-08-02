@@ -1,151 +1,223 @@
 const express = require("express");
 const api = express.Router();
-const connection = require("../database/mysql");
+const path = require("path");
+const fs = require("fs");
+const connection = require("../database/KICT");
 
-api.put("/env", (req, res) => {
-  const id = req.body.id;
-  const score = req.body.score;
-  const labeler = req.body.labeler;
+api.get("/image/KICT/:imageName", (req, res) => {
+  const imageName = req.params.imageName;
+  const img = path.join(__dirname, "../images/labeling/KICT", imageName);
 
-  const query = `UPDATE env_df SET y = ?, label_by = ?, label_time = NOW()
-                 WHERE id = ?;`;
-
-  connection.query(query, [score, labeler, id], (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-
-    return res.status(200).send("Update Successfully");
-  });
-});
-
-api.put("/health", (req, res) => {
-  const id = req.body.id;
-  const score = req.body.score;
-  const labeler = req.body.labeler;
-
-  const query = `UPDATE health_df SET y = ?, label_by = ?, label_time = NOW()
-                 WHERE id = ?;`;
-
-  connection.query(query, [score, labeler, id], (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-
-    return res.status(200).send("Update Successfully");
-  });
-});
-
-api.get("/progress", (req, res) => {
-  const labeler_id = req.query.id;
-  const type = req.query.type;
-  let table = "";
-
-  if (!labeler_id) {
-    return res.status(400).send("ID is necessary");
-  }
-
-  if (type === "health") {
-    table = "health_df";
-  } else if (type === "env") {
-    table = "env_df";
+  // 이미지 파일이 존재하는지 확인
+  if (fs.existsSync(img)) {
+    return res.sendFile(img);
   } else {
-    return res.status(400).send("Type Error");
+    return res.status(404).send("Image not found");
   }
-
-  // 테이블 이름을 쿼리에 직접 삽입하기 전에 유효성 검사를 수행합니다.
-  const query = `SELECT id, label_time, y 
-                 FROM ${table} 
-                 WHERE label_by = ?
-                 ORDER BY label_time DESC;`;
-
-  connection.query(query, [labeler_id], (error, result) => {
-    if (error) {
-      console.error(error);
-      return res.status(500).send("Internal Server Error!");
-    }
-
-    const returnData = { length: result.length, labeled: result };
-
-    return res.status(200).json(returnData);
-  });
 });
 
-api.get("/data/:id", (req, res) => {
-  const id = req.params.id == "undefined" ? undefined : req.params.id;
-  const type = req.query.type == "undefined" ? undefined : req.query.type;
+api.get("/KICT/origin", (req, res) => {
+  let originId = req.query.originId;
 
-  let query = ``;
-  const param = [];
+  if (!originId || originId == "null" || originId == "undefined")
+    return res.status(200).json({ message: "missing originId" });
 
-  if (id) {
-    param.push(parseInt(id));
-    query = `
-      SELECT e.x AS env_x, h.x AS health_x, e.y AS env_y, h.y AS health_y, w.worker_id, fake_name, age, gender, height, weight, illness, job, smoke, num_of_drink, employment_period, e.id
-      FROM health_df h
-      JOIN worker w ON h.worker_id = w.worker_id
-      JOIN env_df e ON h.id = e.id
-      WHERE e.id = ?
-    `;
-  } else {
-    if (!type) return res.status(400).send("ID or Type is required");
-    query = `
-      SELECT e.x AS env_x, h.x AS health_x, e.y AS env_y, h.y AS health_y, w.worker_id, fake_name, age, gender, height, weight, illness, job, smoke, num_of_drink, employment_period, e.id
-      FROM health_df h
-      JOIN worker w ON h.worker_id = w.worker_id
-      JOIN env_df e ON h.id = e.id
-      WHERE ${type === "health" ? "h.y IS NULL" : "e.y IS NULL"}
-      ORDER BY rand()
-      LIMIT 1;
-    `;
-  }
+  const query = `SELECT * FROM origin_image
+                  WHERE id = ?;`;
 
-  connection.query(query, param, (error, result) => {
+  connection.query(query, [originId], (error, result) => {
     if (error) {
       console.log(error);
       return res.status(500).send("Internal Server Error!");
     }
+    return res.status(200).json(result[0] || { message: "Invalid originId!" });
+  });
+});
 
-    if (result.length > 0) {
-      try {
-        // x 열의 데이터를 JSON 객체로 파싱
-        const parsedEnvXData = JSON.parse(result[0].env_x);
-        const parsedHealthXData = JSON.parse(result[0].health_x);
-        // x 열 데이터 외의 다른 정보를 포함하는 객체 생성
-        const additionalData = {
-          workerId: result[0].worker_id,
-          fakeName: result[0].fake_name,
-          age: result[0].age,
-          gender: result[0].gender,
-          height: result[0].height,
-          weight: result[0].weight,
-          illness: result[0].illness,
-          job: result[0].job,
-          smoke: result[0].smoke,
-          numOfDrink: result[0].num_of_drink,
-          employmentPeriod: result[0].employment_period,
-          id: result[0].id,
-          health_y: result[0].health_y,
-          env_y: result[0].env_y,
-        };
+api.post("/KICT/origin", (req, res) => {
+  let userId = req.query.userId;
 
-        // 최종 반환 객체에 x 열 데이터와 추가 데이터를 모두 포함
-        const finalData = {
-          ...parsedEnvXData,
-          ...parsedHealthXData,
-          ...additionalData,
-        };
+  if (!userId || userId === "null" || userId === "undefined")
+    return res.status(400).send("userId field is required.");
 
-        return res.status(200).json(finalData);
-      } catch (parseError) {
-        console.error("JSON 파싱 실패:", parseError);
-        return res.status(500).send("Error parsing JSON data");
+  // null labeler를 가진 origin_image 레코드 중 하나의 id를 가져오기
+  const selectQuery = `
+    SELECT id 
+    FROM origin_image 
+    WHERE labeler IS NULL 
+    LIMIT 1
+  `;
+
+  connection.query(selectQuery, [], (selectError, selectResult) => {
+    if (selectError) {
+      console.log(selectError);
+      return res.status(500).send("Internal Server Error!");
+    }
+
+    if (selectResult.length === 0) {
+      return res.status(200).json({ message: "모든 이미지가 완료되었습니다." });
+    }
+
+    const originId = selectResult[0].id;
+
+    // 해당 origin_image 레코드를 업데이트하여 userId와 현재 시간 설정하기
+    const updateQuery = `
+      UPDATE origin_image 
+      SET labeler = ?, start_time = NOW() 
+      WHERE id = ?;
+      UPDATE labeler
+      SET last_origin = ?
+      WHERE id = ?;
+    `;
+
+    connection.query(
+      updateQuery,
+      [userId, originId, originId, userId],
+      (updateError, updateResult) => {
+        if (updateError) {
+          console.log(updateError);
+          return res.status(500).send("Internal Server Error!");
+        }
+
+        return res.status(200).json({ originId: originId });
       }
-    } else {
-      return res.status(404).send("No data found");
+    );
+  });
+});
+
+api.get("/KICT/progress", (req, res) => {
+  let userId = req.query.userId;
+
+  if (!userId) {
+    return res.status(400).send("userId field is required.");
+  }
+
+  // 첫 번째 쿼리: labeler 테이블에서 유저 정보 가져오기
+  let labelerQuery = `
+    SELECT 
+      id, name, last_origin 
+    FROM 
+      labeler 
+    WHERE 
+      id = ?
+  `;
+
+  connection.query(labelerQuery, [userId], (error, labelerResult) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
     }
+
+    if (labelerResult.length === 0) {
+      return res.status(404).json({ message: "Unknown id" });
+    }
+
+    let labeler = labelerResult[0];
+
+    // 두 번째 쿼리: origin_image 테이블에서 라벨링한 오리진 리스트 가져오기
+    let originImageQuery = `
+      SELECT 
+        id AS origin_id, 
+        file_name 
+      FROM 
+        origin_image 
+      WHERE 
+        labeler = ?
+      ORDER BY 
+        id
+    `;
+
+    connection.query(originImageQuery, [userId], (error, originImageResult) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error!");
+      }
+
+      let labeledOrigins = originImageResult.map((item) => ({
+        origin_id: item.origin_id,
+        file_name: item.file_name,
+      }));
+
+      return res.status(200).json({
+        labeler_id: labeler.id,
+        name: labeler.name,
+        last_origin_id: labeler.last_origin,
+        labeled_origins: labeledOrigins,
+      });
+    });
+  });
+});
+
+api.put("/KICT/progress", (req, res) => {
+  let userId = req.query.userId;
+  let originId = req.query.originId;
+
+  if (!userId || userId == "null" || userId == "undefined")
+    return res.status(400).send("userId field is required.");
+
+  if (!originId || originId == "null" || originId == "undefined")
+    return res.status(400).send("originId field is required.");
+
+  const query = `UPDATE labeler 
+                  SET last_origin = ?
+                  WHERE id = ?`;
+
+  connection.query(query, [originId, userId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json({ message: "Update successfully" });
+  });
+});
+
+api.post("/KICT/fragment", (req, res) => {
+  let originId = req.body.originId;
+  let x = parseInt(req.body.x);
+  let y = parseInt(req.body.y);
+  let size = parseInt(req.body.size);
+  let class_info = parseInt(req.body.class);
+
+  if (!originId || originId == "null" || originId == "undefined")
+    return res.status(400).send("originId field is required.");
+
+  if (isNaN(x) || isNaN(y) || isNaN(size) || isNaN(class_info)) {
+    return res.status(400).send("x, y, size, class field is required.");
+  }
+
+  const query = `INSERT INTO fragment VALUES(?,?,?,?,?)
+                  ON DUPLICATE KEY UPDATE
+                  size = ?,
+                  class = ?;`;
+
+  connection.query(
+    query,
+    [originId, x, y, size, class_info, size, class_info],
+    (error, result) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).send("Internal Server Error!");
+      }
+      return res.status(200).json({ message: "Update successfully" });
+    }
+  );
+});
+
+api.get("/KICT/fragments", (req, res) => {
+  let originId = req.query.originId;
+
+  if (!originId || originId == "null" || originId == "undefined")
+    return res.status(200).json({ message: "missing originId" });
+
+  const query = `SELECT * FROM fragment
+                  WHERE origin_id = ?;`;
+
+  connection.query(query, [originId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json(result);
   });
 });
 

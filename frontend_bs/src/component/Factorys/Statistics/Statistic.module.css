@@ -172,6 +172,7 @@
   font-size: large;
   text-align: center;
   padding-bottom: 0.5rem;
+  text-shadow: none;
 }
 
 .air-quality {

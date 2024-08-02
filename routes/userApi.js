@@ -25,7 +25,13 @@ api.get("/:userId/info", (req, res) => {
 
   const query = `
     SELECT
-      u.user_id, u.name, a.module_name AS airwall_name, u.watch_id, w.last_sync, w.level, u.last_workload AS workload, w.last_health_index AS health_index, w.last_health_level AS health_level
+      u.user_id, u.name, a.module_name AS airwall_name, u.watch_id, 
+      w.level, u.last_workload AS workload, w.last_health_index AS health_index,
+      w.last_health_level AS health_level, w.last_wear, 
+        CASE 
+          WHEN TIMESTAMPDIFF(MINUTE, last_sync, NOW()) <= 1 THEN TRUE
+          ELSE FALSE
+        END AS online
     FROM
     users u
     LEFT JOIN
