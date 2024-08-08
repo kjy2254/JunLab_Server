@@ -55,7 +55,7 @@ function App() {
     const fetchDebug = () => {
       setAuthData({
         isLogin: true,
-        user: { id: "postech2", name: "testㄷㄱ", role: "admin" },
+        user: { id: "postech1", name: "준영", role: "user" },
       });
       setLoading(false);
     };

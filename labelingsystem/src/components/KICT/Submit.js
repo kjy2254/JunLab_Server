@@ -12,6 +12,7 @@ function Submit({
   isSubmitting,
   setIsSubmitting,
   fragments,
+  setFragments,
 }) {
   const numBlocks = useMemo(
     () => ({
@@ -22,8 +23,10 @@ function Submit({
   );
 
   const [autoSubmit, setAutoSubmit] = useState(true);
+  const [autoNext, setAutoNext] = useState(true);
   const isSubmittingRef = useRef(isSubmitting);
   const autoSubmitRef = useRef(autoSubmit);
+  const autoNextRef = useRef(autoNext);
   const currentBlockRef = useRef(currentBlock);
 
   const radioRefs = [
@@ -43,12 +46,16 @@ function Submit({
   }, [autoSubmit]);
 
   useEffect(() => {
+    autoNextRef.current = autoNext;
+  }, [autoNext]);
+
+  useEffect(() => {
     currentBlockRef.current = currentBlock;
   }, [currentBlock]);
 
   const handleKeyDown = (event) => {
     if (isSubmittingRef.current) return;
-    console.log(event.key);
+    // console.log(event.key);
     switch (event.key) {
       case "ArrowUp":
         handleBlock("up");
@@ -78,16 +85,12 @@ function Submit({
         radioRefs[4].current.checked = !radioRefs[4].current.checked;
         break;
       case "Enter":
-        handleSubmitClass([
-          radioRefs[0].current.checked,
-          radioRefs[1].current.checked,
-          radioRefs[2].current.checked,
-          radioRefs[3].current.checked,
-          radioRefs[4].current.checked,
-        ]);
+        handleSubmitClass();
         break;
       case " ":
         setAutoSubmit((prev) => !prev);
+      case "Control":
+        setAutoNext((prev) => !prev);
         break;
       default:
         break;
@@ -102,8 +105,8 @@ function Submit({
   };
 
   useEffect(() => {
-    const throttledHandleKeyDown = throttle(handleKeyDown, 100);
-    console.log("keyEvent Regeist");
+    const throttledHandleKeyDown = throttle(handleKeyDown, 85);
+    // console.log("keyEvent Regeist");
     window.addEventListener("keydown", throttledHandleKeyDown);
     return () => {
       window.removeEventListener("keydown", throttledHandleKeyDown);
@@ -194,10 +197,23 @@ function Submit({
           ref.current.checked = false;
         }
       });
-      handleBlock("right");
       setIsSubmitting(false);
+      handleBlock("right");
       return;
     }
+
+    const newFragment = {
+      originId: originId,
+      x: currentBlockRef.current.x,
+      y: currentBlockRef.current.y,
+      size: blockSize,
+      class1: classInfo[0] ? 1 : 0,
+      class2: classInfo[1] ? 1 : 0,
+      class3: classInfo[2] ? 1 : 0,
+      class4: classInfo[3] ? 1 : 0,
+      class5: classInfo[4] ? 1 : 0,
+      class0: classInfo[5] ? 1 : 0,
+    };
 
     axios
       .post("http://junlab.postech.ac.kr:880/api/labeling/KICT/fragment", {
@@ -208,13 +224,28 @@ function Submit({
         class: classInfo,
       })
       .then((response) => {
-        handleBlock("right");
         // 라디오 버튼 초기화
         radioRefs.forEach((ref) => {
           if (ref.current) {
             ref.current.checked = false;
           }
         });
+        setFragments((prevFragments) => {
+          // 기존 fragment 중 동일한 키값을 가진 항목을 제거하고 새로운 fragment를 추가
+          const updatedFragments = prevFragments.filter(
+            (fragment) =>
+              !(
+                fragment.x === newFragment.x &&
+                fragment.y === newFragment.y &&
+                fragment.size === newFragment.size
+              )
+          );
+          return [...updatedFragments, newFragment];
+        });
+
+        if (autoNextRef.current) {
+          handleBlock("right");
+        }
       })
       .catch((error) => {
         console.error("There was an error!", error);
@@ -312,11 +343,20 @@ function Submit({
           <label>
             <input
               type="checkbox"
-              id="auto"
+              id="autosubmit"
               checked={autoSubmit}
               onChange={() => setAutoSubmit((prev) => !prev)}
             />
-            자동 제출
+            자동 제출(Space)
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              id="autonext"
+              checked={autoNext}
+              onChange={() => setAutoNext((prev) => !prev)}
+            />
+            자동 다음(CTL)
           </label>
           <button ref={spaceButtonRef} onClick={() => handleSubmitClass()}>
             &#8617; Enter

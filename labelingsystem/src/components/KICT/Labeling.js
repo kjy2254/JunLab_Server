@@ -117,7 +117,7 @@ function Labeling({ authData, show, showInSmall, smallView }) {
 
   // 5. fragment 리스트를 받아오는 로직
   useEffect(() => {
-    if (metaData.id && !isSubmitting) {
+    if (metaData.id) {
       axios
         .get(
           `http://junlab.postech.ac.kr:880/api/labeling/KICT/fragments?originId=${metaData.id}`
@@ -126,7 +126,7 @@ function Labeling({ authData, show, showInSmall, smallView }) {
           setFragments(response.data);
         });
     }
-  }, [metaData.id, isSubmitting]);
+  }, [metaData.id]);
 
   // 6. 경과 시간 업데이트
   useEffect(() => {
@@ -167,6 +167,7 @@ function Labeling({ authData, show, showInSmall, smallView }) {
         currentOriginId={metaData.id}
         show={show}
         showInSmall={showInSmall}
+        blockSize={blockSize}
       />
       <div
         className={`${styles.main} ${show ? "" : styles.expanded} ${
@@ -200,6 +201,7 @@ function Labeling({ authData, show, showInSmall, smallView }) {
             isSubmitting={isSubmitting}
             setIsSubmitting={setIsSubmitting}
             fragments={fragments}
+            setFragments={setFragments}
           />
           {authData.user.role === "user" && (
             <button className={`${styles.next}`} onClick={handleNextImg}>

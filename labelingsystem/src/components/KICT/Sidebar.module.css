@@ -63,8 +63,7 @@
 .sidebar .item {
   display: flex;
   flex-direction: column;
-  /* padding: 0.5rem 1rem 0.5rem 0; */
-  font-weight: bold;
+  /* font-weight: bold; */
 }
 
 .sidebar .labeler {
@@ -76,12 +75,13 @@
 }
 
 .sidebar .name {
-  /* text-wrap: nowrap; */
-  /* text-overflow: ellipsis; */
-  /* overflow: hidden; */
   width: 100%;
   box-sizing: border-box;
   font-size: small;
+}
+
+.sidebar li.selected {
+  background: #6e6a6a;
 }
 
 @media (max-width: 1250px) {

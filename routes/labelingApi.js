@@ -158,7 +158,7 @@ api.get("/KICT/origin", (req, res) => {
   if (!originId || originId == "null" || originId == "undefined")
     return res.status(200).json({ message: "missing originId" });
 
-  const query = `SELECT * FROM origin_image
+  const query = `SELECT * FROM origin_view
                   WHERE id = ?;`;
 
   connection.query(query, [originId], (error, result) => {
@@ -176,51 +176,81 @@ api.post("/KICT/origin", (req, res) => {
   if (!userId || userId === "null" || userId === "undefined")
     return res.status(400).send("userId field is required.");
 
-  // null labeler를 가진 origin_image 레코드 중 하나의 id를 가져오기
-  const selectQuery = `
-    SELECT id 
-    FROM origin_image 
-    WHERE labeler IS NULL 
-    LIMIT 1
+  // 유저가 작업 중인 origin_image의 진행율 조회
+  const progressQuery = `
+    SELECT progress_percentage
+    FROM origin_view
+    WHERE labeler = ?
   `;
 
-  connection.query(selectQuery, [], (selectError, selectResult) => {
-    if (selectError) {
-      console.log(selectError);
-      return res.status(500).send("Internal Server Error!");
-    }
+  connection.query(
+    progressQuery,
+    [userId],
+    (progressError, progressResults) => {
+      if (progressError) {
+        console.log(progressError);
+        return res.status(500).send("Internal Server Error!");
+      }
 
-    if (selectResult.length === 0) {
-      return res
-        .status(200)
-        .json({ message: "더 이상 불러올 이미지가 없습니다." });
-    }
+      // 진행율이 모두 99% 이상인지 확인
+      const allProgressComplete = progressResults.every(
+        (row) => row.progress_percentage >= 99
+      );
 
-    const originId = selectResult[0].id;
+      if (!allProgressComplete) {
+        return res.status(200).json({
+          message:
+            "보유한 모든 이미지의 라벨링이 끝나야 새로운 이미지를 할당받을 수 있습니다.",
+        });
+      }
 
-    // 해당 origin_image 레코드를 업데이트하여 userId와 현재 시간 설정하기
-    const updateQuery = `
-      UPDATE origin_image 
-      SET labeler = ?, start_time = NOW() 
-      WHERE id = ?;
-      UPDATE user
-      SET last_origin = ?
-      WHERE id = ?;
+      // null labeler를 가진 origin_image 레코드 중 하나의 id를 가져오기
+      const selectQuery = `
+      SELECT id 
+      FROM origin_image 
+      WHERE labeler IS NULL 
+      LIMIT 1
     `;
 
-    connection.query(
-      updateQuery,
-      [userId, originId, originId, userId],
-      (updateError, updateResult) => {
-        if (updateError) {
-          console.log(updateError);
+      connection.query(selectQuery, [], (selectError, selectResult) => {
+        if (selectError) {
+          console.log(selectError);
           return res.status(500).send("Internal Server Error!");
         }
 
-        return res.status(200).json({ originId: originId });
-      }
-    );
-  });
+        if (selectResult.length === 0) {
+          return res
+            .status(200)
+            .json({ message: "더 이상 불러올 이미지가 없습니다." });
+        }
+
+        const originId = selectResult[0].id;
+
+        // 해당 origin_image 레코드를 업데이트하여 userId와 현재 시간 설정하기
+        const updateQuery = `
+        UPDATE origin_image 
+        SET labeler = ?, start_time = NOW() 
+        WHERE id = ?;
+        UPDATE user
+        SET last_origin = ?
+        WHERE id = ?;
+      `;
+
+        connection.query(
+          updateQuery,
+          [userId, originId, originId, userId],
+          (updateError, updateResult) => {
+            if (updateError) {
+              console.log(updateError);
+              return res.status(500).send("Internal Server Error!");
+            }
+
+            return res.status(200).json({ originId: originId });
+          }
+        );
+      });
+    }
+  );
 });
 
 api.get("/KICT/progress", (req, res) => {
@@ -258,9 +288,9 @@ api.get("/KICT/progress", (req, res) => {
       SELECT 
         id AS origin_id, 
         file_name,
-        start_time
+        start_time, progress_percentage
       FROM 
-        origin_image 
+        origin_view 
       WHERE 
         labeler = ?
       ORDER BY 
@@ -272,9 +302,9 @@ api.get("/KICT/progress", (req, res) => {
       SELECT 
         id AS origin_id, 
         file_name,
-        start_time, labeler
+        start_time, labeler, progress_percentage
       FROM 
-        origin_image 
+        origin_view 
       WHERE 
         labeler IS NOT NULL
       ORDER BY 
@@ -293,6 +323,7 @@ api.get("/KICT/progress", (req, res) => {
         file_name: item.file_name,
         start_time: item.start_time,
         labeler: item.labeler,
+        progress_percentage: item.progress_percentage,
       }));
 
       return res.status(200).json({

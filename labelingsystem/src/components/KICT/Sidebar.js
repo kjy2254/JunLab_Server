@@ -11,6 +11,7 @@ function Sidebar({
   setIsLoaded,
   currentOriginId,
   show,
+  blockSize,
   showInSmall,
 }) {
   const [filter, setFilter] = useState("");
@@ -54,11 +55,18 @@ function Sidebar({
             createFuzzyMatcher(filter).test(v.labeler?.toLowerCase())
           )
           .map((e) => (
-            <li key={e.origin_id} onClick={() => handleClickList(e.origin_id)}>
+            <li
+              className={`${
+                currentOriginId == e.origin_id ? styles.selected : ""
+              }`}
+              key={e.origin_id}
+              onClick={() => handleClickList(e.origin_id)}
+            >
               <div className={styles.item}>
-                <span className={styles.name} title={e.file_name}>
+                <span className={`${styles.name}`} title={e.file_name}>
                   <FontAwesomeIcon icon={faImage} /> &nbsp;
-                  {e.file_name}
+                  {e.file_name} ({parseFloat(e.progress_percentage).toFixed(1)}
+                  %)
                 </span>
                 <span className={styles.labeler}>{e.labeler}</span>
               </div>
