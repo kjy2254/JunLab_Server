@@ -34,11 +34,17 @@ function Current({ originalImage, currentBlock, blockSize, isLoaded }) {
             <div id={`spinner`} />
           )}
         </div>
-        <span>Class 0: 흰색 배경</span>
-        <span>Class 1: 프린트 된 선 또는 그림</span>
-        <span>Class 2: 프린트 된 글씨</span>
-        <span>Class 3: 손글씨</span>
-        <span>Class 4: 손그림</span>
+        <div className={styles.class}>
+          <span className={`${styles.class1}`}>
+            Class 1: 흰색 배경(정보 없음)
+          </span>
+          <span className={`${styles.class2}`}>
+            Class 2: 프린트 된 선 또는 그림
+          </span>
+          <span className={`${styles.class3}`}>Class 3: 프린트 된 글씨</span>
+          <span className={`${styles.class4}`}>Class 4: 손글씨</span>
+          <span className={`${styles.class5}`}>Class 5: 손그림</span>
+        </div>
       </div>
     </div>
   );

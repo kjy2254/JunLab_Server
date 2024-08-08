@@ -1,6 +1,7 @@
 body {
   margin: 0;
   font-family: "SUITE-Regular" !important;
+  overflow: hidden;
 }
 
 @font-face {

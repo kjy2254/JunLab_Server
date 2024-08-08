@@ -1,5 +1,5 @@
 var net = require("net");
-const connection = require("../database/mysql");
+const { connection } = require("../database/factorymanagement");
 // const connection = require("./database/apiConnection");
 
 var socketServer = net.createServer();

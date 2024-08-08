@@ -1,0 +1,108 @@
+.login {
+  display: flex;
+  height: calc(100dvh - 100px);
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+.login .bottom {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 0;
+  width: 100vw;
+}
+
+.login .top {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 0;
+  height: 100dvh;
+}
+
+.login .form {
+  padding: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 20rem;
+  min-height: 20rem;
+  justify-content: space-around;
+  position: relative;
+  z-index: 1;
+}
+
+.login-wrapper h5 {
+  text-align: left;
+  font-weight: bold;
+  font-size: 1.25rem;
+
+  margin: 0;
+}
+
+.login .input-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.login .form input {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  appearance: none;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  font-family: unset;
+  box-sizing: border-box;
+
+  margin-bottom: 1rem;
+}
+
+.login .button-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-wrapper button {
+  padding: 0.5rem 1rem;
+  background: rgb(57, 139, 247);
+  color: white;
+  border-radius: 0.5rem;
+  border-style: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: unset;
+}
+
+.button-wrapper button:hover {
+  background: rgb(59, 133, 218);
+  transition: all 0.2s;
+}
+
+.id-wrapper,
+.pw-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.login-wrapper .logo {
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+@media (max-width: 500px) {
+  .login-wrapper {
+    transform: scale(0.7);
+  }
+}

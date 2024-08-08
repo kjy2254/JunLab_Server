@@ -1,4 +1,4 @@
-const connection = require("../database/mysql");
+const { connection } = require("../database/factorymanagement");
 const axios = require("axios");
 const { promisify } = require("util");
 

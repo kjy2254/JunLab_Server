@@ -1,13 +1,25 @@
+import { faImage } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
+import { useState } from "react";
+import { createFuzzyMatcher } from "../../util";
 import styles from "./Sidebar.module.css";
 
-function Sidebar({ originList, userId, setIsLoaded, currentOriginId }) {
+function Sidebar({
+  originList,
+  authData,
+  setIsLoaded,
+  currentOriginId,
+  show,
+  showInSmall,
+}) {
+  const [filter, setFilter] = useState("");
+
   const handleClickList = (originId) => {
-    console.log(currentOriginId, originId);
     if (currentOriginId != originId) {
       axios
         .put(
-          `http://junlab.postech.ac.kr:880/api/labeling/KICT/progress?userId=${userId}&originId=${originId}`
+          `http://junlab.postech.ac.kr:880/api/labeling/KICT/progress?userId=${authData.user.id}&originId=${originId}`
         )
         .then((response) => {
           setIsLoaded(false);
@@ -16,14 +28,42 @@ function Sidebar({ originList, userId, setIsLoaded, currentOriginId }) {
   };
 
   return (
-    <aside className={`${styles.sidebar} layerSidebar`}>
+    <aside
+      className={`${styles.sidebar} layerSidebar ${
+        show ? styles.expanded : styles.collapsed
+      } ${showInSmall ? styles["sv-expanded"] : ""}`}
+    >
+      <div className={`${styles.header}`}>
+        <span className={`${styles.text}`}>
+          진행중 이미지: {originList?.length}건
+        </span>
+        {authData.user.role === "admin" && (
+          <input
+            type="text"
+            placeholder="ID를 입력하세요."
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          />
+        )}
+
+        <hr />
+      </div>
       <ul>
-        {originList?.map((e) => (
-          <li key={e.origin_id} onClick={() => handleClickList(e.origin_id)}>
-            <span>ID: {e.origin_id}&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>FILE: {e.file_name}</span>
-          </li>
-        ))}
+        {originList
+          ?.filter((v) =>
+            createFuzzyMatcher(filter).test(v.labeler?.toLowerCase())
+          )
+          .map((e) => (
+            <li key={e.origin_id} onClick={() => handleClickList(e.origin_id)}>
+              <div className={styles.item}>
+                <span className={styles.name} title={e.file_name}>
+                  <FontAwesomeIcon icon={faImage} /> &nbsp;
+                  {e.file_name}
+                </span>
+                <span className={styles.labeler}>{e.labeler}</span>
+              </div>
+            </li>
+          ))}
       </ul>
     </aside>
   );

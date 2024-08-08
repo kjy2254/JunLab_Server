@@ -81,8 +81,6 @@ function App() {
     debug = true;
   }
 
-  // const debug = 10;
-
   useEffect(() => {
     const fetchData = async () => {
       const authData = await authcheck();

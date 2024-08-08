@@ -1,6 +1,6 @@
 const express = require("express");
 const api = express.Router();
-const connection = require("../database/mysql");
+const { connection } = require("../database/factorymanagement");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
 const multer = require("multer");

@@ -1,6 +1,6 @@
 const dgram = require("dgram");
 const server = dgram.createSocket("udp4");
-const connection = require("../database/mysql");
+const { connection } = require("../database/factorymanagement");
 
 const lastSavedTime = {};
 const saveInterval = 5000; // db에 저장하는 주기
