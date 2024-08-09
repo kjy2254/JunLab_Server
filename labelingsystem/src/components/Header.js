@@ -5,7 +5,7 @@ function Header({ authData, smallView, toggleSmallSidebar, toggleSidebar }) {
     <header className={`${styles.header} layerHeader`}>
       <div>
         <span className={`${styles.title}`}>
-          [KICT 교량 외관망도 정보화] 라벨링 시스템
+          [교량 외관망도 정보화] 라벨링 시스템
         </span>
         <button
           className={styles.toggle}

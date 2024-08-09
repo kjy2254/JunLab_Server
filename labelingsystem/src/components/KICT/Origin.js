@@ -1,8 +1,9 @@
 import { faRotate } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./Labeling.module.css";
+
 function Origin({
   originalImage,
   metaData,
@@ -13,9 +14,13 @@ function Origin({
   isLoaded,
   elapsedTime,
   fragments,
+  autoClick,
+  showClass,
 }) {
   const [redBoxScale, setRedBoxScale] = useState(1);
   const [hoverBlock, setHoverBlock] = useState({ x: -1, y: -1 });
+
+  const isDraggingRef = useRef(false); // 드래그 상태를 추적하기 위한 ref
 
   const updateScale = () => {
     const imgElement = document.querySelector(`.${styles["img-wrapper"]}`);
@@ -79,12 +84,30 @@ function Origin({
         (event.clientY - rect.top) / (blockSize * redBoxScale)
       );
 
-      if (x >= 0 && x < rect.right && y >= 0 && y < rect.bottom) {
+      if (x >= 0 && x < numBlocks.x && y >= 0 && y < numBlocks.y) {
         setHoverBlock({ x, y });
+        if ((isDraggingRef.current || autoClick) && !isClass0(x, y)) {
+          setCurrentBlock({ x, y });
+        }
       }
     } else {
       setHoverBlock({ x: -1, y: -1 }); // 마우스가 img-wrapper 영역을 벗어났을 때
     }
+  };
+
+  const isClass0 = (x, y) => {
+    return fragments.some(
+      (fragment) => fragment.x === x && fragment.y === y && fragment.class0
+    );
+  };
+
+  const handleMouseDown = (event) => {
+    isDraggingRef.current = true;
+    handleImgWrapperClick(event); // 클릭 시에도 블록을 설정
+  };
+
+  const handleMouseUp = () => {
+    isDraggingRef.current = false;
   };
 
   const handleResetElapsed = () => {
@@ -128,7 +151,13 @@ function Origin({
     y: imageSize.height / blockSize,
   };
   const totalBlocks = numBlocks.x * numBlocks.y;
+  const shouldShowFragment = (fragment) => {
+    // showClass가 -1이 아니고, fragment의 해당 클래스 속성이 true인 경우
+    if (showClass === -1) return true;
 
+    const classKey = `class${showClass}`;
+    return fragment[classKey];
+  };
   return (
     <div className={`${styles.origin} layer2`}>
       <span className={"bar"} />
@@ -175,9 +204,10 @@ function Origin({
         <div
           className={`${styles["img-wrapper"]}`}
           style={{ backgroundImage: `url(${isLoaded && originalImage})` }}
-          onClick={handleImgWrapperClick}
-          onMouseMove={handleMouseMove} // 마우스 이동 이벤트 핸들러 추가
-          onMouseLeave={() => setHoverBlock({ x: -1, y: -1 })} // 마우스가 img-wrapper를 벗어났을 때
+          onMouseDown={handleMouseDown} // 마우스 누름 이벤트 핸들러
+          onMouseMove={handleMouseMove} // 마우스 이동 이벤트 핸들러
+          onMouseUp={handleMouseUp} // 마우스 뗌 이벤트 핸들러
+          onMouseLeave={handleMouseUp} // 마우스가 img-wrapper를 벗어났을 때
         >
           <div id={isLoaded ? `` : `spinner`} />
           <div
@@ -187,21 +217,26 @@ function Origin({
               top: `${currentBlock?.y * blockSize * redBoxScale - 1}px`,
               width: `${blockSize * redBoxScale}px`,
               height: `${blockSize * redBoxScale}px`,
+              userSelect: "none",
             }}
           />
           {isLoaded &&
-            fragments.map((e, index) => (
-              <div
-                key={index}
-                className={`${styles["labeled-area"]} ${classToClassName(e)}`}
-                style={{
-                  left: `${e.x * e.size * redBoxScale}px`,
-                  top: `${e.y * e.size * redBoxScale}px`,
-                  width: `${e.size * redBoxScale}px`,
-                  height: `${e.size * redBoxScale}px`,
-                }}
-              />
-            ))}
+            fragments
+              .filter((fragment) => shouldShowFragment(fragment))
+              .map((e, index) => (
+                <div
+                  key={index}
+                  className={`${styles["labeled-area"]} ${classToClassName(
+                    e
+                  )} ${showClass !== -1 ? styles.selected : ""}`}
+                  style={{
+                    left: `${e.x * e.size * redBoxScale}px`,
+                    top: `${e.y * e.size * redBoxScale}px`,
+                    width: `${e.size * redBoxScale}px`,
+                    height: `${e.size * redBoxScale}px`,
+                  }}
+                />
+              ))}
           {hoverBlock.x !== -1 && hoverBlock.y !== -1 && (
             <div
               className={styles.hoverArea}
@@ -210,6 +245,7 @@ function Origin({
                 top: `${hoverBlock.y * blockSize * redBoxScale}px`,
                 width: `${blockSize * redBoxScale}px`,
                 height: `${blockSize * redBoxScale}px`,
+                userSelect: "none",
               }}
             />
           )}

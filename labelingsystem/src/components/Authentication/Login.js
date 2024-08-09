@@ -61,7 +61,7 @@ function Login() {
         ></path>
       </svg>
       <div className={`${styles["login-wrapper"]}`}>
-        <h1 className={`${styles["logo"]}`}>KICT 라벨링 시스템</h1>
+        <h1 className={`${styles["logo"]}`}>교량 외관망도 라벨링 시스템</h1>
         <div className={`${styles["form"]} layer2`}>
           <div>
             <h5>로그인</h5>

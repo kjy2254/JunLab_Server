@@ -65,7 +65,7 @@ function App() {
     } else {
       fetchData();
     }
-  }, []);
+  }, [debug]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -149,11 +149,11 @@ function HomeRedirector({ authData }) {
       return "/KICT/login";
     }
     // 일반유저
-    else if (authData.user.role == "user") {
+    else if (authData.user.role === "user") {
       return `/KICT/labeling`;
     }
     // 관리자
-    else if (authData.user.role == "admin") {
+    else if (authData.user.role === "admin") {
       return `/KICT/labeling`;
     }
     // 기본 리다이렉션 경로

@@ -15,11 +15,14 @@ function Labeling({ authData, show, showInSmall, smallView }) {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [fragments, setFragments] = useState([]);
 
+  const [autoClick, setAutoClick] = useState(false);
+
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [showClass, setShowClass] = useState(-1);
+
   const blockSize = 32;
-  const prevOriginIdRef = useRef(null);
   const intervalRef = useRef(null);
 
   // 1. 진행도 불러오기
@@ -51,13 +54,19 @@ function Labeling({ authData, show, showInSmall, smallView }) {
 
   // 이전 originId를 추적하고 변경될 때마다 서버로 elapsedTime 전송
   useEffect(() => {
+    if (metaData.id) {
+      setElapsedTime(metaData.elapsed_time || 0);
+    }
+  }, [metaData]);
+
+  useEffect(() => {
     const sendElapsedTime = () => {
-      if (prevOriginIdRef.current && prevOriginIdRef.current !== metaData.id) {
+      if (elapsedTime != 0 && elapsedTime % 10 == 0) {
         axios
           .post(
             "http://junlab.postech.ac.kr:880/api/labeling/KICT/elapsedTime",
             {
-              originId: prevOriginIdRef.current,
+              originId: metaData.id,
               elapsedTime: elapsedTime,
             }
           )
@@ -68,15 +77,11 @@ function Labeling({ authData, show, showInSmall, smallView }) {
     };
 
     sendElapsedTime();
-    if (metaData.id) {
-      setElapsedTime(metaData.elapsed_time || 0);
-      prevOriginIdRef.current = metaData.id;
-    }
 
     return () => {
       sendElapsedTime();
     };
-  }, [metaData]);
+  }, [elapsedTime]);
 
   // 4. 이미지 설정
   useEffect(() => {
@@ -98,7 +103,7 @@ function Labeling({ authData, show, showInSmall, smallView }) {
         const ctx = canvas.getContext("2d");
 
         // 흰색 배경
-        ctx.fillStyle = "gray";
+        ctx.fillStyle = "white";
         ctx.fillRect(0, 0, paddedWidth, paddedHeight);
 
         // 원본 이미지 그리기
@@ -140,6 +145,12 @@ function Labeling({ authData, show, showInSmall, smallView }) {
     };
   }, [metaData.id]);
 
+  useEffect(() => {
+    if (!isLoaded) {
+      setOriginalImage(null);
+    }
+  }, [isLoaded]);
+
   const handleNextImg = () => {
     axios
       .post(
@@ -167,7 +178,6 @@ function Labeling({ authData, show, showInSmall, smallView }) {
         currentOriginId={metaData.id}
         show={show}
         showInSmall={showInSmall}
-        blockSize={blockSize}
       />
       <div
         className={`${styles.main} ${show ? "" : styles.expanded} ${
@@ -184,6 +194,8 @@ function Labeling({ authData, show, showInSmall, smallView }) {
           isLoaded={isLoaded}
           elapsedTime={elapsedTime}
           fragments={fragments}
+          autoClick={autoClick}
+          showClass={showClass}
         />
         <div className={styles.section2}>
           <Current
@@ -191,6 +203,8 @@ function Labeling({ authData, show, showInSmall, smallView }) {
             currentBlock={currentBlock}
             blockSize={blockSize}
             isLoaded={isLoaded}
+            setShowClass={setShowClass}
+            showClass={showClass}
           />
           <Submit
             setCurrentBlock={setCurrentBlock}
@@ -202,6 +216,8 @@ function Labeling({ authData, show, showInSmall, smallView }) {
             setIsSubmitting={setIsSubmitting}
             fragments={fragments}
             setFragments={setFragments}
+            autoClick={autoClick}
+            setAutoClick={setAutoClick}
           />
           {authData.user.role === "user" && (
             <button className={`${styles.next}`} onClick={handleNextImg}>

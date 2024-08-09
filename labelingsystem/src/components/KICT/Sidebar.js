@@ -11,13 +11,12 @@ function Sidebar({
   setIsLoaded,
   currentOriginId,
   show,
-  blockSize,
   showInSmall,
 }) {
   const [filter, setFilter] = useState("");
 
   const handleClickList = (originId) => {
-    if (currentOriginId != originId) {
+    if (currentOriginId !== originId) {
       axios
         .put(
           `http://junlab.postech.ac.kr:880/api/labeling/KICT/progress?userId=${authData.user.id}&originId=${originId}`
@@ -57,7 +56,7 @@ function Sidebar({
           .map((e) => (
             <li
               className={`${
-                currentOriginId == e.origin_id ? styles.selected : ""
+                currentOriginId === e.origin_id ? styles.selected : ""
               }`}
               key={e.origin_id}
               onClick={() => handleClickList(e.origin_id)}
