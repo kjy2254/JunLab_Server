@@ -430,6 +430,20 @@ api.get("/KICT/fragments", (req, res) => {
   });
 });
 
+api.post("/KICT/fragment/reset", (req, res) => {
+  let originId = req.body.originId;
+
+  const query = `DELETE FROM fragment WHERE origin_id = ? AND class0 != 1`;
+
+  connection.query(query, [originId], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json({ message: "Reset successfully" });
+  });
+});
+
 api.post("/KICT/elapsedTime", (req, res) => {
   let originId = req.body.originId;
   let elapsedTime = req.body.elapsedTime;

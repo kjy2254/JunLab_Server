@@ -68,7 +68,7 @@ api.get("/:userId/heartrate", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND date(timestamp) = ?;
+        user_id = ? AND date(timestamp) = ? AND heart_rate IS NOT NULL;
       `;
   } else {
     if (!timeSlot) timeSlot = 30;
@@ -79,7 +79,7 @@ api.get("/:userId/heartrate", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE);
+        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND heart_rate IS NOT NULL;
       `;
   }
 
@@ -109,7 +109,7 @@ api.get("/:userId/temperature", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND date(timestamp) = ?;
+        user_id = ? AND date(timestamp) = ? AND body_temperature IS NOT NULL;
       `;
   } else {
     if (!timeSlot) timeSlot = 30;
@@ -120,7 +120,7 @@ api.get("/:userId/temperature", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE);
+        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND body_temperature IS NOT NULL;
       `;
   }
 
@@ -150,7 +150,7 @@ api.get("/:userId/oxygen", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND date(timestamp) = ? AND oxygen_saturation != ".ING.";
+        user_id = ? AND date(timestamp) = ? AND oxygen_saturation != ".ING." AND oxygen_saturation IS NOT NULL;
       `;
   } else {
     if (!timeSlot) timeSlot = 30;
@@ -161,7 +161,7 @@ api.get("/:userId/oxygen", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND oxygen_saturation != ".ING.";
+        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND oxygen_saturation != ".ING." AND oxygen_saturation IS NOT NULL;
       `;
   }
 

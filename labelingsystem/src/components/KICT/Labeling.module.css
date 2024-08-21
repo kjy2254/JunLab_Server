@@ -191,7 +191,7 @@
 }
 
 .origin .body .img-wrapper .selected {
-  background: #ff00008a !important;
+  background: #ff00008a;
 }
 
 .selectedArea {
@@ -204,7 +204,7 @@
 }
 
 .class0 {
-  background: #0000001c;
+  background: #0000001c !important;
 }
 
 .class1 {
@@ -249,6 +249,7 @@
 }
 
 /* -------------------- 라디오 버튼 -------------------- */
+
 .radios {
   display: flex;
   /* flex-direction: column; */
@@ -311,7 +312,7 @@
 
 .next {
   margin-top: 1rem;
-  margin-left: auto;
+  margin-left: 1rem;
   padding: 0.5rem;
   width: 10rem;
   background-color: #ddd;
@@ -346,6 +347,14 @@
 
 li {
   cursor: pointer;
+}
+
+/* ----------------------------------------------- */
+
+.buttons {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
 }
 
 @media (max-width: 1850px) {

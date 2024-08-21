@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./Labeling.module.css";
+import { LabelingContext } from "./LabelingContext";
 
-function Current({
-  originalImage,
-  currentBlock,
-  blockSize,
-  isLoaded,
-  showClass,
-  setShowClass,
-}) {
+function Current() {
+  const {
+    originalImage,
+    currentBlock,
+    blockSize,
+    isLoaded,
+    showClass,
+    setShowClass,
+  } = useContext(LabelingContext);
+
   const [currentScale, setCurrentScale] = useState(1);
 
   useEffect(() => {

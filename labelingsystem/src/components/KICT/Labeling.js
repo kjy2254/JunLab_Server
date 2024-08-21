@@ -1,28 +1,29 @@
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import Current from "./Current";
 import styles from "./Labeling.module.css";
+import { LabelingContext } from "./LabelingContext";
 import Origin from "./Origin";
 import Sidebar from "./Sidebar";
-import Submit from "./Submit";
+import Submit from "./Submit/Submit";
 
 function Labeling({ authData, show, showInSmall, smallView }) {
-  const [originalImage, setOriginalImage] = useState(null);
-  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
-  const [currentBlock, setCurrentBlock] = useState({ x: -1, y: 0 });
-  const [metaData, setMetaData] = useState({});
-  const [progress, setProgress] = useState({});
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [fragments, setFragments] = useState([]);
+  const {
+    setOriginalImage,
+    setImageSize,
+    setCurrentBlock,
+    metaData,
+    setMetaData,
+    progress,
+    setProgress,
+    elapsedTime,
+    setElapsedTime,
+    setFragments,
+    isLoaded,
+    setIsLoaded,
+    blockSize,
+  } = useContext(LabelingContext);
 
-  const [autoClick, setAutoClick] = useState(false);
-
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [showClass, setShowClass] = useState(-1);
-
-  const blockSize = 32;
   const intervalRef = useRef(null);
 
   // 1. 진행도 불러오기
@@ -50,7 +51,7 @@ function Labeling({ authData, show, showInSmall, smallView }) {
           setMetaData(response.data);
         });
     }
-  }, [progress]);
+  }, [progress, setMetaData]);
 
   // 이전 originId를 추적하고 변경될 때마다 서버로 elapsedTime 전송
   useEffect(() => {
@@ -169,6 +170,26 @@ function Labeling({ authData, show, showInSmall, smallView }) {
       .finally(() => window.location.reload());
   };
 
+  const handleReset = () => {
+    if (
+      window.confirm(
+        "정말로 초기화 하시겠습니까?\n현재 이미지의 라벨링한 모든 데이터가 삭제됩니다."
+      )
+    ) {
+      axios
+        .post(
+          `http://junlab.postech.ac.kr:880/api/labeling/KICT/fragment/reset`,
+          {
+            originId: metaData.id,
+          }
+        )
+        .then((response) => {
+          alert("초기화가 완료되었습니다.");
+        })
+        .finally(() => window.location.reload());
+    }
+  };
+
   return (
     <section className={`${styles.section} layer1`}>
       <Sidebar
@@ -184,46 +205,20 @@ function Labeling({ authData, show, showInSmall, smallView }) {
           smallView ? styles.smallView : ""
         }`}
       >
-        <Origin
-          originalImage={originalImage}
-          metaData={metaData}
-          currentBlock={currentBlock}
-          setCurrentBlock={setCurrentBlock}
-          blockSize={blockSize}
-          imageSize={imageSize}
-          isLoaded={isLoaded}
-          elapsedTime={elapsedTime}
-          fragments={fragments}
-          autoClick={autoClick}
-          showClass={showClass}
-        />
+        <Origin />
         <div className={styles.section2}>
-          <Current
-            originalImage={originalImage}
-            currentBlock={currentBlock}
-            blockSize={blockSize}
-            isLoaded={isLoaded}
-            setShowClass={setShowClass}
-            showClass={showClass}
-          />
-          <Submit
-            setCurrentBlock={setCurrentBlock}
-            currentBlock={currentBlock}
-            blockSize={blockSize}
-            imageSize={imageSize}
-            originId={metaData.id}
-            isSubmitting={isSubmitting}
-            setIsSubmitting={setIsSubmitting}
-            fragments={fragments}
-            setFragments={setFragments}
-            autoClick={autoClick}
-            setAutoClick={setAutoClick}
-          />
-          {authData.user.role === "user" && (
-            <button className={`${styles.next}`} onClick={handleNextImg}>
-              새 이미지 가져오기
+          <Current />
+          <Submit authData={authData} />
+          <div className={styles.buttons}>
+            {authData.user.role === "user" && (
+              <button className={`${styles.next}`} onClick={handleNextImg}>
+                새 이미지 가져오기
+              </button>
+            )}
+            <button className={`${styles.next}`} onClick={handleReset}>
+              초기화
             </button>
-          )}
+          </div>
         </div>
       </div>
     </section>

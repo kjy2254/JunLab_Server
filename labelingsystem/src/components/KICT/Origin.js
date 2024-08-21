@@ -1,22 +1,26 @@
 import { faRotate } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./Labeling.module.css";
 
-function Origin({
-  originalImage,
-  metaData,
-  currentBlock,
-  setCurrentBlock,
-  blockSize,
-  imageSize,
-  isLoaded,
-  elapsedTime,
-  fragments,
-  autoClick,
-  showClass,
-}) {
+import { LabelingContext } from "./LabelingContext";
+
+function Origin() {
+  const {
+    originalImage,
+    imageSize,
+    currentBlock,
+    setCurrentBlock,
+    metaData,
+    elapsedTime,
+    fragments,
+    autoClick,
+    isLoaded,
+    showClass,
+    blockSize,
+  } = useContext(LabelingContext);
+
   const [redBoxScale, setRedBoxScale] = useState(1);
   const [hoverBlock, setHoverBlock] = useState({ x: -1, y: -1 });
 
@@ -152,11 +156,10 @@ function Origin({
   };
   const totalBlocks = numBlocks.x * numBlocks.y;
   const shouldShowFragment = (fragment) => {
-    // showClass가 -1이 아니고, fragment의 해당 클래스 속성이 true인 경우
     if (showClass === -1) return true;
 
     const classKey = `class${showClass}`;
-    return fragment[classKey];
+    return fragment[classKey] || fragment.class0;
   };
   return (
     <div className={`${styles.origin} layer2`}>

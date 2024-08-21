@@ -27,9 +27,6 @@
   height: 4px; /* 스크롤바의 높이 */
 }
 
-.App ::-webkit-scrollbar {
-  display: block;
-}
 .App ::-webkit-scrollbar-track,
 .App ::-webkit-scrollbar-button {
   display: none;

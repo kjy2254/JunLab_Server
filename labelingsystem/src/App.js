@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   Navigate,
   Route,
@@ -7,18 +7,26 @@ import {
   useNavigate,
 } from "react-router-dom";
 import "./App.css";
+import { AppContext } from "./AppContext"; // AppContext와 AppProvider import
 import Login from "./components/Authentication/Login";
 import Header from "./components/Header";
 import Labeling from "./components/KICT/Labeling";
+import { LabelingProvider } from "./components/KICT/LabelingContext";
 import { authcheck } from "./util";
 
 function App() {
-  const [authData, setAuthData] = useState({});
-
-  const [loading, setLoading] = useState(true);
-  const [toggleSmallSide, setToggleSmallSide] = useState(false);
-  const [toggleSide, setToggleSide] = useState(true);
-  const [smallView, setSmallView] = useState(window.innerWidth < 1250);
+  const {
+    authData,
+    setAuthData,
+    loading,
+    setLoading,
+    toggleSmallSide,
+    setToggleSmallSide,
+    toggleSide,
+    setToggleSide,
+    smallView,
+    setSmallView,
+  } = useContext(AppContext); // Context에서 상태와 setter 가져오기
 
   const toggleSidebar = () => {
     setToggleSide(!toggleSide);
@@ -35,7 +43,7 @@ function App() {
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [setSmallView]);
 
   let debug = false;
 
@@ -65,7 +73,7 @@ function App() {
     } else {
       fetchData();
     }
-  }, [debug]);
+  }, [debug, setAuthData, setLoading]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -104,12 +112,14 @@ function App() {
             element={
               <RestrictRoute
                 element={
-                  <Labeling
-                    authData={authData}
-                    show={toggleSide}
-                    showInSmall={toggleSmallSide}
-                    smallView={smallView}
-                  />
+                  <LabelingProvider>
+                    <Labeling
+                      authData={authData}
+                      show={toggleSide}
+                      showInSmall={toggleSmallSide}
+                      smallView={smallView}
+                    />
+                  </LabelingProvider>
                 }
                 authData={authData}
                 role={["user", "admin"]}
