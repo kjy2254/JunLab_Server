@@ -124,7 +124,6 @@ dist
 package-lock.json
 /database/
 
-docker-compose.yml
-database/factorymanagement.js
-database/sessionOptions.js
+# database/factorymanagement.js
+# database/sessionOptions.js
 images/*
