@@ -21,7 +21,7 @@ const customModalStyles = {
   },
 };
 
-function WorkerModal({ modalOpen, setModalOpen, data, previousModal }) {
+function WorkerModal({ modalOpen, setModalOpen, data, previousModal, update }) {
   const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
@@ -38,7 +38,7 @@ function WorkerModal({ modalOpen, setModalOpen, data, previousModal }) {
           console.error("API 요청 실패:", error);
         });
     }
-  }, [data]);
+  }, [data, update]);
 
   return (
     <Modal
@@ -82,7 +82,13 @@ function WorkerModal({ modalOpen, setModalOpen, data, previousModal }) {
           </div>
           <div className="score">
             <div>작업강도:</div>
-            <div className={`workload lv${userInfo.workload}`}>
+            <div
+              className={`workload ${
+                userInfo.online && userInfo.last_wear
+                  ? "lv" + userInfo.workload
+                  : ""
+              }`}
+            >
               {userInfo?.workload}단계
             </div>
           </div>
@@ -92,16 +98,19 @@ function WorkerModal({ modalOpen, setModalOpen, data, previousModal }) {
         header={"심박수(bpm)"}
         selectedWorker={data?.selectedWorker}
         endpoint={"heartrate"}
+        update={update}
       />
       <HealthGraphCard
         header={"체온(°C)"}
         selectedWorker={data?.selectedWorker}
         endpoint={"temperature"}
+        update={update}
       />
       <HealthGraphCard
         header={"산소포화도(%)"}
         selectedWorker={data?.selectedWorker}
         endpoint={"oxygen"}
+        update={update}
       />
     </Modal>
   );

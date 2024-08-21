@@ -3,9 +3,8 @@ const session = require("express-session");
 const path = require("path");
 const login = express.Router();
 
-const connection = require("../database/mysql");
-// const connection = require("../database/connection");
-const sessionOption = require("../database/sessionOptions");
+const { connection, sessionOption } = require("../database/factorymanagement");
+
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 
@@ -184,12 +183,6 @@ login.post("/app-login", (req, res) => {
     res.send(sendData);
   }
 });
-
-// login.post("/app-sync", (req, res) => {
-//   // 데이터 받아서 결과 전송
-//   const id = req.body.userId;
-//   const mac = req.body.mac;
-// });
 
 login.post("/signup2", (req, res) => {
   // 데이터 받아서 결과 전송

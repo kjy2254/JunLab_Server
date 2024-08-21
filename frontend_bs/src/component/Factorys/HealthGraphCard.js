@@ -4,7 +4,7 @@ import HighchartsReact from "highcharts-react-official";
 import React, { useEffect, useRef, useState } from "react";
 import "../../css/WorkerModal.css";
 
-function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
+function HealthGraphCard({ header, selectedWorker, endpoint, title, update }) {
   const [data, setData] = useState([]);
   const [options, setOptions] = useState({});
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
@@ -186,9 +186,7 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title }) {
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 7000);
-    return () => clearInterval(interval);
-  }, [selectedWorker, minute, date, selectedRadio]);
+  }, [selectedWorker, minute, date, selectedRadio, update]);
 
   return (
     <div className="graph-card layer2">

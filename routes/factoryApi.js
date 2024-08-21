@@ -1,7 +1,7 @@
 const express = require("express");
 const api = express.Router();
 // const connection = require("../database/apiConnection.js");
-const connection = require("../database/mysql");
+const { connection } = require("../database/factorymanagement");
 const path = require("path");
 const multer = require("multer");
 const fs = require("fs");
@@ -19,12 +19,7 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
-const {
-  calcWorkLoadIndex,
-  calcEnviromentIndex,
-  calclevel,
-  generateRandomCode,
-} = require("../util/util.js");
+const { generateRandomCode } = require("../util/util.js");
 
 api.get("/image/profile/:imagePath", (req, res) => {
   const imagePath = req.params.imagePath;

@@ -19,9 +19,7 @@ function Statistic(props) {
   const [previousModal, setPreviousModal] = useState(0);
 
   const [workloadModalData, setWorkloadModalData] = useState({});
-  const [healthIndexModalData, setHealthIndexModalData] = useState({});
   const [workerModalData, setWorkerModalData] = useState({});
-  const [workShopModalData, setWorkShopModalData] = useState({});
   const [envModalData, setEnvModalData] = useState({});
   const [alertModalData, setAlertModalData] = useState([]);
 
@@ -46,7 +44,6 @@ function Statistic(props) {
         <div className={`${styles["second-row"]}`}>
           <WorkerSummary
             setWorkloadModalData={setWorkloadModalData}
-            setHealthIndexModalData={setHealthIndexModalData}
             setWorkerModalData={setWorkerModalData}
             setModalOpen={setModalIndex}
             update={update}
@@ -111,6 +108,7 @@ function Statistic(props) {
         setModalOpen={setModalIndex}
         data={workerModalData}
         previousModal={previousModal}
+        update={update}
       />
       {/* <WorkShopModal
         modalOpen={modalIndex == 4}

@@ -35,6 +35,7 @@ app.get("/", (req, res) => {
 });
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "frontend_bs/build")));
+app.use(express.static(path.join(__dirname, "labelingsystem/build")));
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -61,8 +62,12 @@ app.use("/api2/user", userApi);
 // app.get("/labeling/*", (req, res) => {
 //   res.sendFile(path.join(__dirname, "frontend_bs/build/index.html"));
 // });
-app.get("/*", (req, res) => {
+app.get("/factorymanagement/*", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend_bs/build/index.html"));
+});
+
+app.get("/KICT/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "labelingsystem/build/index.html"));
 });
 
 // catch 404 and forward to error handler

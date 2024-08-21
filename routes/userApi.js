@@ -1,6 +1,6 @@
 const express = require("express");
 const api = express.Router();
-const connection = require("../database/mysql");
+const { connection } = require("../database/factorymanagement");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
 const multer = require("multer");
@@ -25,7 +25,13 @@ api.get("/:userId/info", (req, res) => {
 
   const query = `
     SELECT
-      u.user_id, u.name, a.module_name AS airwall_name, u.watch_id, w.last_sync, w.level, u.last_workload AS workload, w.last_health_index AS health_index, w.last_health_level AS health_level
+      u.user_id, u.name, a.module_name AS airwall_name, u.watch_id, 
+      w.level, u.last_workload AS workload, w.last_health_index AS health_index,
+      w.last_health_level AS health_level, w.last_wear, 
+        CASE 
+          WHEN TIMESTAMPDIFF(MINUTE, last_sync, NOW()) <= 1 THEN TRUE
+          ELSE FALSE
+        END AS online
     FROM
     users u
     LEFT JOIN
@@ -62,7 +68,7 @@ api.get("/:userId/heartrate", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND date(timestamp) = ?;
+        user_id = ? AND date(timestamp) = ? AND heart_rate IS NOT NULL;
       `;
   } else {
     if (!timeSlot) timeSlot = 30;
@@ -73,7 +79,7 @@ api.get("/:userId/heartrate", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE);
+        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND heart_rate IS NOT NULL;
       `;
   }
 
@@ -103,7 +109,7 @@ api.get("/:userId/temperature", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND date(timestamp) = ?;
+        user_id = ? AND date(timestamp) = ? AND body_temperature IS NOT NULL;
       `;
   } else {
     if (!timeSlot) timeSlot = 30;
@@ -114,7 +120,7 @@ api.get("/:userId/temperature", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE);
+        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND body_temperature IS NOT NULL;
       `;
   }
 
@@ -144,7 +150,7 @@ api.get("/:userId/oxygen", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND date(timestamp) = ? AND oxygen_saturation != ".ING.";
+        user_id = ? AND date(timestamp) = ? AND oxygen_saturation != ".ING." AND oxygen_saturation IS NOT NULL;
       `;
   } else {
     if (!timeSlot) timeSlot = 30;
@@ -155,7 +161,7 @@ api.get("/:userId/oxygen", (req, res) => {
       FROM
         airwatch_data
       WHERE
-        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND oxygen_saturation != ".ING.";
+        user_id = ? AND timestamp >= DATE_SUB(NOW(), INTERVAL ? MINUTE) AND oxygen_saturation != ".ING." AND oxygen_saturation IS NOT NULL;
       `;
   }
 

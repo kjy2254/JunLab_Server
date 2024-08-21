@@ -206,9 +206,12 @@
   text-wrap: nowrap;
   left: calc(50% + 2rem);
   top: 1.3rem;
+  font-size: 1.4rem;
+  line-height: 1.4rem;
   /* right: 3rem; */
 
   color: white;
+  text-shadow: 0.05rem 0.05rem 0 rgba(0, 0, 0, 0.5);
   /* background: gray; */
 }
 

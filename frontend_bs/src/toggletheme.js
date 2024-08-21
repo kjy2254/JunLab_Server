@@ -9,7 +9,7 @@ export function setTheme1() {
   );
   document.documentElement.style.setProperty(
     "--layer3-bg-color",
-    "rgb(48, 58, 69)"
+    "linear-gradient(145deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.08) 25%, rgba(255, 255, 255, 0.04) 100%)"
   );
   document.documentElement.style.setProperty(
     "--layer4-bg-color",
@@ -78,7 +78,7 @@ export function setTheme2() {
   );
   document.documentElement.style.setProperty(
     "--layer3-bg-color",
-    "rgb(244, 246, 249)"
+    "linear-gradient(145deg, rgb(255 255 255) 0%, rgb(0 0 0 / 7%) 150%)"
   );
   document.documentElement.style.setProperty(
     "--layer4-bg-color",
@@ -114,10 +114,7 @@ export function setTheme2() {
   );
   document.documentElement.style.setProperty("--select-color", "#ececec");
   document.documentElement.style.setProperty("--select-text-color", "unset");
-  document.documentElement.style.setProperty(
-    "--text-color",
-    "rgb(103, 117, 124)"
-  );
+  document.documentElement.style.setProperty("--text-color", "rgb(9 14 17)");
   document.documentElement.style.setProperty(
     "--spinner-color",
     "rgb(228, 231, 234)"
@@ -143,7 +140,7 @@ export function setTheme3() {
   );
   document.documentElement.style.setProperty(
     "--layer3-bg-color",
-    "rgba(161, 135, 135, 0.1)"
+    "linear-gradient(145deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.08) 25%, rgba(255, 255, 255, 0.04) 100%)"
   );
   document.documentElement.style.setProperty(
     "--layer4-bg-color",
@@ -217,7 +214,7 @@ export function setTheme4() {
   );
   document.documentElement.style.setProperty(
     "--layer3-bg-color",
-    "rgba(141, 94, 94, 0.12)"
+    "linear-gradient(145deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.08) 25%, rgba(255, 255, 255, 0.04) 100%)"
   );
   document.documentElement.style.setProperty(
     "--layer4-bg-color",

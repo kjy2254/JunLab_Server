@@ -125,5 +125,6 @@ package-lock.json
 /database/
 
 docker-compose.yml
-database/mysql.js
+database/factorymanagement.js
 database/sessionOptions.js
+images/*

@@ -1,0 +1,54 @@
+.header {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  text-wrap: nowrap;
+  /* justify-content: space-between; */
+}
+
+.header span {
+  margin: 1rem;
+}
+
+.header .userInfo {
+  margin-left: auto;
+}
+
+.header .toggle {
+  padding: 0.5rem 0.7rem;
+  background: none;
+  border-radius: 0.5rem;
+  border-style: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: unset;
+  margin-right: 1rem;
+}
+
+.header .toggle:hover {
+  transition: all 0.2s;
+  font-weight: bold;
+}
+
+.header .logout {
+  padding: 0.5rem 0.7rem;
+  background: rgb(57, 139, 247);
+  color: white;
+  border-radius: 0.5rem;
+  border-style: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: unset;
+  margin-right: 1rem;
+}
+
+.header .logout:hover {
+  background: rgb(59, 133, 218);
+  transition: all 0.2s;
+}
+
+@media (max-width: 600px) {
+  .header .title {
+    display: none;
+  }
+}

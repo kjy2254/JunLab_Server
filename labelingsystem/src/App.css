@@ -1,0 +1,124 @@
+.App {
+  text-align: center;
+  min-height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--layer1-bg-color);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+:root {
+  --layerHeader-bg-color: rgb(255, 255, 255);
+  --layerSidebar-bg-color: rgb(36, 42, 51);
+
+  --layer1-bg-color: rgb(244, 246, 249);
+  --layer2-bg-color: rgb(255, 255, 255);
+  --border-color: rgb(228, 231, 234);
+}
+
+.App ::-webkit-scrollbar {
+  width: 4px; /* 스크롤바의 너비 */
+  height: 4px; /* 스크롤바의 높이 */
+}
+
+.App ::-webkit-scrollbar-track,
+.App ::-webkit-scrollbar-button {
+  display: none;
+}
+.App ::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 4px;
+}
+/* 스크롤바 코너를 숨깁니다 */
+.App ::-webkit-scrollbar-corner {
+  display: none;
+}
+
+.layerHeader {
+  background: var(--layerHeader-bg-color);
+}
+
+.layerSidebar {
+  background: var(--layerSidebar-bg-color);
+  color: white;
+  position: relative;
+}
+
+.layer1 {
+  background: var(--layer1-bg-color);
+}
+
+.layer2 {
+  background: var(--layer2-bg-color);
+  border-radius: 0.5rem;
+  position: relative;
+}
+
+.layer2 .bar {
+  position: absolute;
+  top: 1.5rem;
+  left: 0;
+  background: rgb(57, 139, 247);
+  width: 2px;
+  height: 30px;
+}
+
+#spinner {
+  margin: auto;
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgb(228, 231, 234);
+  box-sizing: border-box;
+  border-top-color: gray;
+  border-radius: 100%;
+  animation: spin 1s ease-in-out infinite;
+
+  position: absolute;
+  top: calc(50% - 25px);
+  left: calc(50% - 25px);
+  /* transform: translate(-50%, -50%); */
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+input[type="text"],
+input[type="password"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: none;
+  border: 1px solid #e4e7ea;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  color: inherit;
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 0.375rem 0.75rem;
+
+  width: 100%;
+
+  margin: 1rem;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  box-shadow: 0 0 2px #a5a5a580;
+  outline: none;
+}
+
+hr {
+  width: 100%;
+  border-top: 1px;
+  margin: 0;
+}
