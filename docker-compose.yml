@@ -4,7 +4,7 @@ services:
   db:
     image: mysql:8.0 # 사용할 DB의 도커 이미지 (예: MySQL 8.0)
     ports:
-      - "3306:3306"
+      - "32306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: junlabFT7zDgh64 # 루트 비밀번호 설정
       MYSQL_USER: webcontainer # DB 사용자 이름
