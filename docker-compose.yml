@@ -18,7 +18,7 @@ services:
     restart: always
 
   web:
-    image: junlabweb
+    image: wkrwjafl15/junlabweb
     # build: .
     ports:
       - "880:880" # 호스트 포트:컨테이너 포트 (예: 8080)
