@@ -9,9 +9,10 @@ services:
       MYSQL_ROOT_PASSWORD: junlabFT7zDgh64 # 루트 비밀번호 설정
       MYSQL_USER: webcontainer # DB 사용자 이름
       MYSQL_PASSWORD: SJdnlvs642 # DB 사용자 비밀번호
+      TZ: Asia/Seoul
     volumes:
       - db_data:/var/lib/mysql # 데이터를 저장할 볼륨 설정
-      - ./database/databases_structure.sql:/docker-entrypoint-initdb.d/databases_structure.sql
+      - ./database/dump.sql:/docker-entrypoint-initdb.d/dump.sql
       - ./database/grants.sql:/docker-entrypoint-initdb.d/grants.sql
     networks:
       - webnet # 웹 서버와 동일한 네트워크로 설정
@@ -22,6 +23,9 @@ services:
     # build: .
     ports:
       - "880:880" # 호스트 포트:컨테이너 포트 (예: 8080)
+      - "4322:4322"
+      - "4326:4326/udp"
+      - "9977:9977"
     depends_on:
       - db # db 컨테이너가 먼저 시작되어야 함을 명시
     networks:

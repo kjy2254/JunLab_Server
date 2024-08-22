@@ -1,7 +1,7 @@
 const mysql = require("mysql2");
 const connection = mysql.createPool({
   host: "db",
-  port: "32306",
+  port: "3306",
   user: "webcontainer",
   password: "SJdnlvs642",
   database: "KICT",
@@ -10,7 +10,7 @@ const connection = mysql.createPool({
 
 const sessionOption = {
   host: "db",
-  port: "32306",
+  port: "3306",
   user: "webcontainer",
   password: "SJdnlvs642",
   database: "KICT",

@@ -127,3 +127,4 @@ package-lock.json
 # database/factorymanagement.js
 # database/sessionOptions.js
 images/*
+database/*.sql

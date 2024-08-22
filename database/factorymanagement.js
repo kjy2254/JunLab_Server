@@ -1,17 +1,16 @@
 const mysql = require("mysql2");
 const connection = mysql.createPool({
   host: "db",
-  port: "32306",
+  port: "3306",
   user: "webcontainer",
   password: "SJdnlvs642",
   database: "factorymanagement",
   multipleStatements: true,
 });
 
-// MySQL에 저장할 세션의 옵션
-var sessionOption = {
+const sessionOption = {
   host: "db",
-  port: "32306",
+  port: "3306",
   user: "webcontainer",
   password: "SJdnlvs642",
   database: "factorymanagement",
