@@ -122,7 +122,7 @@ dist
 
 #보안관련해서..
 package-lock.json
-/database/
+# /database/
 
 # database/factorymanagement.js
 # database/sessionOptions.js

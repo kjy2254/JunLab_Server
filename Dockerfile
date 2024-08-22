@@ -1,19 +1,15 @@
-# 1. 베이스 이미지 선택
-FROM node:18-alpine
+# 기존 이미지 사용 (npm이 설치되지 않은 이미지)
+FROM junlabweb:latest
 
-# 2. 작업 디렉토리 설정
+# 작업 디렉토리 설정
 WORKDIR /usr/src/app
 
-# 3. 패키지 종속성 복사 및 설치
-COPY package*.json ./
+# Node.js 및 npm 설치
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
+    && apt-get install -y nodejs
 
-RUN npm install
+# pm2 설치
+RUN npm install -g pm2
 
-# 4. 애플리케이션 소스 복사
-COPY . .
-
-# 5. 애플리케이션 포트 설정 (예: 8080 포트 사용)
-EXPOSE 8080
-
-# 6. 애플리케이션 실행 명령어 설정
-CMD ["npm", "start"]
+# 컨테이너 시작 시 여러 디렉토리에서 npm 명령어 실행 및 pm2 시작
+CMD /bin/bash -c "npm install && cd frontend_bs && npm install && npm run build && cd ../labelingsystem && npm install && npm run build && pm2 resurrect"

@@ -3,25 +3,35 @@ version: "3.8" # 도커 컴포즈 파일의 버전을 명시합니다.
 services:
   db:
     image: mysql:8.0 # 사용할 DB의 도커 이미지 (예: MySQL 8.0)
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: junlabFT7zDgh64 # 루트 비밀번호 설정
       MYSQL_USER: webcontainer # DB 사용자 이름
       MYSQL_PASSWORD: SJdnlvs642 # DB 사용자 비밀번호
     volumes:
       - db_data:/var/lib/mysql # 데이터를 저장할 볼륨 설정
-      - ./dump.sql:/docker-entrypoint-initdb.d/databases_structure.sql
+      - ./database/databases_structure.sql:/docker-entrypoint-initdb.d/databases_structure.sql
+      - ./database/grants.sql:/docker-entrypoint-initdb.d/grants.sql
     networks:
       - webnet # 웹 서버와 동일한 네트워크로 설정
     restart: always
 
   web:
-    build: . # 웹 서버 프로젝트의 Dockerfile이 있는 경로
+    image: junlabweb
+    # build: .
     ports:
       - "880:880" # 호스트 포트:컨테이너 포트 (예: 8080)
     depends_on:
       - db # db 컨테이너가 먼저 시작되어야 함을 명시
     networks:
       - webnet # DB와 동일한 네트워크로 설정
+    volumes:
+      - .:/usr/src/app
+      - ./pm2-config/dump.pm2:/root/.pm2/dump.pm2
+    stdin_open: true # -i 옵션과 유사한 역할을 합니다
+    tty: true # -t 옵션과 유사한 역할을 합니다
+    restart: always
 
 networks:
   webnet: # 두 컨테이너가 사용할 네트워크를 정의
