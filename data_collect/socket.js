@@ -1,5 +1,5 @@
 var net = require("net");
-const connection = require("../database/factorymanagement");
+const { connection } = require("../database/factorymanagement");
 // const connection = require("./database/apiConnection");
 
 var socketServer = net.createServer();
@@ -26,20 +26,12 @@ setInterval(() => {
   }
 }, parseInt(sensorTime) * 2);
 
-// socketServer.listen(4322, () => {
-//   console.log("Socket server listening on 4322 ...");
-// });
-
-// commandServer.listen(4323, () => {
-//   console.log("Command server listening on 4323 ...");
-// });
-
-socketServer.listen(4324, () => {
-  console.log("Socket server listening on 4324 ...");
+socketServer.listen(4322, () => {
+  console.log("Socket server listening on 4322 ...");
 });
 
-commandServer.listen(4325, () => {
-  console.log("Command server listening on 4325 ...");
+commandServer.listen(4323, () => {
+  console.log("Command server listening on 4323 ...");
 });
 
 commandServer.on("connection", (socket) => {

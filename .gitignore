@@ -122,9 +122,9 @@ dist
 
 #보안관련해서..
 package-lock.json
-/database/
+# /database/
 
-docker-compose.yml
-database/factorymanagement.js
-database/sessionOptions.js
+# database/factorymanagement.js
+# database/sessionOptions.js
 images/*
+database/*.sql

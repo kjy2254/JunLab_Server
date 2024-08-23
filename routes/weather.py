@@ -100,10 +100,10 @@ def get_fcst_data(base_date, base_time, base_date_prev, base_time_prev, nx, ny, 
 # 데이터베이스에서 공장 좌표 가져오기 함수
 def get_factory_coordinates(factory_id):
     conn = mysql.connector.connect(
-        host='127.0.0.1',
-        port=32306,
-        user='root',
-        password='junlabFT7zDgh64',
+        host='db',
+        port=3306,
+        user='webcontainer',
+        password='SJdnlvs642',
         database='factorymanagement'
     )
     cursor = conn.cursor(dictionary=True)
