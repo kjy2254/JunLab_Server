@@ -1,4 +1,5 @@
 const mysql = require("mysql2");
+
 const connection = mysql.createPool({
   host: "db",
   port: "3306",
@@ -6,6 +7,7 @@ const connection = mysql.createPool({
   password: "SJdnlvs642",
   database: "factorymanagement",
   multipleStatements: true,
+  timezone: "+09:00",
 });
 
 const sessionOption = {
@@ -14,6 +16,7 @@ const sessionOption = {
   user: "webcontainer",
   password: "SJdnlvs642",
   database: "factorymanagement",
+  timezone: "+09:00",
 
   clearExpired: true, // 만료된 세션 자동 확인 및 지우기 여부
   checkExpirationInterval: 10000, // 만료된 세션이 지워지는 빈도 (milliseconds)
