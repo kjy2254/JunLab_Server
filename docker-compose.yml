@@ -34,8 +34,14 @@ services:
     volumes:
       - .:/usr/src/app
       - ./pm2-config/dump.pm2:/root/.pm2/dump.pm2
-    stdin_open: true # -i 옵션과 유사한 역할을 합니다
+    # stdin_open: true # -i 옵션과 유사한 역할을 합니다
     tty: true # -t 옵션과 유사한 역할을 합니다
+    command:
+      [
+        "/bin/bash",
+        "-c",
+        'eval "$(/root/.local/share/fnm/fnm env)" && pm2 resurrect && exec bash',
+      ]
     restart: always
 
 networks:
