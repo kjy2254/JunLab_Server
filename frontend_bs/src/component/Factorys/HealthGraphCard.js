@@ -135,10 +135,12 @@ function HealthGraphCard({ header, selectedWorker, endpoint, title, update }) {
       series: [
         {
           // name: "Heart Rate",
-          data: data.map((item) => [
-            new Date(item.timestamp).getTime(),
-            parseFloat(item[endpoint]),
-          ]),
+          data: data
+            .map((item) => [
+              new Date(item.timestamp).getTime(),
+              parseFloat(item[endpoint]),
+            ])
+            .filter(([, yValue]) => yValue !== 0),
           marker: {
             enabled: false, // 점 비활성화
           },

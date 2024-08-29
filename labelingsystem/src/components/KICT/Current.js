@@ -94,14 +94,24 @@ function Current() {
           >
             Class 4: 손글씨
           </span>
-          <span
-            className={`${styles.class5} ${
-              showClass == 5 ? styles.selected : ""
-            }`}
-            onClick={() => toggleClassVisibility(5)}
-          >
-            Class 5: 손그림
-          </span>
+          <div style={{ display: "flex", width: "100%" }}>
+            <span
+              className={`${styles.class5} ${
+                showClass == 5 ? styles.selected : ""
+              }`}
+              onClick={() => toggleClassVisibility(5)}
+            >
+              Class 5: 손그림
+            </span>
+            <span
+              className={`${styles.class100} ${
+                showClass == 100 ? styles.selected : ""
+              }`}
+              onClick={() => toggleClassVisibility(100)}
+            >
+              전체
+            </span>
+          </div>
         </div>
       </div>
     </div>

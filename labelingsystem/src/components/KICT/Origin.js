@@ -156,7 +156,7 @@ function Origin() {
   };
   const totalBlocks = numBlocks.x * numBlocks.y;
   const shouldShowFragment = (fragment) => {
-    if (showClass === -1) return true;
+    if (showClass === -1 || showClass === 100) return true;
 
     const classKey = `class${showClass}`;
     return fragment[classKey] || fragment.class0;
@@ -231,7 +231,9 @@ function Origin() {
                   key={index}
                   className={`${styles["labeled-area"]} ${classToClassName(
                     e
-                  )} ${showClass !== -1 ? styles.selected : ""}`}
+                  )} ${showClass !== -1 ? styles.selected : ""} ${
+                    showClass === 100 ? styles.all : ""
+                  }`}
                   style={{
                     left: `${e.x * e.size * redBoxScale}px`,
                     top: `${e.y * e.size * redBoxScale}px`,

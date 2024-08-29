@@ -95,12 +95,14 @@
   flex-direction: column;
   flex-grow: 1;
   align-items: flex-start;
+  user-select: none;
 }
 
 .current .body .class {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 100%;
 }
 
 .current .body .class .selected {
@@ -191,7 +193,11 @@
 }
 
 .origin .body .img-wrapper .selected {
-  background: #ff00008a;
+  background: #a10a0a41;
+}
+
+.origin .body .img-wrapper .selected.all {
+  background: #a10a0a41 !important;
 }
 
 .selectedArea {
@@ -222,10 +228,14 @@
 .class5 {
   background: #66ff003b;
 }
+.class100 {
+  margin-left: auto;
+}
 
 .current .body .current-img-wrapper {
   position: relative;
-  width: 100%;
+  min-width: 18rem;
+  max-width: 18rem;
   background: rgba(128, 128, 128, 0.041);
   overflow: hidden;
   margin-bottom: auto;
@@ -372,7 +382,6 @@ li {
   }
 
   .section .current {
-    height: 25rem;
     margin-left: 0;
     flex-grow: 1;
     width: calc(100% - 22rem);
@@ -388,11 +397,7 @@ li {
   }
 
   .current .body .current-img-wrapper {
-    height: 100%;
-    width: unset;
-    aspect-ratio: 1 / 1;
-    margin-right: auto;
-    border: 1px solid var(--border-color);
+    margin-right: 1rem;
   }
 
   .current .body {
@@ -410,9 +415,9 @@ li {
     width: 100%;
   }
 
-  .section .current {
+  /* .section .current {
     height: 30rem;
-  }
+  } */
 
   .section .submit {
     height: 15rem;
