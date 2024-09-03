@@ -34,13 +34,13 @@ services:
     volumes:
       - .:/usr/src/app
       - ./pm2-config/dump.pm2:/root/.pm2/dump.pm2
-    # stdin_open: true # -i 옵션과 유사한 역할을 합니다
+    stdin_open: true # -i 옵션과 유사한 역할을 합니다
     tty: true # -t 옵션과 유사한 역할을 합니다
     command:
       [
         "/bin/bash",
         "-c",
-        'eval "$(/root/.local/share/fnm/fnm env)" && pm2 resurrect && exec bash',
+        'mkdir -p /root/.pm2/logs/CalcIndex /root/.pm2/logs/AIServer /root/.pm2/logs/WearOS /root/.pm2/logs/Fitrus /root/.pm2/logs/Pico /root/.pm2/logs/OSLab /root/.pm2/logs/Weather /root/.pm2/logs/WWW && eval "$(/root/.local/share/fnm/fnm env)" && pm2 resurrect && exec bash',
       ]
     restart: always
 
