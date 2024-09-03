@@ -62,6 +62,33 @@ function Mouse() {
   const handleSubmitClass = () => {
     setIsSubmitting(true);
 
+    // 삭제모드
+    if (radioRefs[5].current.checked) {
+      axios
+        .delete(
+          `http://junlab.postech.ac.kr:880/api/labeling/KICT/fragment?originId=${metaData.id}&x=${currentBlock.x}&y=${currentBlock.y}&size=${blockSize}`
+        )
+        .then((response) => {
+          setFragments((prevFragments) => {
+            // 기존 fragment 중 동일한 키값을 가진 항목을 제거하고 새로운 fragment를 추가
+            const updatedFragments = prevFragments.filter(
+              (fragment) =>
+                !(
+                  fragment.x === currentBlock.x && fragment.y === currentBlock.y
+                )
+            );
+            return updatedFragments;
+          });
+        })
+        .catch((error) => {
+          console.error("There was an error!", error);
+        })
+        .finally(() => {
+          setIsSubmitting(false); // 요청 완료
+        });
+      return;
+    }
+
     let classInfo = [
       radioRefs[0].current.checked,
       radioRefs[1].current.checked,
@@ -193,6 +220,16 @@ function Mouse() {
               className={styles.radioInput}
             />
             Class 5
+          </label>
+          <label className={styles.radioLabel}>
+            <input
+              type="checkbox"
+              name="class"
+              value="6"
+              ref={radioRefs[5]}
+              className={styles.radioInput}
+            />
+            삭제
           </label>
         </div>
       </div>

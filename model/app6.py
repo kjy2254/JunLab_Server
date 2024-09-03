@@ -27,6 +27,7 @@ hc_level_threshold = [0.1, 0.3, 0.6, 0.9]
 env_version = 'env_predict_ver3.1.1.h5'
 hc_version = 'hc_predict_ver3.1.1.h5'
 
+
 # 저장된 Scaler 객체 불러오기
 with open('mm_scaler.pkl', 'rb') as f:
     loaded_scaler = pickle.load(f)

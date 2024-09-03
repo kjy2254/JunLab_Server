@@ -11,8 +11,11 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 var app = express();
 
+console.log("Current Working Directory:", process.cwd());
+
 app.set("view engine", "ejs");
-app.set("views", "./views");
+app.set("views", "../views");
+
 
 // skip 함수 정의
 function skipLogging(req) {
