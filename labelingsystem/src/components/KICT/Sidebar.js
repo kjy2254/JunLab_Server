@@ -35,7 +35,13 @@ function Sidebar({
     >
       <div className={`${styles.header}`}>
         <span className={`${styles.text}`}>
-          진행중 이미지: {originList?.length}건
+          진행중 이미지:{" "}
+          {
+            originList?.filter((v) =>
+              createFuzzyMatcher(filter).test(v.labeler?.toLowerCase())
+            ).length
+          }
+          건
         </span>
         {authData.user.role === "admin" && (
           <input

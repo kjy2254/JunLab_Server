@@ -430,6 +430,35 @@ api.get("/KICT/fragments", (req, res) => {
   });
 });
 
+api.delete("/KICT/fragment", (req, res) => {
+  let originId = req.query.originId;
+  let x = parseInt(req.query.x);
+  let y = parseInt(req.query.y);
+  let size = parseInt(req.query.size);
+
+  if (!originId || originId == "null" || originId == "undefined")
+    return res.status(400).send("originId field is required.");
+
+  if (isNaN(x) || isNaN(y) || isNaN(size)) {
+    return res.status(400).send("x, y, size, class field is required.");
+  }
+
+  const query = `DELETE FROM fragment 
+                  WHERE origin_id = ?
+                    AND x = ?
+                    AND y = ?
+                    AND size = ?;
+                  ;`;
+
+  connection.query(query, [originId, x, y, size], (error, result) => {
+    if (error) {
+      console.log(error);
+      return res.status(500).send("Internal Server Error!");
+    }
+    return res.status(200).json({ message: "Delete successfully" });
+  });
+});
+
 api.post("/KICT/fragment/reset", (req, res) => {
   let originId = req.body.originId;
 

@@ -29,6 +29,7 @@ export const LabelingProvider = ({ children }) => {
     useRef(null),
     useRef(null),
     useRef(null),
+    useRef(null),
   ];
 
   return (
